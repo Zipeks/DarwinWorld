@@ -1,10 +1,9 @@
 package agh.model;
 
-import agh.model.MoveDirection;
-import agh.model.Vector2d;
 import agh.model.util.Boundary;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -45,13 +44,15 @@ public interface WorldMap extends MoveValidator {
      */
     boolean isOccupied(Vector2d position);
 
+    List<Animal> animalsAt(Vector2d position);
+
     /**
      * Return an animal at a given position.
      *
      * @param position The position of the animal.
      * @return animal or null if the position is not occupied.
      */
-    WorldElement objectAt(Vector2d position);
+//    List<WorldElement> objectsAt(Vector2d position);
 
     Collection<WorldElement> getElements();
 

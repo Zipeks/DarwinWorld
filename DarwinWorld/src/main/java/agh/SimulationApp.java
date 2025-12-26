@@ -1,7 +1,7 @@
 package agh;
 
-import agh.ics.oop.model.*;
-import agh.ics.oop.presenter.SimulationPresenter;
+import agh.model.*;
+import agh.presenter.SimulationPresenter;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -32,4 +32,5 @@ public class SimulationApp extends Application {
 //        primaryStage.minWidthProperty().bind(viewRoot.minWidthProperty());
 //        primaryStage.minHeightProperty().bind(viewRoot.minHeightProperty());
 //    }
+}
 }

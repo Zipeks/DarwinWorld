@@ -9,6 +9,8 @@ public class Simulation implements Runnable {
     private final List<MoveDirection> moves;
     private final List<Animal> animals;
     private final WorldMap worldMap;
+    private final boolean isRunning = true;
+    private final int newPlantsDaily;
 
     public Simulation(List<Vector2d> positions, List<MoveDirection> moves, WorldMap worldMap){
         this.moves = moves;

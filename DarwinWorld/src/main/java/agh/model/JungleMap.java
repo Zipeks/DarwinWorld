@@ -8,11 +8,12 @@ public class JungleMap extends AbstractWorldMap {
     private final Map<Vector2d, Grass> grasses = new HashMap<>();
     private final Boundary boundary;
     private final Boundary jungle;
+    private final int mapArea;
     private int grassCount;
-
 
     public JungleMap(int grassCount, Boundary boundary) {
         this.boundary = boundary;
+        mapArea = boundary.topRight().getX() * boundary.topRight().getY();
         int height = boundary.topRight().getY() - boundary.bottomLeft().getY();
         int equator = Math.floorDiv(height, 2);
         int eq_ten_percent = Math.floorDiv(equator, 10);
@@ -21,8 +22,11 @@ public class JungleMap extends AbstractWorldMap {
         placeGrasses(grassCount);
     }
 
+    private void removeDeadAnimals() {
+
+    }
+
     private void placeGrasses(int grassesToPlace) {
-        int mapArea = boundary.topRight().getX() * boundary.topRight().getY();
         Random rand = new Random();
         int i = grassesToPlace;
         int mapWidth = boundary.topRight().getX() + 1;
@@ -52,8 +56,8 @@ public class JungleMap extends AbstractWorldMap {
             }
         }
     }
-    @Override
-    public void move(Animal animal, MoveDirection moveDirection) {
+
+    public void moveAnimals() {
 //        Vector2d old_position = animal.getPosition();
 //        MapDirection old_direction = animal.getDirection();
 //        animal.move(moveDirection, this);
@@ -69,11 +73,16 @@ public class JungleMap extends AbstractWorldMap {
 //                    + moveDirection.toString().toLowerCase() + " but can't.");
 //        }
     }
-    public void checkEatenGrasses() {
+
+    public void grassConsumption() {
         grasses.values().forEach(grass -> {
             List<Animal> animalsEating = animalsAt(grass.getPosition());
 
         });
+    }
+
+    public void animalReproduction() {
+
     }
 
     @Override

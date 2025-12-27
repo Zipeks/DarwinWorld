@@ -1,18 +1,30 @@
 package agh.model;
 
+import agh.model.util.Genotype;
+
 import java.util.Objects;
 
 public class Animal implements WorldElement {
+    private final Genotype genotype;
+    int id;
+    int age;
     private MapDirection direction;
     private Vector2d position;
+    private int energy;
 
-    public Animal(Vector2d positon) {
-        this.direction = MapDirection.NORTH;
-        this.position = positon;
+    public Animal(Vector2d position, Animal parentOne, Animal parentTwo, int mutationsCnt, int startEnergy) {
+        this(position, new Genotype(parentOne,parentTwo,mutationsCnt),startEnergy);
     }
 
-    public Animal() {
-        this(new Vector2d(2, 2));
+    public Animal(Vector2d position, int genomSize, int startEnergy) {
+        this(position, new Genotype(genomSize), startEnergy);
+    }
+
+    private Animal(Vector2d position, Genotype genotype, int energy) {
+        this.direction = MapDirection.randomDirection();
+        this.position = position;
+        this.genotype = genotype;
+        this.energy = energy;
     }
 
     public MapDirection getDirection() {
@@ -21,6 +33,14 @@ public class Animal implements WorldElement {
 
     public Vector2d getPosition() {
         return position;
+    }
+
+    public Genotype getGenotype() {
+        return genotype;
+    }
+
+    public int getEnergy() {
+        return energy;
     }
 
     @Override

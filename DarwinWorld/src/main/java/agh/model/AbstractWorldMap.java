@@ -33,13 +33,10 @@ abstract class AbstractWorldMap implements agh.model.WorldMap {
     }
 
     @Override
-    public void place(Animal animal)  {
-        if (canMoveTo(animal.getPosition())) {
-            animals.computeIfAbsent(animal.getPosition(), k -> new ArrayList<>()).add(animal);
-            notifyObservers("Animal has been placed at: " + animal.getPosition());
-        }
+    public void place(Animal animal) {
+        animals.computeIfAbsent(animal.getPosition(), k -> new ArrayList<>()).add(animal);
+        notifyObservers("Animal has been placed at: " + animal.getPosition());
     }
-
 
 
     @Override

@@ -2,22 +2,25 @@ package agh.model.util;
 
 import agh.model.Animal;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Genotype {
     private static final Random PRNG = new Random();
     private final List<Integer> genes;
     private int activeGeneIdx;
 
+    // First animal
     public Genotype(int size) {
         genes = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             genes.add(PRNG.nextInt(8));
         }
         activeGeneIdx = PRNG.nextInt(size);
+    }
+
+    public Genotype(Genotype genotype) {
+        genes = genotype.getGenes();
+        activeGeneIdx = PRNG.nextInt(genes.size());
     }
 
     public Genotype(Animal parentOne, Animal parentTwo, int mutationsCnt) {
@@ -75,5 +78,17 @@ public class Genotype {
     }
     public List<Integer> getGenes() {
         return new ArrayList<>(genes);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Genotype genotype = (Genotype) o;
+        return Objects.equals(genes, genotype.genes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(genes);
     }
 }

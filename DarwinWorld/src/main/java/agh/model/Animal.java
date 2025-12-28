@@ -2,29 +2,70 @@ package agh.model;
 
 import agh.model.util.Genotype;
 
-import java.util.Objects;
+import java.util.*;
 
 public class Animal implements WorldElement {
     private final Genotype genotype;
-    int id;
-    int age;
+    private final List<Animal> children = new ArrayList<>();
+    private int age;
+    private int deathDate;
     private MapDirection direction;
     private Vector2d position;
+    private int eatenGrassesCount;
     private int energy;
 
     public Animal(Vector2d position, Animal parentOne, Animal parentTwo, int mutationsCnt, int startEnergy) {
-        this(position, new Genotype(parentOne,parentTwo,mutationsCnt),startEnergy);
+        this(position, new Genotype(parentOne, parentTwo, mutationsCnt), startEnergy);
     }
 
-    public Animal(Vector2d position, int genomSize, int startEnergy) {
-        this(position, new Genotype(genomSize), startEnergy);
-    }
-
-    private Animal(Vector2d position, Genotype genotype, int energy) {
+    public Animal(Vector2d position, Genotype genotype, int energy) {
         this.direction = MapDirection.randomDirection();
         this.position = position;
         this.genotype = genotype;
         this.energy = energy;
+    }
+
+
+    public boolean isAt(Vector2d otherPosition) {
+        return Objects.equals(position, otherPosition);
+    }
+
+    public void move(MoveDirection dir, MoveValidator moveValidator) {
+
+    }
+
+    public void addChild(Animal child) {
+        children.add(child);
+    }
+    public void eatenGrass(int energy) {
+        this.energy += energy;
+        eatenGrassesCount++;
+    }
+
+    public int getDescendantCount() {
+        HashSet<Animal> uniqueDescendants = new HashSet<>();
+        DFS_UniqueDescendants(this, uniqueDescendants);
+        return uniqueDescendants.size();
+    }
+
+    private void DFS_UniqueDescendants(Animal animal, HashSet<Animal> unique) {
+        for (Animal child : animal.getChildren()) {
+            if (unique.add(child)) {
+                DFS_UniqueDescendants(child, unique);
+            }
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Animal animal = (Animal) o;
+        return age == animal.age && energy == animal.energy && Objects.equals(genotype, animal.genotype) && Objects.equals(children, animal.children) && direction == animal.direction && Objects.equals(position, animal.position);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(genotype, children, age, direction, position, energy);
     }
 
     public MapDirection getDirection() {
@@ -43,29 +84,14 @@ public class Animal implements WorldElement {
         return energy;
     }
 
-    @Override
-    public String toString() {
-        return direction.toString();
+    public int getAge() {
+        return age;
     }
 
-    public boolean isAt(Vector2d otherPosition) {
-        return Objects.equals(position, otherPosition);
+    public List<Animal> getChildren() {
+        return children;
     }
-
-    public void move(MoveDirection dir, MoveValidator moveValidator) {
-        switch (dir) {
-            case RIGHT -> direction = direction.next();
-            case LEFT -> direction = direction.previous();
-            case FORWARD -> {
-                Vector2d v = position.add(direction.toUnitVector());
-                if (moveValidator.canMoveTo(v))
-                    position = v;
-            }
-            case BACKWARD -> {
-                Vector2d v = position.add(direction.toUnitVector().opposite());
-                if (moveValidator.canMoveTo(v))
-                    position = v;
-            }
-        }
+    public int getChildrenCount() {
+        return children.size();
     }
 }

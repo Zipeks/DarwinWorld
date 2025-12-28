@@ -23,7 +23,10 @@ public class JungleMap extends AbstractWorldMap {
     }
 
     private void removeDeadAnimals() {
-
+        for (Vector2d position : animals.keySet()) {
+            List<Animal> animalsAtP = animals.get(position);
+            animalsAtP.removeIf(animal -> animal.getEnergy() <= 0);
+        }
     }
 
     private void placeGrasses(int grassesToPlace) {
@@ -74,15 +77,32 @@ public class JungleMap extends AbstractWorldMap {
 //        }
     }
 
+    // Work in progress
     public void grassConsumption() {
         grasses.values().forEach(grass -> {
             List<Animal> animalsEating = animalsAt(grass.getPosition());
-
+            if (animalsEating.isEmpty()) {
+                return;
+            }
+            animalsEating.sort(Comparator.comparingInt(Animal::getEnergy)
+                    .thenComparing(Animal::getAge)
+                    .thenComparing(Animal::getChildrenCount));
+            Animal firstAnimal = animalsEating.getFirst();
         });
     }
 
-    public void animalReproduction() {
 
+    // Work in progress
+    public void animalReproduction() {
+        for (Vector2d position : animals.keySet()) {
+            List<Animal> animalsAtP = animals.get(position);
+            if (animalsAtP.size() < 2) {
+                return;
+            }
+            animalsAtP.sort(Comparator.comparingInt(Animal::getEnergy)
+                    .thenComparing(Animal::getAge)
+                    .thenComparing(Animal::getChildrenCount));
+        }
     }
 
     @Override

@@ -32,6 +32,10 @@ public enum MapDirection {
         return direction;
     }
 
+    public MapDirection rotateBy(int rotation) {
+        return directions[(this.ordinal() + rotation) % directions.length];
+    }
+
     public MapDirection next() {
         return directions[(this.ordinal() + 1) % directions.length];
     }

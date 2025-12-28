@@ -13,7 +13,7 @@ import java.util.Vector;
 
 public class Simulation implements Runnable {
     private final List<Animal> animals;
-    private final WorldMap worldMap;
+    private final JungleMap worldMap;
     private final boolean isRunning = true;
     private final SimulationConfig config;
 
@@ -29,6 +29,7 @@ public class Simulation implements Runnable {
 //            animals.add(animal);
 //        }
     }
+
     public void generateAnimals() {
         Random PRNG = new Random();
         Genotype startingGenotype = new Genotype(config.genotypeLength());
@@ -40,6 +41,7 @@ public class Simulation implements Runnable {
             animals.add(animal);
         }
     }
+
     public List<Animal> getAnimals() {
         return animals;
     }
@@ -51,7 +53,14 @@ public class Simulation implements Runnable {
         } catch (InterruptedException e) {
             IO.println(e.getMessage());
         }
-//        worldMap.move(animals.get(i), nextMove);
+        worldMap.removeDeadAnimals();
+        worldMap.moveAnimals(config.energyLostDaily());
+        worldMap.grassConsumption(config.energyFromEatingGrass());
+        animals.addAll(worldMap.animalReproduction(config.energyNeededToReproduce(),
+                config.energyLostToReproduce(),
+                config.minimalMutationCount(),
+                config.maximalMutationCount()));
+        worldMap.placeGrasses(config.newGrassesDaily());
     }
 
 }

@@ -22,14 +22,14 @@ public class JungleMap extends AbstractWorldMap {
         placeGrasses(grassCount);
     }
 
-    private void removeDeadAnimals() {
+    public void removeDeadAnimals() {
         for (Vector2d position : animals.keySet()) {
             List<Animal> animalsAtP = animals.get(position);
             animalsAtP.removeIf(animal -> animal.getEnergy() <= 0);
         }
     }
 
-    private void placeGrasses(int grassesToPlace) {
+    public void placeGrasses(int grassesToPlace) {
         Random rand = new Random();
         int i = grassesToPlace;
         int mapWidth = boundary.topRight().getX() + 1;
@@ -60,49 +60,75 @@ public class JungleMap extends AbstractWorldMap {
         }
     }
 
-    public void moveAnimals() {
-//        Vector2d old_position = animal.getPosition();
-//        MapDirection old_direction = animal.getDirection();
-//        animal.move(moveDirection, this);
-//        if (!Objects.equals(old_position, animal.getPosition())) {
-//            animals.remove(old_position);
-//            animals.put(animal.getPosition(), animal);
-//            notifyObservers("Animal has moved from: " + old_position + " to: " + animal.getPosition());
-//        } else if (!Objects.equals(old_direction, animal.getDirection())) {
-//            notifyObservers("Animal at: " + animal.getPosition() + " has changed direction from: "
-//                    + old_direction + " to: " + animal.getDirection());
-//        } else {
-//            notifyObservers("Animal at: " + animal.getPosition() + " tried to move "
-//                    + moveDirection.toString().toLowerCase() + " but can't.");
-//        }
-    }
+    public void moveAnimals(int moveCost) {
+        animals.values().forEach(animals -> {
+            for (Animal animal: animals) {
+                animals.remove(animal);
+                animal.move(this, moveCost);
+                this.place(animal);
 
-    // Work in progress
-    public void grassConsumption() {
-        grasses.values().forEach(grass -> {
-            List<Animal> animalsEating = animalsAt(grass.getPosition());
-            if (animalsEating.isEmpty()) {
-                return;
+//                notifyObservers("Animal has moved from: " + old_position + " to: " + animal.getPosition());
+//                } else if (!Objects.equals(old_direction, animal.getDirection())) {
+//                    notifyObservers("Animal at: " + animal.getPosition() + " has changed direction from: "
+//                            + old_direction + " to: " + animal.getDirection());
+//                } else {
+//                    notifyObservers("Animal at: " + animal.getPosition() + " tried to move "
+//                            + moveDirection.toString().toLowerCase() + " but can't.");
+//                }
             }
-            animalsEating.sort(Comparator.comparingInt(Animal::getEnergy)
-                    .thenComparing(Animal::getAge)
-                    .thenComparing(Animal::getChildrenCount));
-            Animal firstAnimal = animalsEating.getFirst();
+
         });
     }
+    public Vector2d moveOnMap(Vector2d position, Vector2d moveVector) {
+        int width = boundary.topRight().getX();
+        int height = boundary.topRight().getY();
+        int y = position.getY() + moveVector.getY();
+        if (y < 0 || y >= height) {
+            moveVector = moveVector.opposite();
+        }
+        int x = (position.getX() + moveVector.getX() + width ) % width;
+        return  new Vector2d(x,y);
+    }
 
-
-    // Work in progress
-    public void animalReproduction() {
-        for (Vector2d position : animals.keySet()) {
-            List<Animal> animalsAtP = animals.get(position);
-            if (animalsAtP.size() < 2) {
+    public void grassConsumption(int energyGained) {
+        animals.values().forEach(animalsAtP -> {
+            Vector2d position = animalsAtP.getFirst().getPosition();
+            if (!grasses.containsKey(position)) {
                 return;
             }
             animalsAtP.sort(Comparator.comparingInt(Animal::getEnergy)
                     .thenComparing(Animal::getAge)
                     .thenComparing(Animal::getChildrenCount));
+            Animal firstAnimal = animalsAtP.getFirst();
+            firstAnimal.eatenGrass(energyGained);
+            grasses.remove(position);
+        });
+    }
+
+
+    public List<Animal> animalReproduction(int energyNeededToReproduce, int energyLostToReproduction, int minMutations, int maxMutation) {
+        List<Animal> childAnimals = new ArrayList<>();
+        Random PRNG = new Random();
+        for (Vector2d position : animals.keySet()) {
+            List<Animal> animalsAtP = animals.get(position);
+            if (animalsAtP.size() < 2) {
+                return Collections.emptyList();
+            }
+            animalsAtP.sort(Comparator.comparingInt(Animal::getEnergy)
+                    .thenComparing(Animal::getAge)
+                    .thenComparing(Animal::getChildrenCount));
+            Animal firstAnimal = animalsAtP.getFirst();
+            Animal secondAnimal = animalsAtP.get(1);
+            if (firstAnimal.getEnergy() > energyNeededToReproduce && secondAnimal.getEnergy() > energyNeededToReproduce) {
+                Animal childAnimal = new Animal(position, firstAnimal, secondAnimal,
+                        PRNG.nextInt(minMutations, maxMutation + 1), energyLostToReproduction * 2);
+                place(childAnimal);
+
+                firstAnimal.addChild(childAnimal, energyLostToReproduction);
+                secondAnimal.addChild(childAnimal, energyLostToReproduction);
+            }
         }
+        return childAnimals;
     }
 
     @Override
@@ -124,8 +150,7 @@ public class JungleMap extends AbstractWorldMap {
         return new Boundary(v2, v1);
     }
 
-    @Override
     public boolean canMoveTo(Vector2d position) {
-        return false;
+        return true;
     }
 }

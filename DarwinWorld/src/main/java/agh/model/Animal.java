@@ -30,12 +30,15 @@ public class Animal implements WorldElement {
         return Objects.equals(position, otherPosition);
     }
 
-    public void move(MoveDirection dir, MoveValidator moveValidator) {
-
+    public void move(MoveValidator moveValidator, int moveCost) {
+        direction = direction.rotateBy(genotype.next());
+        position =  moveValidator.moveOnMap(position, direction.toUnitVector()) ;
+        energy -= moveCost;
     }
 
-    public void addChild(Animal child) {
+    public void addChild(Animal child, int energyCost) {
         children.add(child);
+        energy -= energyCost;
     }
     public void eatenGrass(int energy) {
         this.energy += energy;

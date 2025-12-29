@@ -14,15 +14,16 @@ public class SimulationApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getClassLoader().getResource("configurationScreen.fxml"));
+//        loader.setLocation(getClass().getClassLoader().getResource("configurationScreen.fxml"));
+        loader.setLocation(getClass().getClassLoader().getResource("simulation.fxml"));
 //
-        StackPane viewRoot = loader.load();
+        BorderPane viewRoot = loader.load();
         SimulationPresenter presenter = loader.getController();
         configureStage(primaryStage, viewRoot);
         primaryStage.show();
     }
 //
-    private void configureStage(Stage primaryStage, StackPane viewRoot) {
+    private void configureStage(Stage primaryStage, BorderPane viewRoot) {
         // Do posprzątania
         Font firaFont = Font.loadFont(getClass().getResourceAsStream("/fonts/FiraCode-Regular.ttf"), 12);
         Font firaFont2 = Font.loadFont(getClass().getResourceAsStream("/fonts/FiraCode-Bold.ttf"), 12);

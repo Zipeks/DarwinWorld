@@ -19,6 +19,7 @@ public class JungleMap extends AbstractWorldMap {
         int eq_ten_percent = Math.floorDiv(equator, 10);
         this.jungle = new Boundary(new Vector2d(0, equator - eq_ten_percent),
                 new Vector2d(boundary.topRight().getX(), equator + eq_ten_percent));
+        IO.println(grassCount);
         placeGrasses(grassCount);
     }
 
@@ -33,6 +34,7 @@ public class JungleMap extends AbstractWorldMap {
         Random rand = new Random();
         int i = grassesToPlace;
         int mapWidth = boundary.topRight().getX() + 1;
+        IO.println(mapWidth);
         while (i > 0) {
             if (mapArea >= grassCount) {
                 return;
@@ -50,6 +52,7 @@ public class JungleMap extends AbstractWorldMap {
                             rand.nextInt(jungle.topRight().getY() + 1, boundary.topRight().getY() + 1); // górna połowa
                 }
                 Vector2d grassPosition = new Vector2d(x, y);
+                IO.println(grassPosition);
                 if (grasses.get(grassPosition) == null) {
                     grasses.put(grassPosition, new Grass(grassPosition));
                     i -= 1;
@@ -58,6 +61,7 @@ public class JungleMap extends AbstractWorldMap {
                 }
             }
         }
+        IO.println(grasses);
     }
 
     public void moveAnimals(int moveCost) {
@@ -135,6 +139,7 @@ public class JungleMap extends AbstractWorldMap {
     public List<WorldElement> getElements() {
         List<WorldElement> list = super.getElements();
         list.addAll(grasses.values());
+        IO.println(grasses.values());
         return list;
     }
 

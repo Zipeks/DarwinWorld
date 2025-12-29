@@ -60,7 +60,10 @@ public class JungleMap extends AbstractWorldMap {
             }
         }
     }
-
+    public void nextDay(int i) {
+        notifyObservers("Day: " + i);
+        System.out.println("Day: " + i);
+    }
     public void moveAnimals(int moveCost) {
         List<Animal> allAnimals = animals.values().stream() //KOMENTARZ: Możesz sprawdzić czy to jest git, bo poprzednie sypało błąd z modyfikacją listy w trakcie iteracji
                 .flatMap(List::stream)
@@ -101,6 +104,9 @@ public class JungleMap extends AbstractWorldMap {
 
     public void grassConsumption(int energyGained) {
         animals.values().forEach(animalsAtP -> {
+            if (animalsAtP.isEmpty()) {
+                return;
+            }
             Vector2d position = animalsAtP.getFirst().getPosition();
             if (!grasses.containsKey(position)) {
                 return;

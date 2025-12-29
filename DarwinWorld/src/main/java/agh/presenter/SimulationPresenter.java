@@ -21,20 +21,16 @@ import java.util.List;
 import java.util.Objects;
 
 public class SimulationPresenter implements MapChangeListener {
-//    @Override
-//    public void mapChanged(WorldMap worldMap, String message) {
-//
-//    }
+    private static final int CELL_WIDTH = 65;
+    private static final int CELL_HEIGHT = 65;
+    private static final int BORDER_WIDTH = 2;
+    private static final int BORDER_OFFSET = BORDER_WIDTH / 2;
     private JungleMap jungleMap;
     private SimulationConfig config;
     @FXML
     private Canvas mapCanvas;
     @FXML
     private Label moveInfoLabel;
-    private static final int CELL_WIDTH = 65;
-    private static final int CELL_HEIGHT = 65;
-    private static final int BORDER_WIDTH = 2;
-    private static final int BORDER_OFFSET = BORDER_WIDTH / 2;
 //    private final Font NotoEmojiFont;
 
 //    public SimulationPresenter() {
@@ -106,11 +102,12 @@ public class SimulationPresenter implements MapChangeListener {
                 graphics.rotate(rotation);
 
 //                configureFont(graphics, this.NotoEmojiFont, Color.BROWN);
-                graphics.fillText("🐻", 0, 0);
+                graphics.fillText("@", 0, 0);
                 graphics.restore();
             } else {
 //                configureFont(graphics, this.NotoEmojiFont, Color.ORANGE);
-                graphics.fillText("🍯", xOnCanvas, yOnCanvas);
+//                graphics.fillText("🍯", xOnCanvas, yOnCanvas);
+                graphics.fillText("#", xOnCanvas, yOnCanvas);
             }
         });
     }
@@ -130,10 +127,8 @@ public class SimulationPresenter implements MapChangeListener {
 
     @Override
     public void mapChanged(WorldMap worldMap, String message) {
-        Platform.runLater(() -> {
-            drawMap();
-//            moveInfoLabel.setText(message);
-        });
+        //            moveInfoLabel.setText(message);
+        Platform.runLater(this::drawMap);
     }
 //
     public void setConfig(SimulationConfig config){
@@ -143,18 +138,12 @@ public class SimulationPresenter implements MapChangeListener {
 //
     public void start() {
         try {
-            jungleMap = new JungleMap(config.startGrassesCount(),new Boundary(new Vector2d(0,0),
-                    new Vector2d(config.mapWidth()-1,config.mapHeight()-1)));
-            Simulation simulation=new Simulation(config,jungleMap);
-            jungleMap.addObserver(this);
-            simulation.generateAnimals();
-            simulation.getAnimals();
             drawMap();
 //            simulation.run();
-            List<Simulation> simulations = List.of(simulation);
-            SimulationEngine simulationEngine = new SimulationEngine(simulations);
-
-            simulationEngine.runAsyncInThreadPool();
+//            List<Simulation> simulations = List.of(simulation);
+//            SimulationEngine simulationEngine = new SimulationEngine();
+//
+//            simulationEngine.runAsyncInThreadPool();
 //            IO.println(config.mapWidth());
 //            IO.println(config.mapHeight());
 

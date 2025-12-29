@@ -49,19 +49,22 @@ public class Simulation implements Runnable {
 
     @Override
     public void run() {
-        try {
-            Thread.sleep(config.timeBetweenDays());
-        } catch (InterruptedException e) {
-            IO.println(e.getMessage());
+        for (int i=0; i < 100; i++){
+            try {
+                Thread.sleep(config.timeBetweenDays());
+            } catch (InterruptedException e) {
+                IO.println(e.getMessage());
+            }
+            worldMap.removeDeadAnimals();
+            worldMap.moveAnimals(config.energyLostDaily());
+            worldMap.grassConsumption(config.energyFromEatingGrass());
+            animals.addAll(worldMap.animalReproduction(config.energyNeededToReproduce(),
+                    config.energyLostToReproduce(),
+                    config.minimalMutationCount(),
+                    config.maximalMutationCount()));
+            worldMap.placeGrasses(config.newGrassesDaily());
+            worldMap.nextDay(i);
         }
-        worldMap.removeDeadAnimals();
-        worldMap.moveAnimals(config.energyLostDaily());
-        worldMap.grassConsumption(config.energyFromEatingGrass());
-        animals.addAll(worldMap.animalReproduction(config.energyNeededToReproduce(),
-                config.energyLostToReproduce(),
-                config.minimalMutationCount(),
-                config.maximalMutationCount()));
-        worldMap.placeGrasses(config.newGrassesDaily());
     }
 
 }

@@ -116,7 +116,4 @@
    <center>
       <Canvas fx:id="mapCanvas" BorderPane.alignment="CENTER" />
    </center>
-   <left>
-      <Button fx:id="test" mnemonicParsing="false" onAction="#onSimulationStartClicked" text="Button" BorderPane.alignment="CENTER" />
-   </left>
 </BorderPane>

@@ -17,12 +17,13 @@ public class Simulation implements Runnable {
     private final boolean isRunning = true;
     private final SimulationConfig config;
 
-    public Simulation(SimulationConfig config) {
+    public Simulation(SimulationConfig config,JungleMap jungleMap) {
         this.config = config;
         this.animals = new ArrayList<>();
-        this.worldMap = new JungleMap(
-                config.startGrassesCount()
-                , new Boundary(new Vector2d(0, 0), new Vector2d(config.mapWidth() - 1, config.mapHeight() - 1)));
+        this.worldMap=jungleMap;
+//        this.worldMap = new JungleMap(
+//                config.startGrassesCount()
+//                , new Boundary(new Vector2d(0, 0), new Vector2d(config.mapWidth() - 1, config.mapHeight() - 1)));
 //        for (Vector2d position : positions) {
 //            Animal animal = new Animal(position);
 //            this.worldMap.place(animal);

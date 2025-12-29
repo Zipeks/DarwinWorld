@@ -32,7 +32,11 @@ public class Animal implements WorldElement {
 
     public void move(MoveValidator moveValidator, int moveCost) {
         direction = direction.rotateBy(genotype.next());
+        IO.println("---------------");
+        IO.println(position);
         position =  moveValidator.moveOnMap(position, direction.toUnitVector()) ;
+        IO.println(position);
+        IO.println("---------------");
         energy -= moveCost;
     }
 

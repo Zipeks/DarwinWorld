@@ -1,6 +1,7 @@
 package agh;
 
 import agh.model.*;
+import agh.presenter.ConfigurationPresenter;
 import agh.presenter.SimulationPresenter;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -14,26 +15,19 @@ public class SimulationApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader();
-//        loader.setLocation(getClass().getClassLoader().getResource("configurationScreen.fxml"));
-        loader.setLocation(getClass().getClassLoader().getResource("simulation.fxml"));
-//
+        loader.setLocation(getClass().getClassLoader().getResource("configurationScreen.fxml"));
         BorderPane viewRoot = loader.load();
-        SimulationPresenter presenter = loader.getController();
+        ConfigurationPresenter presenter = loader.getController();
         configureStage(primaryStage, viewRoot);
         primaryStage.show();
     }
-//
+
     private void configureStage(Stage primaryStage, BorderPane viewRoot) {
-        // Do posprzątania
-        Font firaFont = Font.loadFont(getClass().getResourceAsStream("/fonts/FiraCode-Regular.ttf"), 12);
-        Font firaFont2 = Font.loadFont(getClass().getResourceAsStream("/fonts/FiraCode-Bold.ttf"), 12);
+        Font.loadFont(getClass().getResourceAsStream("/fonts/FiraCode-Regular.ttf"), 12);
+        Font.loadFont(getClass().getResourceAsStream("/fonts/FiraCode-Bold.ttf"), 12);
         var scene = new Scene(viewRoot);
         scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
-
-        // ustawienie sceny w oknie
         primaryStage.setScene(scene);
-
-        // konfiguracja okna
         primaryStage.setTitle("Simulation app");
 //        primaryStage.minWidthProperty().bind(viewRoot.minWidthProperty());
 //        primaryStage.minHeightProperty().bind(viewRoot.minHeightProperty());

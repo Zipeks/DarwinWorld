@@ -3,6 +3,7 @@ package agh.model;
 import agh.model.util.Boundary;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 abstract class AbstractWorldMap implements agh.model.WorldMap {
     protected final List<MapChangeListener> observers = new ArrayList<>();
@@ -52,8 +53,7 @@ abstract class AbstractWorldMap implements agh.model.WorldMap {
 
     @Override
     public List<WorldElement> getElements() {
-//        return new ArrayList<>(animals.values());
-        return Collections.emptyList();
+        return animals.values().stream().flatMap(List::stream).collect(Collectors.toList());
     }
 
     abstract public Boundary getCurrentBounds();

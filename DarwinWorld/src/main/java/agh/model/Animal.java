@@ -1,18 +1,17 @@
 package agh.model;
 
+import agh.model.util.AnimalStats;
 import agh.model.util.Genotype;
 
 import java.util.*;
 
 public class Animal implements WorldElement {
+    private final UUID id = UUID.randomUUID();
     private final Genotype genotype;
     private final List<Animal> children = new ArrayList<>();
-    private int age;
-    private int deathDate;
+    private final AnimalStats animalStats = new AnimalStats();
     private MapDirection direction;
     private Vector2d position;
-    private int eatenGrassesCount;
-    private int energy;
 
     public Animal(Vector2d position, Animal parentOne, Animal parentTwo, int mutationsCnt, int startEnergy) {
         this(position, new Genotype(parentOne, parentTwo, mutationsCnt), startEnergy);
@@ -22,7 +21,7 @@ public class Animal implements WorldElement {
         this.direction = MapDirection.randomDirection();
         this.position = position;
         this.genotype = genotype;
-        this.energy = energy;
+        animalStats.setEnergy(energy);
     }
 
 
@@ -32,22 +31,34 @@ public class Animal implements WorldElement {
 
     public void move(MoveValidator moveValidator, int moveCost) {
         direction = direction.rotateBy(genotype.next());
+
         IO.println("---------------");
         IO.println(position);
-        position =  moveValidator.moveOnMap(position, direction.toUnitVector()) ;
+
+        Vector2d moveVector = direction.toUnitVector();
+        Vector2d newPosition = moveValidator.moveOnMap(position, moveVector);
+        if (newPosition.getY() == position.getY() && direction.toUnitVector().getY() != 0) {
+            direction = direction.opposite();
+        } else {
+            position = newPosition;
+        }
+
         IO.println(position);
         IO.println("---------------");
-        energy -= moveCost;
+        animalStats.setEnergy(animalStats.getEnergy() - moveCost);
     }
 
     public void addChild(Animal child, int energyCost) {
+        animalStats.increaseChildrenCount();
         children.add(child);
-        energy -= energyCost;
+        animalStats.setEnergy(animalStats.getEnergy() - energyCost);
     }
+
     public void eatenGrass(int energy) {
-        this.energy += energy;
-        eatenGrassesCount++;
+        animalStats.increaseGrassesEaten();
+        animalStats.setEnergy(animalStats.getEnergy() + energy);
     }
+
 
     public int getDescendantCount() {
         HashSet<Animal> uniqueDescendants = new HashSet<>();
@@ -67,12 +78,12 @@ public class Animal implements WorldElement {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Animal animal = (Animal) o;
-        return age == animal.age && energy == animal.energy && Objects.equals(genotype, animal.genotype) && Objects.equals(children, animal.children) && direction == animal.direction && Objects.equals(position, animal.position);
+        return Objects.equals(id, animal.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(genotype, children, age, direction, position, energy);
+        return Objects.hashCode(id);
     }
 
     public MapDirection getDirection() {
@@ -88,16 +99,17 @@ public class Animal implements WorldElement {
     }
 
     public int getEnergy() {
-        return energy;
+        return animalStats.getEnergy();
     }
 
     public int getAge() {
-        return age;
+        return animalStats.getAge();
     }
 
     public List<Animal> getChildren() {
         return children;
     }
+
     public int getChildrenCount() {
         return children.size();
     }

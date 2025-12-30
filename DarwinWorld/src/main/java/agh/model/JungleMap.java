@@ -14,33 +14,44 @@ public class JungleMap extends AbstractWorldMap {
 
     public JungleMap(int grassCount, Boundary boundary) {
         this.boundary = boundary;
-        mapArea = boundary.topRight().getX() * boundary.topRight().getY();
-        int height = boundary.topRight().getY() - boundary.bottomLeft().getY();
+        mapArea = (boundary.topRight().getX() + 1) * (boundary.topRight().getY() + 1);
+
+        int height = boundary.topRight().getY() + 1;
         int equator = Math.floorDiv(height, 2);
-        int eq_ten_percent = Math.floorDiv(equator, 10);
-        this.jungle = new Boundary(new Vector2d(0, equator - eq_ten_percent),
-                new Vector2d(boundary.topRight().getX(), equator + eq_ten_percent));
+        int map_ten_percent = Math.floorDiv(height, 10);
+        if (map_ten_percent == 0) map_ten_percent = 1;
+        this.jungle = new Boundary(
+                new Vector2d(0, equator - map_ten_percent),
+                new Vector2d(boundary.topRight().getX(), equator + map_ten_percent));
+
         placeGrasses(grassCount);
     }
 
     public void removeDeadAnimals() {
-        for (Vector2d position : animals.keySet()) {
-            List<Animal> animalsAtP = animals.get(position);
-            animalsAtP.removeIf(animal -> animal.getEnergy() <= 0);
+        Iterator<Map.Entry<Vector2d, List<Animal>>> iterator = animals.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Vector2d, List<Animal>> entry = iterator.next();
+            List<Animal> animalList = entry.getValue();
+
+            animalList.removeIf(animal -> animal.getEnergy() <= 0);
+
+            if (animalList.isEmpty()) {
+                iterator.remove();
+            }
         }
     }
 
     public void placeGrasses(int grassesToPlace) {
         Random rand = new Random();
-        int i = grassesToPlace;
+        int i = 0;
         int mapWidth = boundary.topRight().getX() + 1;
-        while (i > 0) {
+        while (i < grassesToPlace) {
             if (mapArea <= grassCount) {
                 return;
             }
-            int pareto = rand.nextInt(5);
-            boolean inJungle = pareto > 0;
             while (true) {
+                int pareto = rand.nextInt(5);
+                boolean inJungle = pareto > 0;
                 int x = rand.nextInt(mapWidth);
                 int y;
                 if (inJungle) {
@@ -53,122 +64,108 @@ public class JungleMap extends AbstractWorldMap {
                 Vector2d grassPosition = new Vector2d(x, y);
                 if (grasses.get(grassPosition) == null) {
                     grasses.put(grassPosition, new Grass(grassPosition));
-                    i -= 1;
+                    i++;
                     grassCount += 1;
                     break;
                 }
             }
         }
     }
+
     public void nextDay(int i) {
         notifyObservers("Day: " + i);
         System.out.println("Day: " + i);
     }
+
     public void moveAnimals(int moveCost) {
-        List<Animal> allAnimals = animals.values().stream() //KOMENTARZ: Możesz sprawdzić czy to jest git, bo poprzednie sypało błąd z modyfikacją listy w trakcie iteracji
+        List<Animal> allAnimals = animals.values().stream()
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
-        for (Animal animal: allAnimals) {
-            animals.remove(animal);
+
+        animals.clear();
+
+        for (Animal animal : allAnimals) {
             animal.move(this, moveCost);
-            this.place(animal);
-
-//        animals.values().forEach(animals -> {
-//            for (Animal animal: animals) {
-//                animals.remove(animal);
-//                animal.move(this, moveCost);
-//                this.place(animal);
-//                notifyObservers("Animal has moved from: " + old_position + " to: " + animal.getPosition());
-//                } else if (!Objects.equals(old_direction, animal.getDirection())) {
-//                    notifyObservers("Animal at: " + animal.getPosition() + " has changed direction from: "
-//                            + old_direction + " to: " + animal.getDirection());
-//                } else {
-//                    notifyObservers("Animal at: " + animal.getPosition() + " tried to move "
-//                            + moveDirection.toString().toLowerCase() + " but can't.");
-//                }
-//            }
-
-//        });
+            place(animal);
         }
     }
+
     public Vector2d moveOnMap(Vector2d position, Vector2d moveVector) {
-        int width = boundary.topRight().getX();
-        int height = boundary.topRight().getY();
+        int width = boundary.topRight().getX() + 1;
+        int height = boundary.topRight().getY() + 1;
+
         int y = position.getY() + moveVector.getY();
+
         if (y < 0 || y >= height) {
-            moveVector = moveVector.opposite();
+            y = position.getY();
         }
-        int x = (position.getX() + moveVector.getX() + width ) % width;
-        return  new Vector2d(x,y);
+        int x = (position.getX() + moveVector.getX() + width) % width;
+
+        return new Vector2d(x, y);
     }
 
     public void grassConsumption(int energyGained) {
-        animals.values().forEach(animalsAtP -> {
-            if (animalsAtP.isEmpty()) {
-                return;
+        for (List<Animal> animalsList : animals.values()) {
+            if (animalsList.isEmpty()) return;
+            Vector2d position = animalsList.getFirst().getPosition();
+            if (grasses.containsKey(position)) {
+                animalsList.sort(Comparator.comparingInt(Animal::getEnergy)
+                        .thenComparing(Animal::getAge)
+                        .thenComparing(Animal::getChildrenCount)
+                        .reversed());
+
+                Animal strongest = animalsList.getFirst();
+                strongest.eatenGrass(energyGained);
+
+                grasses.remove(position);
+                grassCount--;
             }
-            Vector2d position = animalsAtP.getFirst().getPosition();
-            if (!grasses.containsKey(position)) {
-                return;
-            }
-            animalsAtP.sort(Comparator.comparingInt(Animal::getEnergy)
-                    .thenComparing(Animal::getAge)
-                    .thenComparing(Animal::getChildrenCount));
-            Animal firstAnimal = animalsAtP.getFirst();
-            firstAnimal.eatenGrass(energyGained);
-            grasses.remove(position);
-        });
+        }
     }
 
 
     public List<Animal> animalReproduction(int energyNeededToReproduce, int energyLostToReproduction, int minMutations, int maxMutation) {
-        List<Animal> childAnimals = new ArrayList<>();
+        List<Animal> children = new ArrayList<>();
         Random PRNG = new Random();
         for (Vector2d position : animals.keySet()) {
             List<Animal> animalsAtP = animals.get(position);
             if (animalsAtP.size() < 2) {
-                return Collections.emptyList();
+                continue;
             }
             animalsAtP.sort(Comparator.comparingInt(Animal::getEnergy)
                     .thenComparing(Animal::getAge)
-                    .thenComparing(Animal::getChildrenCount));
+                    .thenComparing(Animal::getChildrenCount)
+                    .reversed());
+
             Animal firstAnimal = animalsAtP.getFirst();
             Animal secondAnimal = animalsAtP.get(1);
-            if (firstAnimal.getEnergy() > energyNeededToReproduce && secondAnimal.getEnergy() > energyNeededToReproduce) {
-                Animal childAnimal = new Animal(position, firstAnimal, secondAnimal,
-                        PRNG.nextInt(minMutations, maxMutation + 1), energyLostToReproduction * 2);
-                place(childAnimal);
 
-                firstAnimal.addChild(childAnimal, energyLostToReproduction);
-                secondAnimal.addChild(childAnimal, energyLostToReproduction);
+            if (firstAnimal.getEnergy() > energyNeededToReproduce && secondAnimal.getEnergy() > energyNeededToReproduce) {
+                Animal child = new Animal(position, firstAnimal, secondAnimal,
+                        PRNG.nextInt(minMutations, maxMutation + 1), energyLostToReproduction * 2);
+
+                firstAnimal.addChild(child, energyLostToReproduction);
+                secondAnimal.addChild(child, energyLostToReproduction);
+
+                children.add(child);
             }
         }
-        return childAnimals;
+        for (Animal child: children) {
+            place(child);
+        }
+
+        return children;
     }
 
     @Override
     public List<WorldElement> getElements() {
         List<WorldElement> list = new ArrayList<>(super.getElements());
         list.addAll(grasses.values());
-        for (List<Animal> animalList : animals.values()) {
-            list.addAll(animalList);
-        }
         return list;
     }
 
     @Override
     public Boundary getCurrentBounds() {
-//        List<WorldElement> worldElements = getElements();
-//        Vector2d v1 = worldElements.getFirst().getPosition();
-//        Vector2d v2 = v1;
-//        for (WorldElement worldElement : worldElements) {
-//            v1 = v1.upperRight(worldElement.getPosition());
-//            v2 = v2.lowerLeft(worldElement.getPosition());
-//        }
-        return new Boundary(boundary.bottomLeft(),boundary.topRight());
-    }
-
-    public boolean canMoveTo(Vector2d position) {
-        return true;
+        return boundary;
     }
 }

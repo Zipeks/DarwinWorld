@@ -42,7 +42,7 @@
                         </HBox>
                         <HBox alignment="TOP_RIGHT" HBox.hgrow="ALWAYS">
                            <children>
-                              <Button fx:id="loadPreset" mnemonicParsing="false" style="-fx-background-color: #74aad3; -fx-border-width: 1; -fx-border-color: #000; -fx-border-radius: 10; -fx-background-radius: 10;" text="Wczytaj preset">
+                              <Button fx:id="loadPreset" mnemonicParsing="false" onAction="#onLoadPresetClick" style="-fx-background-color: #74aad3; -fx-border-width: 1; -fx-border-color: #000; -fx-border-radius: 10; -fx-background-radius: 10;" text="Wczytaj preset">
                                  <font>
                                     <Font name="Fira Code Bold" size="12.0" />
                                  </font>
@@ -238,6 +238,15 @@
                   <HBox>
                      <children>
                         <CheckBox fx:id="habsburg" mnemonicParsing="false" text="Klątwa Habsburgów" />
+                        <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Button fx:id="saveConfig" mnemonicParsing="false" onAction="#onSaveConfig" style="-fx-background-color: #e4854c; -fx-border-width: 1; -fx-border-color: #000; -fx-border-radius: 10; -fx-background-radius: 10;" text="Zapisz konfigurację">
+                                 <font>
+                                    <Font name="Fira Code Bold" size="12.0" />
+                                 </font>
+                              </Button>
+                           </children>
+                        </HBox>
                      </children>
                   </HBox>
                   <HBox alignment="CENTER" VBox.vgrow="ALWAYS">

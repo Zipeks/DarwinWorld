@@ -17,12 +17,17 @@ public class JungleMap extends AbstractWorldMap {
         mapArea = (boundary.topRight().getX() + 1) * (boundary.topRight().getY() + 1);
 
         int height = boundary.topRight().getY() + 1;
-        int equator = Math.floorDiv(height, 2);
-        int map_ten_percent = Math.floorDiv(height, 10);
-        if (map_ten_percent == 0) map_ten_percent = 1;
-        this.jungle = new Boundary(
-                new Vector2d(0, equator - map_ten_percent),
-                new Vector2d(boundary.topRight().getX(), equator + map_ten_percent));
+        int jungleHeight= Math.round((float) height/ 5);;
+        int midRow= height/2;
+        int lowerRow=(height - jungleHeight) / 2;
+        int upperRow=lowerRow + jungleHeight - 1;
+        this.jungle=new Boundary(new Vector2d(0,lowerRow),new Vector2d(boundary.topRight().getX(),upperRow));
+//        int equator = Math.floorDiv(height, 2);
+//        int map_ten_percent = Math.floorDiv(height, 10);
+//        if (map_ten_percent == 0) map_ten_percent = 1;
+//        this.jungle = new Boundary(
+//                new Vector2d(0, equator - map_ten_percent),
+//                new Vector2d(boundary.topRight().getX(), equator + map_ten_percent));
 
         placeGrasses(grassCount);
     }

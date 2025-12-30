@@ -3,6 +3,7 @@ package agh.presenter;
 import agh.Simulation;
 import agh.model.*;
 import agh.model.util.Boundary;
+import agh.model.util.MapBoundaryException;
 import agh.model.util.SimulationConfig;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -47,6 +48,8 @@ public class ConfigurationPresenter {
     private TextField dailyIncrease;
     @FXML
     private CheckBox habsburg;
+    @FXML
+    private TextField dayLength;
 
     public void onStartClicked() {
         try {
@@ -80,6 +83,12 @@ public class ConfigurationPresenter {
             alert.setContentText("Podaj poprawne wartości");
             alert.showAndWait();
         }
+        catch (MapBoundaryException e){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Mapa jest za duża");
+            alert.setContentText("Maksymalny rozmiar mapy to 160x80");
+            alert.showAndWait();
+        }
     }
 
     private SimulationConfig getSimulationConfig() {
@@ -96,11 +105,13 @@ public class ConfigurationPresenter {
         int fertility = Integer.parseInt(fertilityEnergy.getText());
         int plants = Integer.parseInt(initialPlants.getText());
         int dailyInc = Integer.parseInt(dailyIncrease.getText());
+        int day = Integer.parseInt(dayLength.getText());
         boolean isHabsburg = habsburg.isSelected();
         SimulationConfig config = new SimulationConfig(mapWidth, mapHeight, isHabsburg,
                 plants, energyFromGrass, dailyInc, animals, energy, energyLossValue,
                 fertility, reproduction, mutationMinValue, mutationMaxValue,
-                genomLength, 1000); // Czy czas też podajemy?
+                genomLength, day);
+        if(mapWidth>160 || mapHeight>80)  throw new MapBoundaryException("Map is too big");
         return config;
     }
 }

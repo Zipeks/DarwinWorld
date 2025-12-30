@@ -20,6 +20,7 @@ public class JungleMap extends AbstractWorldMap {
         int eq_ten_percent = Math.floorDiv(equator, 10);
         this.jungle = new Boundary(new Vector2d(0, equator - eq_ten_percent),
                 new Vector2d(boundary.topRight().getX(), equator + eq_ten_percent));
+        IO.println(jungle);
         placeGrasses(grassCount);
     }
 
@@ -68,6 +69,7 @@ public class JungleMap extends AbstractWorldMap {
         List<Animal> allAnimals = animals.values().stream() //KOMENTARZ: Możesz sprawdzić czy to jest git, bo poprzednie sypało błąd z modyfikacją listy w trakcie iteracji
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
+
         for (Animal animal: allAnimals) {
             animals.remove(animal);
             animal.move(this, moveCost);
@@ -166,6 +168,10 @@ public class JungleMap extends AbstractWorldMap {
 //            v2 = v2.lowerLeft(worldElement.getPosition());
 //        }
         return new Boundary(boundary.bottomLeft(),boundary.topRight());
+    }
+
+    public Boundary getJungle(){
+        return jungle;
     }
 
     public boolean canMoveTo(Vector2d position) {

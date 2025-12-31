@@ -164,8 +164,8 @@ public class JungleMap extends AbstractWorldMap {
 
     @Override
     public List<WorldElement> getElements() {
-        List<WorldElement> list = new ArrayList<>(super.getElements());
-        list.addAll(grasses.values());
+        List<WorldElement> list=new ArrayList<>(grasses.values());
+        list.addAll(super.getElements());
         return list;
     }
 

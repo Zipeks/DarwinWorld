@@ -1,25 +1,39 @@
 package agh.model.util;
 
+import java.util.Optional;
+
 public class AnimalStats {
-    private int age = 0;
+    private final int birthDate;
     private int grassesEaten = 0;
-    private int deathDate;
+    private Integer deathDate = null;
+    private int age;
     private int energy = 0;
     private int childrenCount = 0;
 
-    public int getAge() {
-        return age;
+    public AnimalStats(int birthDate) {
+        this.birthDate = birthDate;
     }
 
     public int getGrassesEaten() {
         return grassesEaten;
     }
 
-    public int getDeathDate() {
-        return deathDate;
+    public int getBirthDate() {
+        return birthDate;
     }
 
-    public void setDeathDate(int date) {
+    public int getAge() {
+        return age;
+    }
+    public void increaseAge() {
+        age++;
+    }
+
+    public Optional<Integer> getDeathDate() {
+        return Optional.ofNullable(deathDate);
+    }
+
+    public void setDeathDate(Integer date) {
         deathDate = date;
     }
 
@@ -29,10 +43,6 @@ public class AnimalStats {
 
     public void setEnergy(int energy) {
         this.energy = energy;
-    }
-
-    public void increaseAge() {
-        age++;
     }
 
     public void increaseGrassesEaten() {

@@ -17,11 +17,11 @@ public class JungleMap extends AbstractWorldMap {
         mapArea = (boundary.topRight().getX() + 1) * (boundary.topRight().getY() + 1);
 
         int height = boundary.topRight().getY() + 1;
-        int jungleHeight= Math.round((float) height/ 5);;
-        int midRow= height/2;
-        int lowerRow=(height - jungleHeight) / 2;
-        int upperRow=lowerRow + jungleHeight - 1;
-        this.jungle=new Boundary(new Vector2d(0,lowerRow),new Vector2d(boundary.topRight().getX(),upperRow));
+        int jungleHeight = Math.round((float) height / 5);
+        int midRow = height / 2;
+        int lowerRow = (height - jungleHeight) / 2;
+        int upperRow = lowerRow + jungleHeight - 1;
+        this.jungle = new Boundary(new Vector2d(0, lowerRow), new Vector2d(boundary.topRight().getX(), upperRow));
 //        int equator = Math.floorDiv(height, 2);
 //        int map_ten_percent = Math.floorDiv(height, 10);
 //        if (map_ten_percent == 0) map_ten_percent = 1;
@@ -70,7 +70,7 @@ public class JungleMap extends AbstractWorldMap {
                 if (grasses.get(grassPosition) == null) {
                     grasses.put(grassPosition, new Grass(grassPosition));
                     i++;
-                    grassCount += 1;
+                    grassCount++;
                     break;
                 }
             }
@@ -129,7 +129,7 @@ public class JungleMap extends AbstractWorldMap {
     }
 
 
-    public List<Animal> animalReproduction(int energyNeededToReproduce, int energyLostToReproduction, int minMutations, int maxMutation) {
+    public List<Animal> animalReproduction(int energyNeededToReproduce, int energyLostToReproduction, int minMutations, int maxMutation, int date) {
         List<Animal> children = new ArrayList<>();
         Random PRNG = new Random();
         for (Vector2d position : animals.keySet()) {
@@ -147,7 +147,7 @@ public class JungleMap extends AbstractWorldMap {
 
             if (firstAnimal.getEnergy() > energyNeededToReproduce && secondAnimal.getEnergy() > energyNeededToReproduce) {
                 Animal child = new Animal(position, firstAnimal, secondAnimal,
-                        PRNG.nextInt(minMutations, maxMutation + 1), energyLostToReproduction * 2);
+                        PRNG.nextInt(minMutations, maxMutation + 1), energyLostToReproduction * 2, date);
 
                 firstAnimal.addChild(child, energyLostToReproduction);
                 secondAnimal.addChild(child, energyLostToReproduction);
@@ -155,7 +155,7 @@ public class JungleMap extends AbstractWorldMap {
                 children.add(child);
             }
         }
-        for (Animal child: children) {
+        for (Animal child : children) {
             place(child);
         }
 
@@ -164,7 +164,7 @@ public class JungleMap extends AbstractWorldMap {
 
     @Override
     public List<WorldElement> getElements() {
-        List<WorldElement> list=new ArrayList<>(grasses.values());
+        List<WorldElement> list = new ArrayList<>(grasses.values());
         list.addAll(super.getElements());
         return list;
     }
@@ -174,7 +174,11 @@ public class JungleMap extends AbstractWorldMap {
         return boundary;
     }
 
-    public Boundary getJungle(){
+    public Boundary getJungle() {
         return jungle;
+    }
+
+    public int getGrassCount() {
+        return grassCount;
     }
 }

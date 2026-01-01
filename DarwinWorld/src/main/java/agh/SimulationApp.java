@@ -4,6 +4,7 @@ import agh.model.*;
 import agh.presenter.ConfigurationPresenter;
 import agh.presenter.SimulationPresenter;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -19,6 +20,11 @@ public class SimulationApp extends Application {
         BorderPane viewRoot = loader.load();
         ConfigurationPresenter presenter = loader.getController();
         configureStage(primaryStage, viewRoot);
+        primaryStage.setOnCloseRequest(windowEvent -> {
+            presenter.closeApp();
+            Platform.exit();
+            System.exit(0);
+        });
         primaryStage.show();
     }
 

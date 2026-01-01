@@ -9,18 +9,19 @@ public class Animal implements WorldElement {
     private final UUID id = UUID.randomUUID();
     private final Genotype genotype;
     private final List<Animal> children = new ArrayList<>();
-    private final AnimalStats animalStats = new AnimalStats();
+    private final AnimalStats animalStats;
     private MapDirection direction;
     private Vector2d position;
 
-    public Animal(Vector2d position, Animal parentOne, Animal parentTwo, int mutationsCnt, int startEnergy) {
-        this(position, new Genotype(parentOne, parentTwo, mutationsCnt), startEnergy);
+    public Animal(Vector2d position, Animal parentOne, Animal parentTwo, int mutationsCnt, int startEnergy, int birthDate) {
+        this(position, new Genotype(parentOne, parentTwo, mutationsCnt), startEnergy, birthDate);
     }
 
-    public Animal(Vector2d position, Genotype genotype, int energy) {
+    public Animal(Vector2d position, Genotype genotype, int energy, int birthDate) {
         this.direction = MapDirection.randomDirection();
         this.position = position;
         this.genotype = genotype;
+        animalStats = new AnimalStats(birthDate);
         animalStats.setEnergy(energy);
     }
 
@@ -102,15 +103,26 @@ public class Animal implements WorldElement {
         return animalStats.getEnergy();
     }
 
-    public int getAge() {
-        return animalStats.getAge();
-    }
-
     public List<Animal> getChildren() {
         return children;
     }
 
     public int getChildrenCount() {
         return children.size();
+    }
+
+    public boolean isAlive() {
+        return animalStats.getDeathDate().isEmpty();
+    }
+
+    public int lifeLength(int currentDate) {
+        int endDate = animalStats.getDeathDate().orElse(currentDate);
+        return endDate - animalStats.getBirthDate();
+    }
+    public int getAge() {
+        return animalStats.getAge();
+    }
+    public void increaseAge() {
+        animalStats.increaseAge();
     }
 }

@@ -74,18 +74,21 @@ public class ConfigurationPresenter {
 
             JungleMap jungleMap = new JungleMap(config.startGrassesCount(), new Boundary(new Vector2d(0, 0),
                     new Vector2d(config.mapWidth() - 1, config.mapHeight() - 1)));
-            Simulation simulation = new Simulation(config, jungleMap);
+            jungleMap.addObserver(presenter);
 
-            simulation.generateAnimals();
-//            simulation.getAnimals();
             presenter.setJungleMap(jungleMap);
             presenter.setConfig(config);
-            jungleMap.addObserver(presenter);
+
+            Simulation simulation = new Simulation(config, jungleMap);
             stage.setTitle("Simulation");
             stage.setScene(new Scene(viewRoot));
+
+            stage.setOnCloseRequest(event -> {
+                simulation.stop();
+            });
             stage.show();
+
             executorService.execute(simulation);
-//            executorService.close();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (NumberFormatException e) {
@@ -93,15 +96,15 @@ public class ConfigurationPresenter {
             alert.setTitle("Niepoprawne wartości");
             alert.setContentText("Podaj poprawne wartości");
             alert.showAndWait();
-        }
-        catch (MapBoundaryException e){
+        } catch (MapBoundaryException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Zła mapa");
             alert.setContentText("Rozmiar mapy od 5x5 do 160x80");
             alert.showAndWait();
         }
     }
-    public void onLoadPresetClick(){
+
+    public void onLoadPresetClick() {
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("JSON Files", "*.json")
@@ -109,23 +112,21 @@ public class ConfigurationPresenter {
         File projectDir = new File(System.getProperty("user.dir"));
         IO.println(projectDir);
         if (projectDir.exists() && projectDir.isDirectory()) {
-            File presetDir= new File(projectDir,"src/main/resources/presets");
+            File presetDir = new File(projectDir, "src/main/resources/presets");
             if (presetDir.exists() && presetDir.isDirectory()) {
                 fc.setInitialDirectory(presetDir);
-            }
-            else{
+            } else {
                 fc.setInitialDirectory(projectDir);
             }
         }
         File file = fc.showOpenDialog(loadPreset.getScene().getWindow());
-        if(file!=null){
+        if (file != null) {
             IO.println(file);
             try (JsonReader reader = Json.createReader(new FileInputStream(file))) {
                 JsonObject obj = reader.readObject();
-                SimulationConfig parsedConfig=parseConfig(obj);
+                SimulationConfig parsedConfig = parseConfig(obj);
                 setConfig(parsedConfig);
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Błąd odczytu pliku");
@@ -135,7 +136,7 @@ public class ConfigurationPresenter {
         }
     }
 
-    private SimulationConfig parseConfig(JsonObject obj){
+    private SimulationConfig parseConfig(JsonObject obj) {
         int mapWidth = obj.getInt("mapWidth");
         int mapHeight = obj.getInt("mapHeight");
         int energy = obj.getInt("energy");
@@ -161,7 +162,7 @@ public class ConfigurationPresenter {
 
     //Tu wiem, że trochę ta konwersja na stringi niepotrzebna, bo można od razu z Jsona, ale wolałem zamienić na config wcześniej
 
-    private void setConfig(SimulationConfig config){
+    private void setConfig(SimulationConfig config) {
         initialMapWidth.setText(String.valueOf(config.mapWidth()));
         initialMapHeight.setText(String.valueOf(config.mapHeight()));
         initialEnergy.setText(String.valueOf(config.startEnergy()));
@@ -199,14 +200,15 @@ public class ConfigurationPresenter {
                 plants, energyFromGrass, dailyInc, animals, energy, energyLossValue,
                 fertility, reproduction, mutationMinValue, mutationMaxValue,
                 genomLength, day);
-        if(mapWidth>160 || mapHeight>80 || mapWidth<5 || mapHeight<5)  throw new MapBoundaryException("Map is too big");
+        if (mapWidth > 160 || mapHeight > 80 || mapWidth < 5 || mapHeight < 5)
+            throw new MapBoundaryException("Map is too big");
         return config;
     }
 
-    public void onSaveConfig(){
-        try{
-            SimulationConfig config=getSimulationConfig();
-            JsonObject obj=prepareJsonObject(config);
+    public void onSaveConfig() {
+        try {
+            SimulationConfig config = getSimulationConfig();
+            JsonObject obj = prepareJsonObject(config);
 
             FileChooser fc = new FileChooser();
             fc.getExtensionFilters().add(
@@ -214,17 +216,16 @@ public class ConfigurationPresenter {
             );
             File projectDir = new File(System.getProperty("user.dir"));
             if (projectDir.exists() && projectDir.isDirectory()) {
-                File presetDir= new File(projectDir,"src/main/resources/presets");
+                File presetDir = new File(projectDir, "src/main/resources/presets");
                 if (presetDir.exists() && presetDir.isDirectory()) {
                     fc.setInitialDirectory(presetDir);
-                }
-                else{
+                } else {
                     fc.setInitialDirectory(projectDir);
                 }
             }
             File file = fc.showSaveDialog(saveConfig.getScene().getWindow());
 
-            if(file!=null){
+            if (file != null) {
                 try (OutputStream os = new FileOutputStream(file);
                      JsonWriter writer = Json.createWriter(os)) {
                     writer.writeObject(obj);
@@ -240,14 +241,12 @@ public class ConfigurationPresenter {
             alert.setTitle("Niepoprawne wartości");
             alert.setContentText("Podaj poprawne wartości");
             alert.showAndWait();
-        }
-        catch (MapBoundaryException e){
+        } catch (MapBoundaryException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Zła mapa");
             alert.setContentText("Rozmiar mapy od 5x5 do 160x80");
             alert.showAndWait();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Błąd przy zapisie konfiguracji");
@@ -255,26 +254,29 @@ public class ConfigurationPresenter {
             alert.showAndWait();
         }
     }
-    private JsonObject prepareJsonObject(SimulationConfig config){
+
+    private JsonObject prepareJsonObject(SimulationConfig config) {
         JsonObject obj = Json.createObjectBuilder()
                 .add("mapWidth", config.mapWidth())
                 .add("mapHeight", config.mapHeight())
                 .add("energy", config.startEnergy())
-                .add("reproduction",config.energyLostToReproduce())
-                .add("genomLength",config.genotypeLength())
-                .add("energyLoss",config.energyLostDaily())
-                .add("energyFromGrass",config.energyFromEatingGrass())
-                .add("mutationMinValue",config.minimalMutationCount())
-                .add("mutationMaxValue",config.maximalMutationCount())
-                .add("animals",config.startAnimalCount())
-                .add("fertility",config.energyNeededToReproduce())
-                .add("plants",config.startGrassesCount())
-                .add("dailyInc",config.newGrassesDaily())
-                .add("day",config.timeBetweenDays())
-                .add("isHabsburg",config.habsburgsOn())
+                .add("reproduction", config.energyLostToReproduce())
+                .add("genomLength", config.genotypeLength())
+                .add("energyLoss", config.energyLostDaily())
+                .add("energyFromGrass", config.energyFromEatingGrass())
+                .add("mutationMinValue", config.minimalMutationCount())
+                .add("mutationMaxValue", config.maximalMutationCount())
+                .add("animals", config.startAnimalCount())
+                .add("fertility", config.energyNeededToReproduce())
+                .add("plants", config.startGrassesCount())
+                .add("dailyInc", config.newGrassesDaily())
+                .add("day", config.timeBetweenDays())
+                .add("isHabsburg", config.habsburgsOn())
                 .build();
         return obj;
     }
 
-
+    public void closeApp() {
+        executorService.shutdown();
+    }
 }

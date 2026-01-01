@@ -33,6 +33,7 @@ public class SimulationPresenter implements MapChangeListener {
     private static final int CELL_HEIGHT = 65;
     private static final int BORDER_WIDTH = 2;
     private static final int BORDER_OFFSET = BORDER_WIDTH / 2;
+    private final Font NotoEmojiFont;
     private int cellSize=10;
     private JungleMap jungleMap;
     private SimulationConfig config;
@@ -40,7 +41,6 @@ public class SimulationPresenter implements MapChangeListener {
     private Canvas mapCanvas;
     @FXML
     private Label moveInfoLabel;
-    private final Font NotoEmojiFont;
 
     public SimulationPresenter() {
         String fontPath = Objects.requireNonNull(getClass().getResource("/fonts/NotoEmoji-VariableFont_wght.ttf")).toExternalForm();
@@ -109,16 +109,18 @@ public class SimulationPresenter implements MapChangeListener {
 
                 graphics.rotate(rotation);
 //                graphics.setFont(new Font(cellSize-2));
-//                configureFont(graphics, new Font("notoEmojiFamily",fontSize), Color.BROWN);
+                configureFont(graphics, this.NotoEmojiFont, Color.BROWN);
                 IO.println(config.energyLostDaily());
                 graphics.setFill(getAnimalColor(((Animal) element).getEnergy(),config.energyLostDaily()));
                 graphics.fillText("\uD83D\uDC3B", 0, 0);
+//                graphics.fillText("@", 0, 0);
                 graphics.restore();
             } else {
-//                configureFont(graphics, this.NotoEmojiFont, Color.ORANGE);
+                configureFont(graphics, this.NotoEmojiFont, Color.ORANGE);
 //                graphics.fillText("🍯", xOnCanvas, yOnCanvas);
                 graphics.setFill(Color.GREEN);
                 graphics.fillText("\uD83C\uDF33", xOnCanvas, yOnCanvas);
+//                graphics.fillText("#", xOnCanvas, yOnCanvas);
             }
         });
     }
@@ -152,39 +154,9 @@ public class SimulationPresenter implements MapChangeListener {
 //
     public void setConfig(SimulationConfig config){
         this.config=config;
-        start();
+        drawMap();
     }
 //
-    public void start() {
-        try {
-            drawMap();
-//            simulation.run();
-//            List<Simulation> simulations = List.of(simulation);
-//            SimulationEngine simulationEngine = new SimulationEngine();
-//
-//            simulationEngine.runAsyncInThreadPool();
-//            IO.println(config.mapWidth());
-//            IO.println(config.mapHeight());
-
-//            List<Vector2d> positions = List.of(new Vector2d(5, 5), new Vector2d(5, 4), new Vector2d(3, 3));
-//            drawMap();
-//            Simulation simulation = new Simulation(positions, directions, worldMap);
-//            List<Simulation> simulations = List.of(simulation);
-//            SimulationEngine simulationEngine = new SimulationEngine(simulations);
-
-//            simulationEngine.runAsyncInThreadPool();
-//        } catch (IncorrectPositionException e) {
-//            Alert alert = new Alert(Alert.AlertType.ERROR);
-//            alert.setTitle("Invalid position");
-//            alert.setContentText(e.getMessage());
-//            alert.showAndWait();
-        } catch (IllegalArgumentException e) {
-//            Alert alert = new Alert(Alert.AlertType.ERROR);
-//            alert.setTitle("Invalid moves");
-//            alert.setContentText(e.getMessage());
-//            alert.showAndWait();
-        }
-    }
 
     public void onCanvasClicked(MouseEvent e){
         double mouseX = e.getX();

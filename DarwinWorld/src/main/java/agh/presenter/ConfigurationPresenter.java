@@ -80,6 +80,7 @@ public class ConfigurationPresenter {
             presenter.setConfig(config);
 
             Simulation simulation = new Simulation(config, jungleMap);
+            simulation.addObserver(presenter);
             stage.setTitle("Simulation");
             stage.setScene(new Scene(viewRoot));
 

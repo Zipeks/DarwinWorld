@@ -2,6 +2,7 @@ package agh.model.util;
 
 public class SimulationStats {
     Genotype mostPopularGenotype;
+    private int animalsCount=0;
     private int grassesCount = 0;
     private int emptyFields = 0;
     private int avgEnergyLevel = 0;
@@ -23,6 +24,12 @@ public class SimulationStats {
 
     public void setGrassesCount(int grassesCount) {
         this.grassesCount = grassesCount;
+    }
+
+    public int getAnimalsCount() { return animalsCount; }
+
+    public void setAnimalsCount(int animalsCount) {
+        this.animalsCount = animalsCount;
     }
 
     public int getEmptyFields() {

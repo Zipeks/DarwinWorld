@@ -33,8 +33,6 @@ public class Animal implements WorldElement {
     public void move(MoveValidator moveValidator, int moveCost) {
         direction = direction.rotateBy(genotype.next());
 
-        IO.println("---------------");
-        IO.println(position);
 
         Vector2d moveVector = direction.toUnitVector();
         Vector2d newPosition = moveValidator.moveOnMap(position, moveVector);
@@ -43,9 +41,6 @@ public class Animal implements WorldElement {
         } else {
             position = newPosition;
         }
-
-        IO.println(position);
-        IO.println("---------------");
         animalStats.setEnergy(animalStats.getEnergy() - moveCost);
     }
 
@@ -124,5 +119,9 @@ public class Animal implements WorldElement {
     }
     public void increaseAge() {
         animalStats.increaseAge();
+    }
+
+    public void die(int day){
+        animalStats.setDeathDate(Integer.valueOf(day));
     }
 }

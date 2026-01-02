@@ -4,6 +4,7 @@ import agh.model.*;
 import agh.model.util.Genotype;
 import agh.model.util.SimulationConfig;
 import agh.model.util.SimulationStats;
+import agh.model.StatsListener;
 
 import java.util.*;
 
@@ -13,6 +14,22 @@ public class Simulation implements Runnable {
     private final SimulationConfig config;
     private final SimulationStats stats = new SimulationStats();
     private boolean isRunning = true;
+
+    protected final List<StatsListener> observers = new ArrayList<>();
+
+    public void addObserver(StatsListener statsListener) {
+        observers.add(statsListener);
+    }
+
+    public void removeObserver(StatsListener statsListener) {
+        observers.remove(statsListener);
+    }
+
+    public void notifyObservers() {
+        for (StatsListener observer : observers) {
+            observer.statsChanged(stats);
+        }
+    }
 
     public Simulation(SimulationConfig config, JungleMap jungleMap) {
         this.config = config;
@@ -84,6 +101,7 @@ public class Simulation implements Runnable {
         int totalAliveAnimalsChildrenCount = 0;
 
         for (Animal animal : animals) {
+            if(animal.getEnergy()<=0) animal.die(stats.getCurrentDate());
             if (animal.isAlive()) {
                 aliveAnimalsCount++;
                 totalAliveAnimalsEnergy += animal.getEnergy();
@@ -100,15 +118,17 @@ public class Simulation implements Runnable {
                 totalDeadAnimalsLifeLength += animal.getAge();
             }
         }
-        stats.setAvgChildCount(totalAliveAnimalsChildrenCount / aliveAnimalsCount);
+            stats.setAvgChildCount(aliveAnimalsCount == 0 ? 0 : totalAliveAnimalsChildrenCount / aliveAnimalsCount);
         if (deadAnimalsCount > 0) {
             stats.setAvgLifeTime(totalDeadAnimalsLifeLength / deadAnimalsCount);
         }
-        stats.setAvgEnergyLevel(totalAliveAnimalsEnergy / aliveAnimalsCount);
+        stats.setAnimalsCount(aliveAnimalsCount);
+        stats.setAvgEnergyLevel(aliveAnimalsCount == 0 ? 0 : totalAliveAnimalsEnergy / aliveAnimalsCount);
         stats.setMostPopularGenotype(mostPopularGenotype);
+        IO.println(mostPopularGenotype);
         stats.setGrassesCount(worldMap.getGrassCount());
         stats.setEmptyFields(0); // wolne pole, czyli takie gdzie nie ma zwierząt, trawy, obu ????
-
         stats.increaseCurrentDate();
+        notifyObservers();
     }
 }

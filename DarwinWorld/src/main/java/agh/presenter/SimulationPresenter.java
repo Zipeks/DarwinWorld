@@ -7,6 +7,7 @@ import agh.model.MapChangeListener;
 import agh.model.util.Boundary;
 import agh.model.util.MapBoundaryException;
 import agh.model.util.SimulationConfig;
+import agh.model.util.SimulationStats;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,7 +29,7 @@ import java.util.Objects;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
-public class SimulationPresenter implements MapChangeListener {
+public class SimulationPresenter implements MapChangeListener,StatsListener {
     private static final int CELL_WIDTH = 65;
     private static final int CELL_HEIGHT = 65;
     private static final int BORDER_WIDTH = 2;
@@ -40,7 +41,20 @@ public class SimulationPresenter implements MapChangeListener {
     @FXML
     private Canvas mapCanvas;
     @FXML
-    private Label moveInfoLabel;
+    private Label animalsCount ;
+    @FXML
+    private Label grassCount ;
+    @FXML
+    private Label emptyFields;
+    @FXML
+    private Label avgAge;
+    @FXML
+    private Label avgEnergy ;
+    @FXML
+    private Label genotype;
+    @FXML
+    private Label avgChildCount;
+
 
     public SimulationPresenter() {
         String fontPath = Objects.requireNonNull(getClass().getResource("/fonts/NotoEmoji-VariableFont_wght.ttf")).toExternalForm();
@@ -73,7 +87,7 @@ public class SimulationPresenter implements MapChangeListener {
 //        IO.println(jungleBounds);
 
         //Dżungla
-        graphics.setFill(Color.DARKOLIVEGREEN);
+        graphics.setFill(Color.DARKGREEN);
         graphics.fillRect(0, (bounds.topRight().getY()-jungleBounds.topRight().getY())*cellSize,mapCanvas.getWidth(),(jungleBounds.topRight().getY()-jungleBounds.bottomLeft().getY()+1)*cellSize);
 
 //         Pionowe kreski
@@ -109,16 +123,17 @@ public class SimulationPresenter implements MapChangeListener {
 
                 graphics.rotate(rotation);
 //                graphics.setFont(new Font(cellSize-2));
-                configureFont(graphics, this.NotoEmojiFont, Color.BROWN);
-                IO.println(config.energyLostDaily());
+//                configureFont(graphics, this.NotoEmojiFont, Color.BROWN);
                 graphics.setFill(getAnimalColor(((Animal) element).getEnergy(),config.energyLostDaily()));
                 graphics.fillText("\uD83D\uDC3B", 0, 0);
+//                graphics.setFill(getAnimalColor(((Animal) element).getEnergy(),config.energyLostDaily()));
+//                graphics.fillText("\uD83D\uDC3B", 0, 0);
 //                graphics.fillText("@", 0, 0);
                 graphics.restore();
             } else {
-                configureFont(graphics, this.NotoEmojiFont, Color.ORANGE);
+//                configureFont(graphics, this.NotoEmojiFont, Color.ORANGE);
 //                graphics.fillText("🍯", xOnCanvas, yOnCanvas);
-                graphics.setFill(Color.GREEN);
+                graphics.setFill(Color.YELLOWGREEN);
                 graphics.fillText("\uD83C\uDF33", xOnCanvas, yOnCanvas);
 //                graphics.fillText("#", xOnCanvas, yOnCanvas);
             }
@@ -128,9 +143,9 @@ public class SimulationPresenter implements MapChangeListener {
         int moves=animalEnergy/dailyLoss;
         if(moves<=0) return  Color.BLACK;
         else if(moves<=3) return Color.RED;
-        else if(moves<=6) return Color.ORANGE;
-        else if(moves<=10) return Color.YELLOW;
-        else return Color.GREEN;
+        else if(moves<=6) return Color.YELLOW;
+        else if(moves<=10) return Color.VIOLET;
+        else return Color.PEACHPUFF;
     }
 
     private void configureFont(GraphicsContext graphics, Font font, Color color) {
@@ -142,7 +157,7 @@ public class SimulationPresenter implements MapChangeListener {
 
     private void clearGrid() {
         GraphicsContext graphics = mapCanvas.getGraphicsContext2D();
-        graphics.setFill(Color.LIGHTGOLDENRODYELLOW);
+        graphics.setFill(Color.SADDLEBROWN);
         graphics.fillRect(0, 0, mapCanvas.getWidth(), mapCanvas.getHeight());
     }
 
@@ -167,6 +182,21 @@ public class SimulationPresenter implements MapChangeListener {
         IO.println(animals);
         IO.println("x=" + x + ", y=" + y);
 //        IO.println("CANVAS CLICKED");
+    }
+
+
+    public void updateStats(SimulationStats stats){
+        emptyFields.setText(String.valueOf(stats.getEmptyFields()));
+        grassCount.setText(String.valueOf(stats.getGrassesCount()));
+        avgEnergy.setText(String.valueOf(stats.getAvgEnergyLevel()));
+        avgAge.setText(String.valueOf(stats.getAvgLifeTime()));
+        avgChildCount.setText(String.valueOf(stats.getAvgChildCount()));
+        genotype.setText(String.valueOf(stats.getMostPopularGenotype()));
+        animalsCount.setText(String.valueOf(stats.getAnimalsCount()));
+    }
+    @Override
+    public void statsChanged(SimulationStats stats) {
+        Platform.runLater(() -> updateStats(stats));
     }
 //    private void openAnimalWindow(){
 //        try {

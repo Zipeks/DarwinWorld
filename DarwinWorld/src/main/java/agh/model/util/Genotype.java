@@ -91,4 +91,10 @@ public class Genotype {
     public int hashCode() {
         return Objects.hashCode(genes);
     }
+
+    @Override
+    public String toString(){
+        return genes.toString();
+    }
+
 }

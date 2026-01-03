@@ -27,30 +27,40 @@ import javafx.scene.text.TextAlignment;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
-public class SimulationPresenter implements MapChangeListener,StatsListener {
+public class SimulationPresenter implements MapChangeListener, StatsListener {
     private static final int CELL_WIDTH = 65;
     private static final int CELL_HEIGHT = 65;
     private static final int BORDER_WIDTH = 2;
     private static final int BORDER_OFFSET = BORDER_WIDTH / 2;
-    private final Font NotoEmojiFont;
-    private int cellSize=10;
+    private String fontPath;
+    private Font notoEmojiFont;
+    private int numCols;
+    private int numRows;
+    private int colSize;
+    private int rowSize;
+    private int canvasWidth;
+    private int canvasHeight;
+
+    private int cellSize = 10;
     private JungleMap jungleMap;
     private SimulationConfig config;
+
     @FXML
     private Canvas mapCanvas;
     @FXML
-    private Label animalsCount ;
+    private Label animalsCount;
     @FXML
-    private Label grassCount ;
+    private Label grassCount;
     @FXML
     private Label emptyFields;
     @FXML
     private Label avgAge;
     @FXML
-    private Label avgEnergy ;
+    private Label avgEnergy;
     @FXML
     private Label genotype;
     @FXML
@@ -60,25 +70,45 @@ public class SimulationPresenter implements MapChangeListener,StatsListener {
 
 
     public SimulationPresenter() {
-        String fontPath = Objects.requireNonNull(getClass().getResource("/fonts/NotoEmoji-VariableFont_wght.ttf")).toExternalForm();
-        NotoEmojiFont = Font.loadFont(fontPath, 40);
+        try {
+            fontPath = Objects.requireNonNull(getClass().getResource("/fonts/NotoEmoji-VariableFont_wght.ttf")).toExternalForm();
+        } catch (NullPointerException e) {
+            System.err.println("Font not found");
+        }
     }
 
     public void setJungleMap(JungleMap jungleMap) {
         this.jungleMap = jungleMap;
+        initializeView();
     }
-    public void drawMap() {
+
+    private void initializeView() {
+        if (jungleMap == null) return;
+
         Boundary bounds = jungleMap.getCurrentBounds();
-        Boundary jungleBounds=jungleMap.getJungle();
-        int numCols = bounds.topRight().getX() - bounds.bottomLeft().getX() + 1;
-        int numRows = bounds.topRight().getY() - bounds.bottomLeft().getY() + 1;
-        int colSize=1280/numCols;
-        int rowSize=640/numRows;
-        cellSize=Math.max(8,Math.min(colSize,rowSize));
-        int canvasWidth = cellSize * numCols + BORDER_WIDTH;
-        int canvasHeight = cellSize * numRows + BORDER_WIDTH;
+
+        numCols = bounds.topRight().getX() - bounds.bottomLeft().getX() + 1;
+        numRows = bounds.topRight().getY() - bounds.bottomLeft().getY() + 1;
+
+        int colSize = 1280 / numCols;
+        int rowSize = 640 / numRows;
+        cellSize = Math.max(8, Math.min(colSize, rowSize));
+
+        double canvasWidth = cellSize * numCols + BORDER_WIDTH;
+        double canvasHeight = cellSize * numRows + BORDER_WIDTH;
+
         mapCanvas.setWidth(canvasWidth);
         mapCanvas.setHeight(canvasHeight);
+
+        if (fontPath != null) {
+            int fontSize = (int) (cellSize * 0.9);
+            notoEmojiFont = Font.loadFont(fontPath, fontSize);
+        }
+    }
+
+    public void drawMap() {
+        Boundary bounds = jungleMap.getCurrentBounds();
+        Boundary jungleBounds = jungleMap.getJungle();
         clearGrid();
 
         GraphicsContext graphics = mapCanvas.getGraphicsContext2D();
@@ -88,7 +118,7 @@ public class SimulationPresenter implements MapChangeListener,StatsListener {
 
         //Dżungla
         graphics.setFill(Color.DARKGREEN);
-        graphics.fillRect(0, (bounds.topRight().getY()-jungleBounds.topRight().getY())*cellSize,mapCanvas.getWidth(),(jungleBounds.topRight().getY()-jungleBounds.bottomLeft().getY()+1)*cellSize);
+        graphics.fillRect(0, (bounds.topRight().getY() - jungleBounds.topRight().getY()) * cellSize, mapCanvas.getWidth(), (jungleBounds.topRight().getY() - jungleBounds.bottomLeft().getY() + 1) * cellSize);
 
 //         Pionowe kreski
         for (int i = 0; i <= numCols; i++) {
@@ -102,10 +132,8 @@ public class SimulationPresenter implements MapChangeListener,StatsListener {
         }
 
 
-
         double halfCell = ((double) cellSize / 2);
-        int fontSize = (int) (cellSize * 0.9);
-        configureFont(graphics, new Font("notoEmojiFamily",fontSize), Color.BLACK);
+        configureFont(graphics, this.notoEmojiFont, Color.BLACK);
         jungleMap.getElements().forEach(element -> {
             Vector2d position = element.getPosition();
             int xIndex = position.getX() - bounds.bottomLeft().getX();
@@ -124,7 +152,7 @@ public class SimulationPresenter implements MapChangeListener,StatsListener {
                 graphics.rotate(rotation);
 //                graphics.setFont(new Font(cellSize-2));
 //                configureFont(graphics, this.NotoEmojiFont, Color.BROWN);
-                graphics.setFill(getAnimalColor(((Animal) element).getEnergy(),config.energyLostDaily()));
+                graphics.setFill(getAnimalColor(((Animal) element).getEnergy(), config.energyLostDaily()));
                 graphics.fillText("\uD83D\uDC3B", 0, 0);
 //                graphics.setFill(getAnimalColor(((Animal) element).getEnergy(),config.energyLostDaily()));
 //                graphics.fillText("\uD83D\uDC3B", 0, 0);
@@ -139,12 +167,13 @@ public class SimulationPresenter implements MapChangeListener,StatsListener {
             }
         });
     }
-    private Color getAnimalColor(int animalEnergy,int dailyLoss){
-        int moves=animalEnergy/dailyLoss;
-        if(moves<=0) return  Color.BLACK;
-        else if(moves<=3) return Color.RED;
-        else if(moves<=6) return Color.YELLOW;
-        else if(moves<=10) return Color.VIOLET;
+
+    private Color getAnimalColor(int animalEnergy, int dailyLoss) {
+        int moves = animalEnergy / dailyLoss;
+        if (moves <= 0) return Color.BLACK;
+        else if (moves <= 3) return Color.RED;
+        else if (moves <= 6) return Color.YELLOW;
+        else if (moves <= 10) return Color.VIOLET;
         else return Color.PEACHPUFF;
     }
 
@@ -165,21 +194,20 @@ public class SimulationPresenter implements MapChangeListener,StatsListener {
     public void mapChanged(WorldMap worldMap, String message) {
         Platform.runLater(this::drawMap);
     }
-//
-    public void setConfig(SimulationConfig config){
-        this.config=config;
+
+    public void setConfig(SimulationConfig config) {
+        this.config = config;
         drawMap();
     }
-//
 
-    public void onCanvasClicked(MouseEvent e){
+    public void onCanvasClicked(MouseEvent e) {
         double mouseX = e.getX();
         double mouseY = e.getY();
-        int x= (int) mouseX/cellSize;
-        int y= (int) (mapCanvas.getHeight()-mouseY)/cellSize;
-        List<Animal> animals=jungleMap.animalsAt(new Vector2d(x,y));
+        int x = (int) mouseX / cellSize;
+        int y = (int) (mapCanvas.getHeight() - mouseY) / cellSize;
+        List<Animal> animals = jungleMap.animalsAt(new Vector2d(x, y));
         IO.println(animals);
-        for(Animal animal : animals){
+        for (Animal animal : animals) {
             openAnimalWindow(animal);
         }
         IO.println("x=" + x + ", y=" + y);
@@ -187,22 +215,24 @@ public class SimulationPresenter implements MapChangeListener,StatsListener {
     }
 
 
-    public void updateStats(SimulationStats stats){
+    public void updateStats(SimulationStats stats) {
         emptyFields.setText(String.valueOf(stats.getEmptyFields()));
         grassCount.setText(String.valueOf(stats.getGrassesCount()));
         avgEnergy.setText(String.valueOf(stats.getAvgEnergyLevel()));
         avgAge.setText(String.valueOf(stats.getAvgLifeTime()));
         avgChildCount.setText(String.valueOf(stats.getAvgChildCount()));
-        genotype.setText(stats.getMostPopularGenotype()!=null ? String.valueOf(stats.getMostPopularGenotype()) : "-");
+        genotype.setText(stats.getMostPopularGenotype() != null ? String.valueOf(stats.getMostPopularGenotype()) : "-");
         animalsCount.setText(String.valueOf(stats.getAnimalsCount()));
-        day.setText("Dzień "+stats.getCurrentDate());
+        day.setText("Dzień " + stats.getCurrentDate());
 
     }
+
     @Override
     public void statsChanged(SimulationStats stats) {
         Platform.runLater(() -> updateStats(stats));
     }
-    private void openAnimalWindow(Animal animal){
+
+    private void openAnimalWindow(Animal animal) {
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getClassLoader().getResource("animalStats.fxml")

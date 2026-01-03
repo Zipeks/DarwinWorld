@@ -19,6 +19,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -54,6 +55,8 @@ public class SimulationPresenter implements MapChangeListener,StatsListener {
     private Label genotype;
     @FXML
     private Label avgChildCount;
+    @FXML
+    private Label day;
 
 
     public SimulationPresenter() {
@@ -82,9 +85,6 @@ public class SimulationPresenter implements MapChangeListener,StatsListener {
 
         graphics.setStroke(Color.BLACK);
         graphics.setLineWidth(2);
-
-//        IO.println("DZUNGLA");
-//        IO.println(jungleBounds);
 
         //Dżungla
         graphics.setFill(Color.DARKGREEN);
@@ -163,7 +163,6 @@ public class SimulationPresenter implements MapChangeListener,StatsListener {
 
     @Override
     public void mapChanged(WorldMap worldMap, String message) {
-        //            moveInfoLabel.setText(message);
         Platform.runLater(this::drawMap);
     }
 //
@@ -180,6 +179,9 @@ public class SimulationPresenter implements MapChangeListener,StatsListener {
         int y= (int) (mapCanvas.getHeight()-mouseY)/cellSize;
         List<Animal> animals=jungleMap.animalsAt(new Vector2d(x,y));
         IO.println(animals);
+        for(Animal animal : animals){
+            openAnimalWindow(animal);
+        }
         IO.println("x=" + x + ", y=" + y);
 //        IO.println("CANVAS CLICKED");
     }
@@ -191,28 +193,33 @@ public class SimulationPresenter implements MapChangeListener,StatsListener {
         avgEnergy.setText(String.valueOf(stats.getAvgEnergyLevel()));
         avgAge.setText(String.valueOf(stats.getAvgLifeTime()));
         avgChildCount.setText(String.valueOf(stats.getAvgChildCount()));
-        genotype.setText(String.valueOf(stats.getMostPopularGenotype()));
+        genotype.setText(stats.getMostPopularGenotype()!=null ? String.valueOf(stats.getMostPopularGenotype()) : "-");
         animalsCount.setText(String.valueOf(stats.getAnimalsCount()));
+        day.setText("Dzień "+stats.getCurrentDate());
+
     }
     @Override
     public void statsChanged(SimulationStats stats) {
         Platform.runLater(() -> updateStats(stats));
     }
-//    private void openAnimalWindow(){
-//        try {
-//            FXMLLoader loader = new FXMLLoader(
-//                    getClass().getClassLoader().getResource("simulation.fxml")
-//            );
-//            BorderPane viewRoot = loader.load();
-//            Stage stage = new Stage();
-//            AnimalStatsPresenter presenter = loader.getController();
-//            animalStats.addObserver(presenter);
-//            stage.setTitle("Animal information");
-//            stage.setScene(new Scene(viewRoot));
-//            stage.show();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    private void openAnimalWindow(Animal animal){
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getClassLoader().getResource("animalStats.fxml")
+            );
+            Pane viewRoot = loader.load();
+            Stage stage = new Stage();
+            AnimalStatsPresenter presenter = loader.getController();
+            animal.addObserver(presenter);
+            stage.setTitle("Animal information");
+            stage.setScene(new Scene(viewRoot));
+            stage.setOnCloseRequest(event -> {
+                animal.removeObserver(presenter);
+            });
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

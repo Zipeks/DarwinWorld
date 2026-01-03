@@ -97,4 +97,9 @@ public class Genotype {
         return genes.toString();
     }
 
+    public int getActiveGen(){
+        return activeGeneIdx;
+    }
+
+
 }

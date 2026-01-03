@@ -13,7 +13,7 @@
          <children>
             <HBox alignment="CENTER_LEFT">
                <children>
-                  <Label alignment="CENTER" text="Dzień 1 ">
+                  <Label fx:id="day" alignment="CENTER" text="Dzień 0 ">
                      <font>
                         <Font name="System Bold" size="24.0" />
                      </font></Label>
@@ -81,7 +81,7 @@
                         <Label fx:id="avgAge" text="-" />
                      </children>
                   </HBox>
-                  <HBox alignment="CENTER_LEFT" minWidth="200.0" spacing="8.0">
+                  <HBox alignment="CENTER_LEFT" minWidth="300.0" spacing="8.0">
                      <children>
                         <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                            <image>

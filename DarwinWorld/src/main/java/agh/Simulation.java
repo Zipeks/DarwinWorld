@@ -101,7 +101,7 @@ public class Simulation implements Runnable {
         int totalAliveAnimalsChildrenCount = 0;
 
         for (Animal animal : animals) {
-            if(animal.getEnergy()<=0) animal.die(stats.getCurrentDate());
+            if(animal.isAlive() && animal.getEnergy()<=0) animal.die(stats.getCurrentDate());
             if (animal.isAlive()) {
                 aliveAnimalsCount++;
                 totalAliveAnimalsEnergy += animal.getEnergy();
@@ -125,7 +125,6 @@ public class Simulation implements Runnable {
         stats.setAnimalsCount(aliveAnimalsCount);
         stats.setAvgEnergyLevel(aliveAnimalsCount == 0 ? 0 : totalAliveAnimalsEnergy / aliveAnimalsCount);
         stats.setMostPopularGenotype(mostPopularGenotype);
-        IO.println(mostPopularGenotype);
         stats.setGrassesCount(worldMap.getGrassCount());
         stats.setEmptyFields(0); // wolne pole, czyli takie gdzie nie ma zwierząt, trawy, obu ????
         stats.increaseCurrentDate();

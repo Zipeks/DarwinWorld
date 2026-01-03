@@ -12,6 +12,7 @@ public class Animal implements WorldElement {
     private final AnimalStats animalStats;
     private MapDirection direction;
     private Vector2d position;
+    protected final List<AnimalListener> observers = new ArrayList<>();
 
     public Animal(Vector2d position, Animal parentOne, Animal parentTwo, int mutationsCnt, int startEnergy, int birthDate) {
         this(position, new Genotype(parentOne, parentTwo, mutationsCnt), startEnergy, birthDate);
@@ -24,6 +25,22 @@ public class Animal implements WorldElement {
         animalStats = new AnimalStats(birthDate);
         animalStats.setEnergy(energy);
     }
+
+    public void addObserver(AnimalListener animalListener) {
+        observers.add(animalListener);
+        animalListener.animalChanged(animalStats,genotype);
+    }
+
+    public void removeObserver(AnimalListener animalListener) {
+        observers.remove(animalListener);
+    }
+
+    public void notifyObservers() {
+        for (AnimalListener observer : observers) {
+            observer.animalChanged(animalStats,genotype);
+        }
+    }
+
 
 
     public boolean isAt(Vector2d otherPosition) {
@@ -42,17 +59,20 @@ public class Animal implements WorldElement {
             position = newPosition;
         }
         animalStats.setEnergy(animalStats.getEnergy() - moveCost);
+        notifyObservers();
     }
 
     public void addChild(Animal child, int energyCost) {
         animalStats.increaseChildrenCount();
         children.add(child);
         animalStats.setEnergy(animalStats.getEnergy() - energyCost);
+        notifyObservers();
     }
 
     public void eatenGrass(int energy) {
         animalStats.increaseGrassesEaten();
         animalStats.setEnergy(animalStats.getEnergy() + energy);
+        notifyObservers();
     }
 
 
@@ -119,9 +139,13 @@ public class Animal implements WorldElement {
     }
     public void increaseAge() {
         animalStats.increaseAge();
+        notifyObservers();
     }
 
     public void die(int day){
         animalStats.setDeathDate(Integer.valueOf(day));
+        notifyObservers();
     }
+
+
 }

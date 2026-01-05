@@ -9,13 +9,19 @@ import agh.model.StatsListener;
 import java.util.*;
 
 public class Simulation implements Runnable {
+    protected final List<StatsListener> observers = new ArrayList<>();
     private final List<Animal> animals;
-    private final JungleMap worldMap;
+    private final AbstractJungleMap worldMap;
     private final SimulationConfig config;
     private final SimulationStats stats = new SimulationStats();
     private boolean isRunning = true;
 
-    protected final List<StatsListener> observers = new ArrayList<>();
+    public Simulation(SimulationConfig config, AbstractJungleMap jungleMap) {
+        this.config = config;
+        this.animals = new ArrayList<>();
+        this.worldMap = jungleMap;
+        generateAnimals();
+    }
 
     public void addObserver(StatsListener statsListener) {
         observers.add(statsListener);
@@ -29,13 +35,6 @@ public class Simulation implements Runnable {
         for (StatsListener observer : observers) {
             observer.statsChanged(stats);
         }
-    }
-
-    public Simulation(SimulationConfig config, JungleMap jungleMap) {
-        this.config = config;
-        this.animals = new ArrayList<>();
-        this.worldMap = jungleMap;
-        generateAnimals();
     }
 
     private void generateAnimals() {
@@ -53,6 +52,10 @@ public class Simulation implements Runnable {
     public void stop() {
         isRunning = false;
     }
+    public void start() {
+        isRunning = true;
+        run();
+    }
 
     public List<Animal> getAnimals() {
         return animals;
@@ -62,9 +65,9 @@ public class Simulation implements Runnable {
         return stats;
     }
 
+    // Nie jestem pewny czy synchronized jest potrzebne, ale przy zmianie stanu wydaje mi się, że mogłoby się wysypać
     @Override
-    public void run() {
-        int i = 0;
+    public synchronized void run() {
         while (isRunning) {
             try {
                 Thread.sleep(config.timeBetweenDays());
@@ -83,9 +86,8 @@ public class Simulation implements Runnable {
                             stats.getCurrentDate())
             );
             worldMap.placeGrasses(config.newGrassesDaily());
-            worldMap.nextDay(i);
+            worldMap.nextDay(stats.getCurrentDate());
             updateStats();
-            i++;
         }
     }
 

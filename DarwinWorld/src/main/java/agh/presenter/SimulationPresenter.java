@@ -1,11 +1,8 @@
 package agh.presenter;
 
-import agh.Simulation;
-import agh.SimulationEngine;
 import agh.model.*;
 import agh.model.MapChangeListener;
 import agh.model.util.Boundary;
-import agh.model.util.MapBoundaryException;
 import agh.model.util.SimulationConfig;
 import agh.model.util.SimulationStats;
 import javafx.application.Platform;
@@ -15,18 +12,14 @@ import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -40,13 +33,11 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
     private Font notoEmojiFont;
     private int numCols;
     private int numRows;
-    private int colSize;
-    private int rowSize;
-    private int canvasWidth;
-    private int canvasHeight;
+    private double canvasWidth;
+    private double canvasHeight;
 
-    private int cellSize = 10;
-    private JungleMap jungleMap;
+    private double cellSize = 10;
+    private AbstractJungleMap map;
     private SimulationConfig config;
 
     @FXML
@@ -77,64 +68,56 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         }
     }
 
-    public void setJungleMap(JungleMap jungleMap) {
-        this.jungleMap = jungleMap;
+    public void setMap(AbstractJungleMap map) {
+        this.map = map;
         initializeView();
     }
 
     private void initializeView() {
-        if (jungleMap == null) return;
+        if (map == null) return;
 
-        Boundary bounds = jungleMap.getCurrentBounds();
+        Boundary bounds = map.getCurrentBounds();
 
         numCols = bounds.topRight().getX() - bounds.bottomLeft().getX() + 1;
         numRows = bounds.topRight().getY() - bounds.bottomLeft().getY() + 1;
 
-        int colSize = 1280 / numCols;
-        int rowSize = 640 / numRows;
+        double colSize = (double) 1280 / numCols;
+        double rowSize = (double) 640 / numRows;
+
         cellSize = Math.max(8, Math.min(colSize, rowSize));
 
-        double canvasWidth = cellSize * numCols + BORDER_WIDTH;
-        double canvasHeight = cellSize * numRows + BORDER_WIDTH;
+        canvasWidth = cellSize * numCols + BORDER_WIDTH;
+        canvasHeight = cellSize * numRows + BORDER_WIDTH;
 
         mapCanvas.setWidth(canvasWidth);
         mapCanvas.setHeight(canvasHeight);
 
         if (fontPath != null) {
-            int fontSize = (int) (cellSize * 0.9);
-            notoEmojiFont = Font.loadFont(fontPath, fontSize);
+            notoEmojiFont = Font.loadFont(fontPath, cellSize * 0.9);
         }
     }
 
     public void drawMap() {
-        Boundary bounds = jungleMap.getCurrentBounds();
-        Boundary jungleBounds = jungleMap.getJungle();
+        Boundary bounds = map.getCurrentBounds();
+        Boundary jungleBounds = map.getJungle();
         clearGrid();
 
         GraphicsContext graphics = mapCanvas.getGraphicsContext2D();
 
         graphics.setStroke(Color.BLACK);
-        graphics.setLineWidth(2);
+        graphics.setLineWidth(1);
 
         //Dżungla
         graphics.setFill(Color.DARKGREEN);
         graphics.fillRect(0, (bounds.topRight().getY() - jungleBounds.topRight().getY()) * cellSize, mapCanvas.getWidth(), (jungleBounds.topRight().getY() - jungleBounds.bottomLeft().getY() + 1) * cellSize);
 
-//         Pionowe kreski
-        for (int i = 0; i <= numCols; i++) {
-            double x = i * cellSize + BORDER_OFFSET;
-            graphics.strokeLine(x, 0, x, canvasHeight);
-        }
-        // Poziome kreski
-        for (int i = 0; i <= numRows; i++) {
-            double y = i * cellSize + BORDER_OFFSET;
-            graphics.strokeLine(0, y, canvasWidth, y);
-        }
 
 
-        double halfCell = ((double) cellSize / 2);
+        double halfCell = (cellSize / 2);
         configureFont(graphics, this.notoEmojiFont, Color.BLACK);
-        jungleMap.getElements().forEach(element -> {
+        Set<Vector2d> animalsPosition = new HashSet<>();
+
+        map.getElements().forEach(element -> {
             Vector2d position = element.getPosition();
             int xIndex = position.getX() - bounds.bottomLeft().getX();
             int yIndex = position.getY() - bounds.bottomLeft().getY();
@@ -145,15 +128,26 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
             if (element instanceof Animal) {
                 graphics.save();
                 graphics.translate(xOnCanvas, yOnCanvas);
-
                 MapDirection mapDirection = ((Animal) element).getDirection();
-                int rotation = mapDirection.ordinal() * 90;
+//                int rotation = mapDirection.ordinal() * 45;
 
-                graphics.rotate(rotation);
+//                graphics.rotate(rotation);
 //                graphics.setFont(new Font(cellSize-2));
 //                configureFont(graphics, this.NotoEmojiFont, Color.BROWN);
-                graphics.setFill(getAnimalColor(((Animal) element).getEnergy(), config.energyLostDaily()));
-                graphics.fillText("\uD83D\uDC3B", 0, 0);
+                if (animalsPosition.contains(element.getPosition())) {
+                    boolean isJungle = position.follows(jungleBounds.bottomLeft()) && position.precedes(jungleBounds.topRight());
+
+                    graphics.setFill(isJungle ? Color.DARKGREEN : Color.SADDLEBROWN);
+                    graphics.fillRect(-halfCell, -halfCell, cellSize, cellSize);
+
+                    graphics.rect(0,0,cellSize,cellSize);
+                    graphics.setFill(Color.RED);
+                    graphics.fillText("\uD83D\uDC9E", 0, 0);
+                } else {
+                    graphics.setFill(getAnimalColor(((Animal) element).getEnergy(), config.energyLostDaily()));
+                    graphics.fillText("\uD83D\uDC3B", 0, 0);
+                    animalsPosition.add(element.getPosition());
+                }
 //                graphics.setFill(getAnimalColor(((Animal) element).getEnergy(),config.energyLostDaily()));
 //                graphics.fillText("\uD83D\uDC3B", 0, 0);
 //                graphics.fillText("@", 0, 0);
@@ -166,6 +160,16 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
 //                graphics.fillText("#", xOnCanvas, yOnCanvas);
             }
         });
+//         Pionowe kreski
+        for (int i = 0; i <= numCols; i++) {
+            double x = i * cellSize + BORDER_OFFSET;
+            graphics.strokeLine(x, 0, x, canvasHeight);
+        }
+        // Poziome kreski
+        for (int i = 0; i <= numRows; i++) {
+            double y = i * cellSize + BORDER_OFFSET;
+            graphics.strokeLine(0, y, canvasWidth, y);
+        }
     }
 
     private Color getAnimalColor(int animalEnergy, int dailyLoss) {
@@ -203,9 +207,9 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
     public void onCanvasClicked(MouseEvent e) {
         double mouseX = e.getX();
         double mouseY = e.getY();
-        int x = (int) mouseX / cellSize;
-        int y = (int) (mapCanvas.getHeight() - mouseY) / cellSize;
-        List<Animal> animals = jungleMap.animalsAt(new Vector2d(x, y));
+        int x = (int) (mouseX / cellSize);
+        int y = (int) ((mapCanvas.getHeight() - mouseY) / cellSize);
+        List<Animal> animals = map.animalsAt(new Vector2d(x, y));
         IO.println(animals);
         for (Animal animal : animals) {
             openAnimalWindow(animal);

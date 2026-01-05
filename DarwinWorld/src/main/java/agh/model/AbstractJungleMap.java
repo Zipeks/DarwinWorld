@@ -5,33 +5,24 @@ import agh.model.util.Boundary;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class JungleMap extends AbstractWorldMap {
+public abstract class AbstractJungleMap extends AbstractWorldMap {
     private final Map<Vector2d, Grass> grasses = new HashMap<>();
     private final Boundary boundary;
     private final Boundary jungle;
     private final int mapArea;
-    private int grassCount;
 
-    public JungleMap(int grassCount, Boundary boundary) {
-        this.boundary = boundary;
+    public AbstractJungleMap(int grassCount, int width, int height) {
+        this.boundary = new Boundary(new Vector2d(0, 0), new Vector2d(width - 1, height-1));
         mapArea = (boundary.topRight().getX() + 1) * (boundary.topRight().getY() + 1);
 
-        int height = boundary.topRight().getY() + 1;
         int jungleHeight = Math.round((float) height / 5);
         int midRow = height / 2;
         int lowerRow = (height - jungleHeight) / 2;
         int upperRow = lowerRow + jungleHeight - 1;
         this.jungle = new Boundary(new Vector2d(0, lowerRow), new Vector2d(boundary.topRight().getX(), upperRow));
-//        int equator = Math.floorDiv(height, 2);
-//        int map_ten_percent = Math.floorDiv(height, 10);
-//        if (map_ten_percent == 0) map_ten_percent = 1;
-//        this.jungle = new Boundary(
-//                new Vector2d(0, equator - map_ten_percent),
-//                new Vector2d(boundary.topRight().getX(), equator + map_ten_percent));
 
         placeGrasses(grassCount);
     }
-
     public void removeDeadAnimals() {
         Iterator<Map.Entry<Vector2d, List<Animal>>> iterator = animals.entrySet().iterator();
         while (iterator.hasNext()) {
@@ -51,7 +42,7 @@ public class JungleMap extends AbstractWorldMap {
         int i = 0;
         int mapWidth = boundary.topRight().getX() + 1;
         while (i < grassesToPlace) {
-            if (mapArea <= grassCount) {
+            if (mapArea <= getGrassCount()) {
                 return;
             }
             while (true) {
@@ -70,18 +61,11 @@ public class JungleMap extends AbstractWorldMap {
                 if (grasses.get(grassPosition) == null) {
                     grasses.put(grassPosition, new Grass(grassPosition));
                     i++;
-                    grassCount++;
                     break;
                 }
             }
         }
     }
-
-    public void nextDay(int i) {
-        notifyObservers("Day: " + i);
-        System.out.println("Day: " + i);
-    }
-
     public void moveAnimals(int moveCost) {
         List<Animal> allAnimals = animals.values().stream()
                 .flatMap(List::stream)
@@ -123,44 +107,11 @@ public class JungleMap extends AbstractWorldMap {
                 strongest.eatenGrass(energyGained);
 
                 grasses.remove(position);
-                grassCount--;
             }
         }
     }
 
-
-    public List<Animal> animalReproduction(int energyNeededToReproduce, int energyLostToReproduction, int minMutations, int maxMutation, int date) {
-        List<Animal> children = new ArrayList<>();
-        Random PRNG = new Random();
-        for (Vector2d position : animals.keySet()) {
-            List<Animal> animalsAtP = animals.get(position);
-            if (animalsAtP.size() < 2) {
-                continue;
-            }
-            animalsAtP.sort(Comparator.comparingInt(Animal::getEnergy)
-                    .thenComparing(Animal::getAge)
-                    .thenComparing(Animal::getChildrenCount)
-                    .reversed());
-
-            Animal firstAnimal = animalsAtP.getFirst();
-            Animal secondAnimal = animalsAtP.get(1);
-
-            if (firstAnimal.getEnergy() > energyNeededToReproduce && secondAnimal.getEnergy() > energyNeededToReproduce) {
-                Animal child = new Animal(position, firstAnimal, secondAnimal,
-                        PRNG.nextInt(minMutations, maxMutation + 1), energyLostToReproduction * 2, date);
-
-                firstAnimal.addChild(child, energyLostToReproduction);
-                secondAnimal.addChild(child, energyLostToReproduction);
-
-                children.add(child);
-            }
-        }
-        for (Animal child : children) {
-            place(child);
-        }
-
-        return children;
-    }
+    public abstract List<Animal> animalReproduction(int energyNeeded, int energyLost, int minMut, int maxMut, int currentDay);
 
     @Override
     public List<WorldElement> getElements() {
@@ -179,6 +130,12 @@ public class JungleMap extends AbstractWorldMap {
     }
 
     public int getGrassCount() {
-        return grassCount;
+        return grasses.size();
+    }
+
+
+    public void nextDay(int i) {
+        notifyObservers("Day: " + i);
+        System.out.println("Day: " + i);
     }
 }

@@ -2,7 +2,6 @@ package agh.presenter;
 
 import agh.Simulation;
 import agh.model.*;
-import agh.model.util.Boundary;
 import agh.model.util.MapBoundaryException;
 import agh.model.util.SimulationConfig;
 import javafx.fxml.FXML;
@@ -69,18 +68,7 @@ public class ConfigurationPresenter {
             );
             BorderPane viewRoot = loader.load();
             Stage stage = new Stage();
-            SimulationPresenter presenter = loader.getController();
-            SimulationConfig config = getSimulationConfig();
-
-            JungleMap jungleMap = new JungleMap(config.startGrassesCount(), new Boundary(new Vector2d(0, 0),
-                    new Vector2d(config.mapWidth() - 1, config.mapHeight() - 1)));
-            jungleMap.addObserver(presenter);
-
-            presenter.setJungleMap(jungleMap);
-            presenter.setConfig(config);
-
-            Simulation simulation = new Simulation(config, jungleMap);
-            simulation.addObserver(presenter);
+            Simulation simulation = getSimulation(loader);
             stage.setTitle("Simulation");
             stage.setScene(new Scene(viewRoot));
 
@@ -103,6 +91,25 @@ public class ConfigurationPresenter {
             alert.setContentText("Rozmiar mapy od 5x5 do 160x80");
             alert.showAndWait();
         }
+    }
+
+    private Simulation getSimulation(FXMLLoader loader) {
+        SimulationPresenter presenter = loader.getController();
+        SimulationConfig config = getSimulationConfig();
+        AbstractJungleMap map;
+        if (!config.habsburgsOn()) {
+            map = new ClassicalMap(config.startGrassesCount(), config.mapWidth() , config.mapHeight());
+        } else {
+            map = new HabsburgMap(config.startGrassesCount(),config.mapWidth() , config.mapHeight());
+        }
+        map.addObserver(presenter);
+
+        presenter.setMap(map);
+        presenter.setConfig(config);
+
+        Simulation simulation = new Simulation(config, map);
+        simulation.addObserver(presenter);
+        return simulation;
     }
 
     public void onLoadPresetClick() {

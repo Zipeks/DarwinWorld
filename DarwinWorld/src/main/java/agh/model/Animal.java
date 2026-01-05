@@ -6,13 +6,13 @@ import agh.model.util.Genotype;
 import java.util.*;
 
 public class Animal implements WorldElement {
+    protected final List<AnimalListener> observers = new ArrayList<>();
     private final UUID id = UUID.randomUUID();
     private final Genotype genotype;
     private final List<Animal> children = new ArrayList<>();
     private final AnimalStats animalStats;
     private MapDirection direction;
     private Vector2d position;
-    protected final List<AnimalListener> observers = new ArrayList<>();
 
     public Animal(Vector2d position, Animal parentOne, Animal parentTwo, int mutationsCnt, int startEnergy, int birthDate) {
         this(position, new Genotype(parentOne, parentTwo, mutationsCnt), startEnergy, birthDate);
@@ -41,16 +41,12 @@ public class Animal implements WorldElement {
         }
     }
 
-
-
     public boolean isAt(Vector2d otherPosition) {
         return Objects.equals(position, otherPosition);
     }
 
     public void move(MoveValidator moveValidator, int moveCost) {
         direction = direction.rotateBy(genotype.next());
-
-
         Vector2d moveVector = direction.toUnitVector();
         Vector2d newPosition = moveValidator.moveOnMap(position, moveVector);
         if (newPosition.getY() == position.getY() && direction.toUnitVector().getY() != 0) {
@@ -143,7 +139,7 @@ public class Animal implements WorldElement {
     }
 
     public void die(int day){
-        animalStats.setDeathDate(Integer.valueOf(day));
+        animalStats.setDeathDate(day);
         notifyObservers();
     }
 

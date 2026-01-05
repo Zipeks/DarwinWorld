@@ -39,13 +39,6 @@ abstract class AbstractWorldMap implements agh.model.WorldMap {
         notifyObservers("Animal has been placed at: " + animal.getPosition());
     }
 
-
-    @Override
-    public boolean isOccupied(Vector2d position) {
-//        return !objectsAt(position).isEmpty();
-        return false;
-    }
-
     @Override
     public List<Animal> animalsAt(Vector2d position) {
         return animals.getOrDefault(position, Collections.emptyList());

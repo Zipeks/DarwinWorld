@@ -1,19 +1,20 @@
 package agh.model.util;
 
 import agh.model.Animal;
+import agh.model.Gene;
 
 import java.util.*;
 
 public class Genotype {
     private static final Random PRNG = new Random();
-    private final List<Integer> genes;
+    private final List<Gene> genes;
     private int activeGeneIdx;
 
     // First animal
     public Genotype(int size) {
         genes = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            genes.add(PRNG.nextInt(8));
+            genes.add(Gene.randomGene());
         }
         activeGeneIdx = PRNG.nextInt(size);
     }
@@ -24,23 +25,23 @@ public class Genotype {
     }
 
     public Genotype(Animal parentOne, Animal parentTwo, int mutationsCnt) {
-        List<Integer> youngGenes = combineTwoGenotypes(parentOne, parentTwo);
+        List<Gene> youngGenes = combineTwoGenotypes(parentOne, parentTwo);
         applyMutations(youngGenes, mutationsCnt);
         genes = youngGenes;
         activeGeneIdx = PRNG.nextInt(genes.size());
     }
 
-    private List<Integer> combineTwoGenotypes(Animal parentOne, Animal parentTwo) {
+    private List<Gene> combineTwoGenotypes(Animal parentOne, Animal parentTwo) {
         Animal strong = parentOne.getEnergy() >= parentTwo.getEnergy() ? parentOne : parentTwo;
         Animal weak = parentOne.getEnergy() >= parentTwo.getEnergy() ? parentTwo : parentOne;
 
         int totalEnergy = strong.getEnergy() + weak.getEnergy();
-        List<Integer> strongGenes = strong.getGenotype().getGenes();
-        List<Integer> weakGenes = weak.getGenotype().getGenes();
+        List<Gene> strongGenes = strong.getGenotype().getGenes();
+        List<Gene> weakGenes = weak.getGenotype().getGenes();
         int genesLength = strongGenes.size();
 
         int splitPoint = (int) Math.floor(((double) strong.getEnergy() / totalEnergy) * genesLength);
-        List<Integer> childGenes = new ArrayList<>();
+        List<Gene> childGenes = new ArrayList<>();
         if (PRNG.nextInt(2) > 0) {
             childGenes.addAll(strongGenes.subList(0, splitPoint));
             childGenes.addAll(weakGenes.subList(splitPoint, genesLength));
@@ -51,7 +52,7 @@ public class Genotype {
         }
         return childGenes;
     }
-    public void applyMutations(List<Integer> youngAnimalGenes, int mutationsCnt) {
+    public void applyMutations(List<Gene> youngAnimalGenes, int mutationsCnt) {
         int size = youngAnimalGenes.size();
         if (mutationsCnt > size) mutationsCnt = size;
 
@@ -61,10 +62,10 @@ public class Genotype {
         }
 
         for (int idx : indexesToMutate) {
-            int oldGene = youngAnimalGenes.get(idx);
-            int newGene;
+            Gene oldGene = youngAnimalGenes.get(idx);
+            Gene newGene;
             do {
-                newGene = PRNG.nextInt(8);
+                newGene = Gene.randomGene();
             } while (newGene == oldGene);
 
             youngAnimalGenes.set(idx, newGene);
@@ -72,11 +73,11 @@ public class Genotype {
     }
 
     public int next() {
-        int currentGene = genes.get(activeGeneIdx);
+        int currentGene = genes.get(activeGeneIdx).numericValue();
         activeGeneIdx = (activeGeneIdx + 1) % genes.size();
         return currentGene;
     }
-    public List<Integer> getGenes() {
+    public List<Gene> getGenes() {
         return new ArrayList<>(genes);
     }
 

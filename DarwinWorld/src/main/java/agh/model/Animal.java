@@ -28,7 +28,7 @@ public class Animal implements WorldElement {
 
     public void addObserver(AnimalListener animalListener) {
         observers.add(animalListener);
-        animalListener.animalChanged(animalStats,genotype);
+        animalListener.animalChanged(animalStats,genotype,getDescendantCount(),position);
     }
 
     public void removeObserver(AnimalListener animalListener) {
@@ -37,7 +37,7 @@ public class Animal implements WorldElement {
 
     public void notifyObservers() {
         for (AnimalListener observer : observers) {
-            observer.animalChanged(animalStats,genotype);
+            observer.animalChanged(animalStats,genotype,getDescendantCount(),position);
         }
     }
 

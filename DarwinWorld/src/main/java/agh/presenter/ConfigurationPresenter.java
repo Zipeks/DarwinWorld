@@ -57,6 +57,12 @@ public class ConfigurationPresenter {
     @FXML
     private TextField dayLength;
     @FXML
+    private TextField males;
+    @FXML
+    private TextField females;
+    @FXML
+    private TextField inbreedingPenaltyField;
+    @FXML
     private Button loadPreset;
     @FXML
     private Button saveConfig;
@@ -108,6 +114,7 @@ public class ConfigurationPresenter {
         presenter.setConfig(config);
 
         Simulation simulation = new Simulation(config, map);
+        presenter.setChangeState(() -> simulation.changeState());
         simulation.addObserver(presenter);
         return simulation;
     }
@@ -160,10 +167,9 @@ public class ConfigurationPresenter {
         int dailyInc = obj.getInt("dailyInc");
         int day = obj.getInt("day");
         boolean isHabsburg = obj.getBoolean("isHabsburg");
-        // DO EDYCJI
-        int startingMales = 0;
-        int startingFemales = 0;
-        int inbreedingPenalty = 0;
+        int startingMales = obj.getInt("startingMales");
+        int startingFemales = obj.getInt("startingFemales");
+        int inbreedingPenalty = obj.getInt("inbreedingPenalty");
         SimulationConfig config;
         if (!isHabsburg) {
             config = new SimulationConfig(mapWidth, mapHeight,
@@ -180,8 +186,6 @@ public class ConfigurationPresenter {
         return config;
     }
 
-    //Tu wiem, że trochę ta konwersja na stringi niepotrzebna, bo można od razu z Jsona, ale wolałem zamienić na config wcześniej
-
     private void setConfig(SimulationConfig config) {
         initialMapWidth.setText(String.valueOf(config.mapWidth()));
         initialMapHeight.setText(String.valueOf(config.mapHeight()));
@@ -197,6 +201,9 @@ public class ConfigurationPresenter {
         initialPlants.setText(String.valueOf(config.startGrassesCount()));
         dailyIncrease.setText(String.valueOf(config.newGrassesDaily()));
         habsburg.setSelected(config.habsburgsOn());
+        males.setText(String.valueOf(config.startingMales()));
+        females.setText(String.valueOf(config.startingFemales()));
+        inbreedingPenaltyField.setText(String.valueOf(config.inbreedingPenalty()));
 
     }
 
@@ -216,10 +223,9 @@ public class ConfigurationPresenter {
         int dailyInc = Integer.parseInt(dailyIncrease.getText());
         int day = Integer.parseInt(dayLength.getText());
         boolean isHabsburg = habsburg.isSelected();
-        // DO EDYCJI
-        int startingMales = 0;
-        int startingFemales = 0;
-        int inbreedingPenalty = 0;
+        int startingMales = Integer.parseInt(males.getText());
+        int startingFemales = Integer.parseInt(females.getText());
+        int inbreedingPenalty = Integer.parseInt(inbreedingPenaltyField.getText());
         SimulationConfig config;
         if (!isHabsburg) {
             config = new SimulationConfig(mapWidth, mapHeight,
@@ -304,6 +310,9 @@ public class ConfigurationPresenter {
                 .add("dailyInc", config.newGrassesDaily())
                 .add("day", config.timeBetweenDays())
                 .add("isHabsburg", config.habsburgsOn())
+                .add("startingMales",config.startingMales())
+                .add("startingFemales",config.startingFemales())
+                .add("inbreedingPenalty",config.inbreedingPenalty())
                 .build();
         return obj;
     }

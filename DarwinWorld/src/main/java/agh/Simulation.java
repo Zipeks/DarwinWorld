@@ -47,13 +47,18 @@ public class Simulation implements Runnable {
         }
     }
 
+    public void changeState(){
+        isRunning=!isRunning;
+        if(isRunning) run();
+    }
+
     public void stop() {
         isRunning = false;
     }
-    public void start() {
-        isRunning = true;
-        run();
-    }
+//    public void start() {
+//        isRunning = true;
+//        run();
+//    }
 
     public List<Animal> getAnimals() {
         return animals;

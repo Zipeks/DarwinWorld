@@ -5,10 +5,24 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="201.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/17.0.12"  xmlns:fx="http://javafx.com/fxml/1" fx:controller="agh.presenter.AnimalStatsPresenter">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="232.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="agh.presenter.AnimalStatsPresenter">
    <children>
       <VBox minWidth="300.0" spacing="16.0">
          <children>
+            <HBox layoutX="20.0" layoutY="20.0" spacing="8.0">
+               <children>
+                  <Label text="Pozycja:">
+                     <font>
+                        <Font name="Fira Code Regular" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="positionLabel" layoutX="10.0" layoutY="10.0" text="-">
+                     <font>
+                        <Font name="Fira Code Regular" size="12.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
             <HBox spacing="8.0">
                <children>
                   <Label text="Genom: ">

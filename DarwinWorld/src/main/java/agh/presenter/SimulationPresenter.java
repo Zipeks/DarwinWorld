@@ -1,5 +1,6 @@
 package agh.presenter;
 
+import agh.Simulation;
 import agh.model.*;
 import agh.model.MapChangeListener;
 import agh.model.util.Boundary;
@@ -12,6 +13,7 @@ import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
@@ -43,6 +45,8 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
     private AbstractJungleMap map;
     private SimulationConfig config;
 
+    private Runnable changeState;
+
     @FXML
     private Canvas mapCanvas;
     @FXML
@@ -61,6 +65,8 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
     private Label avgChildCount;
     @FXML
     private Label day;
+//    @FXML
+//    private Button changeState;
 
 
     public SimulationPresenter() {
@@ -224,6 +230,13 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         animalsCount.setText(String.valueOf(stats.getAnimalsCount()));
         day.setText("Dzień " + stats.getCurrentDate());
 
+    }
+
+    public void setChangeState(Runnable changeState) {
+        this.changeState = changeState;
+    }
+    public void changeSimulationState(){
+        changeState.run();
     }
 
     @Override

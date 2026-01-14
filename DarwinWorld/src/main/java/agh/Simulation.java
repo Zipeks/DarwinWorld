@@ -121,7 +121,7 @@ public class Simulation implements Runnable {
         stats.setAvgEnergyLevel(aliveAnimalsCount == 0 ? 0 : totalAliveAnimalsEnergy / aliveAnimalsCount);
         stats.setMostPopularGenotype(mostPopularGenotype);
         stats.setGrassesCount(worldMap.getGrassCount());
-        stats.setEmptyFields(0); // wolne pole, czyli takie gdzie nie ma zwierząt, trawy, obu ????
+        stats.setEmptyFields(worldMap.getEmptyCellsCount());
         stats.increaseCurrentDate();
         notifyObservers();
     }

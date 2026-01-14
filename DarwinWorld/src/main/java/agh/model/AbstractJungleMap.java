@@ -120,6 +120,15 @@ public abstract class AbstractJungleMap extends AbstractWorldMap {
         list.addAll(super.getElements());
         return list;
     }
+    public int getEmptyCellsCount() {
+        int emptyCells = mapArea - animals.size();
+        for (Vector2d cell: grasses.keySet()) {
+            if (!animals.containsKey(cell)) {
+                emptyCells--;
+            }
+        }
+        return emptyCells;
+    }
 
     @Override
     public Boundary getCurrentBounds() {

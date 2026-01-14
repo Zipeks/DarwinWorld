@@ -1,5 +1,8 @@
 package agh.model;
 
+import agh.model.util.Genotype;
+import agh.model.util.SimulationConfig;
+
 import java.util.*;
 
 public class HabsburgMap extends AbstractJungleMap {
@@ -8,7 +11,11 @@ public class HabsburgMap extends AbstractJungleMap {
     }
 
     @Override
-    public List<Animal> animalReproduction(int energyNeeded, int energyLost, int minMut, int maxMut, int currentDay) {
+    public List<Animal> animalReproduction(SimulationConfig config, int currentDay) {
+        int energyNeeded = config.energyNeededToReproduce();
+        int energyLost = config.energyLostToReproduce();
+        int minMut = config.minimalMutationCount();
+        int maxMut = config.maximalMutationCount();
         List<Animal> children = new ArrayList<>();
         Random PRNG = new Random();
         Comparator<Animal> animalComparator = Comparator.comparingInt(Animal::getEnergy)
@@ -45,9 +52,10 @@ public class HabsburgMap extends AbstractJungleMap {
             children.add(child);
         }
 
-        for (Animal animal: children) {
+        for (Animal animal : children) {
             place(animal);
         }
         return children;
     }
+
 }

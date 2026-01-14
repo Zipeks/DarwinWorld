@@ -1,6 +1,7 @@
 package agh.model;
 
 import agh.model.util.Boundary;
+import agh.model.util.SimulationConfig;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -111,7 +112,7 @@ public abstract class AbstractJungleMap extends AbstractWorldMap {
         }
     }
 
-    public abstract List<Animal> animalReproduction(int energyNeeded, int energyLost, int minMut, int maxMut, int currentDay);
+    public abstract List<Animal> animalReproduction(SimulationConfig config, int currentDay);
 
     @Override
     public List<WorldElement> getElements() {

@@ -39,11 +39,9 @@ public class Simulation implements Runnable {
 
     private void generateAnimals() {
         Random PRNG = new Random();
-        Genotype startingGenotype = new Genotype(config.genotypeLength());
-
         for (int i = 0; i < config.startAnimalCount(); i++) {
             Vector2d position = new Vector2d(PRNG.nextInt(config.mapWidth()), PRNG.nextInt(config.mapHeight()));
-            Animal animal = new Animal(position, new Genotype(startingGenotype), config.startEnergy(), stats.getCurrentDate());
+            Animal animal = new Animal(position, new Genotype(config.genotypeLength()), config.startEnergy(), stats.getCurrentDate());
             this.worldMap.place(animal);
             animals.add(animal);
         }
@@ -78,12 +76,7 @@ public class Simulation implements Runnable {
             worldMap.moveAnimals(config.energyLostDaily());
             worldMap.grassConsumption(config.energyFromEatingGrass());
             animals.addAll(
-                    worldMap.animalReproduction(
-                            config.energyNeededToReproduce(),
-                            config.energyLostToReproduce(),
-                            config.minimalMutationCount(),
-                            config.maximalMutationCount(),
-                            stats.getCurrentDate())
+                    worldMap.animalReproduction(config, stats.getCurrentDate())
             );
             worldMap.placeGrasses(config.newGrassesDaily());
             worldMap.nextDay(stats.getCurrentDate());

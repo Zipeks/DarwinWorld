@@ -98,9 +98,9 @@ public class ConfigurationPresenter {
         SimulationConfig config = getSimulationConfig();
         AbstractJungleMap map;
         if (!config.habsburgsOn()) {
-            map = new ClassicalMap(config.startGrassesCount(), config.mapWidth() , config.mapHeight());
+            map = new ClassicalMap(config.startGrassesCount(), config.mapWidth(), config.mapHeight());
         } else {
-            map = new HabsburgMap(config.startGrassesCount(),config.mapWidth() , config.mapHeight());
+            map = new HabsburgMap(config.startGrassesCount(), config.mapWidth(), config.mapHeight());
         }
         map.addObserver(presenter);
 
@@ -160,10 +160,22 @@ public class ConfigurationPresenter {
         int dailyInc = obj.getInt("dailyInc");
         int day = obj.getInt("day");
         boolean isHabsburg = obj.getBoolean("isHabsburg");
-        SimulationConfig config = new SimulationConfig(mapWidth, mapHeight, isHabsburg,
-                plants, energyFromGrass, dailyInc, animals, energy, energyLossValue,
-                fertility, reproduction, mutationMinValue, mutationMaxValue,
-                genomLength, day);
+        // DO EDYCJI
+        int startingMales = 0;
+        int startingFemales = 0;
+        int inbreedingPenalty = 0;
+        SimulationConfig config;
+        if (!isHabsburg) {
+            config = new SimulationConfig(mapWidth, mapHeight,
+                    plants, energyFromGrass, dailyInc, animals, energy, energyLossValue,
+                    fertility, reproduction, mutationMinValue, mutationMaxValue,
+                    genomLength, day);
+        } else {
+            config = new SimulationConfig(mapWidth, mapHeight,
+                    plants, energyFromGrass, dailyInc, animals, energy, energyLossValue,
+                    fertility, reproduction, mutationMinValue, mutationMaxValue,
+                    genomLength, day, true, startingMales, startingFemales, inbreedingPenalty);
+        }
         IO.println(config);
         return config;
     }
@@ -204,10 +216,22 @@ public class ConfigurationPresenter {
         int dailyInc = Integer.parseInt(dailyIncrease.getText());
         int day = Integer.parseInt(dayLength.getText());
         boolean isHabsburg = habsburg.isSelected();
-        SimulationConfig config = new SimulationConfig(mapWidth, mapHeight, isHabsburg,
-                plants, energyFromGrass, dailyInc, animals, energy, energyLossValue,
-                fertility, reproduction, mutationMinValue, mutationMaxValue,
-                genomLength, day);
+        // DO EDYCJI
+        int startingMales = 0;
+        int startingFemales = 0;
+        int inbreedingPenalty = 0;
+        SimulationConfig config;
+        if (!isHabsburg) {
+            config = new SimulationConfig(mapWidth, mapHeight,
+                    plants, energyFromGrass, dailyInc, animals, energy, energyLossValue,
+                    fertility, reproduction, mutationMinValue, mutationMaxValue,
+                    genomLength, day);
+        } else {
+            config = new SimulationConfig(mapWidth, mapHeight,
+                    plants, energyFromGrass, dailyInc, animals, energy, energyLossValue,
+                    fertility, reproduction, mutationMinValue, mutationMaxValue,
+                    genomLength, day, true, startingMales, startingFemales, inbreedingPenalty);
+        }
         if (mapWidth > 160 || mapHeight > 80 || mapWidth < 5 || mapHeight < 5)
             throw new MapBoundaryException("Map is too big");
         return config;

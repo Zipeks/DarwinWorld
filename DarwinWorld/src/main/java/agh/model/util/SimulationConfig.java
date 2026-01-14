@@ -2,7 +2,6 @@ package agh.model.util;
 
 public record SimulationConfig(int mapWidth,
                                int mapHeight,
-                               boolean habsburgsOn,
                                int startGrassesCount,
                                int energyFromEatingGrass,
                                int newGrassesDaily,
@@ -14,5 +13,38 @@ public record SimulationConfig(int mapWidth,
                                int minimalMutationCount,
                                int maximalMutationCount,
                                int genotypeLength,
-                               int timeBetweenDays) {
+                               int timeBetweenDays,
+                               boolean habsburgsOn,
+                               int startingMales,
+                               int startingFemales,
+                               int inbreedingPenalty) {
+
+    public SimulationConfig(int mapWidth,
+                            int mapHeight,
+                            int startGrassesCount,
+                            int energyFromEatingGrass,
+                            int newGrassesDaily,
+                            int startAnimalCount,
+                            int startEnergy,
+                            int energyLostDaily,
+                            int energyNeededToReproduce,
+                            int energyLostToReproduce,
+                            int minimalMutationCount,
+                            int maximalMutationCount,
+                            int genotypeLength,
+                            int timeBetweenDays) {
+        this(mapWidth, mapHeight, startGrassesCount,
+                energyFromEatingGrass,
+                newGrassesDaily,
+                startAnimalCount,
+                startEnergy,
+                energyLostDaily,
+                energyNeededToReproduce,
+                energyLostToReproduce,
+                minimalMutationCount,
+                maximalMutationCount,
+                genotypeLength,
+                timeBetweenDays,
+                false, 0, 0, 0);
+    }
 }

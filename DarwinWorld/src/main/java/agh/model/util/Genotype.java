@@ -2,6 +2,7 @@ package agh.model.util;
 
 import agh.model.Animal;
 import agh.model.Gene;
+import agh.model.HabsburgAnimal;
 
 import java.util.*;
 
@@ -52,6 +53,7 @@ public class Genotype {
         }
         return childGenes;
     }
+
     public void applyMutations(List<Gene> youngAnimalGenes, int mutationsCnt) {
         int size = youngAnimalGenes.size();
         if (mutationsCnt > size) mutationsCnt = size;
@@ -72,11 +74,24 @@ public class Genotype {
         }
     }
 
+    public static double kinshipLevel(Animal animalOne, Animal animalTwo) {
+        List<Gene> genesOne = animalOne.getGenotype().getGenes();
+        List<Gene> genesTwo = animalTwo.getGenotype().getGenes();
+        int repeatingGenes = 0;
+        for (int i = 0; i < genesOne.size(); i++) {
+            if (genesOne.get(i) == genesTwo.get(i)) {
+                repeatingGenes++;
+            }
+        }
+        return (double) repeatingGenes / genesOne.size();
+    }
+
     public int next() {
         int currentGene = genes.get(activeGeneIdx).numericValue();
         activeGeneIdx = (activeGeneIdx + 1) % genes.size();
         return currentGene;
     }
+
     public List<Gene> getGenes() {
         return new ArrayList<>(genes);
     }
@@ -94,11 +109,11 @@ public class Genotype {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return genes.toString();
     }
 
-    public int getActiveGen(){
+    public int getActiveGen() {
         return activeGeneIdx;
     }
 

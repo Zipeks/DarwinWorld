@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -25,18 +26,20 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 public class SimulationPresenter implements MapChangeListener, StatsListener {
-    private static final int CELL_WIDTH = 65;
-    private static final int CELL_HEIGHT = 65;
+    private static final double MAX_WIDTH = 1280;
+    private static final double MAX_HEIGHT = 640;
     private static final int BORDER_WIDTH = 2;
     private static final int BORDER_OFFSET = BORDER_WIDTH / 2;
+
     private String fontPath;
     private Font notoEmojiFont;
+
     private int numCols;
     private int numRows;
     private double canvasWidth;
     private double canvasHeight;
+    private double cellSize;
 
-    private double cellSize = 10;
     private AbstractJungleMap map;
     private SimulationConfig config;
 
@@ -72,7 +75,11 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         this.map = map;
         initializeView();
     }
-
+    // Idk czy to działa, u mnie się może sypać przez WM które stosuję xD
+    @FXML
+    public void initialize() {
+        animalsCount.setTooltip(new Tooltip("Alive animals"));
+    }
     private void initializeView() {
         if (map == null) return;
 
@@ -81,8 +88,8 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         numCols = bounds.topRight().getX() - bounds.bottomLeft().getX() + 1;
         numRows = bounds.topRight().getY() - bounds.bottomLeft().getY() + 1;
 
-        double colSize = (double) 1280 / numCols;
-        double rowSize = (double) 640 / numRows;
+        double colSize =  MAX_WIDTH / numCols;
+        double rowSize =  MAX_HEIGHT / numRows;
 
         cellSize = Math.max(8, Math.min(colSize, rowSize));
 
@@ -112,7 +119,6 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         graphics.fillRect(0, (bounds.topRight().getY() - jungleBounds.topRight().getY()) * cellSize, mapCanvas.getWidth(), (jungleBounds.topRight().getY() - jungleBounds.bottomLeft().getY() + 1) * cellSize);
 
 
-
         double halfCell = (cellSize / 2);
         configureFont(graphics, this.notoEmojiFont, Color.BLACK);
         Set<Vector2d> animalsPosition = new HashSet<>();
@@ -129,18 +135,13 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
                 graphics.save();
                 graphics.translate(xOnCanvas, yOnCanvas);
                 MapDirection mapDirection = ((Animal) element).getDirection();
-//                int rotation = mapDirection.ordinal() * 45;
-
-//                graphics.rotate(rotation);
-//                graphics.setFont(new Font(cellSize-2));
-//                configureFont(graphics, this.NotoEmojiFont, Color.BROWN);
                 if (animalsPosition.contains(element.getPosition())) {
                     boolean isJungle = position.follows(jungleBounds.bottomLeft()) && position.precedes(jungleBounds.topRight());
 
                     graphics.setFill(isJungle ? Color.DARKGREEN : Color.SADDLEBROWN);
                     graphics.fillRect(-halfCell, -halfCell, cellSize, cellSize);
 
-                    graphics.rect(0,0,cellSize,cellSize);
+                    graphics.rect(0, 0, cellSize, cellSize);
                     graphics.setFill(Color.RED);
                     graphics.fillText("\uD83D\uDC9E", 0, 0);
                 } else {
@@ -148,16 +149,10 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
                     graphics.fillText("\uD83D\uDC3B", 0, 0);
                     animalsPosition.add(element.getPosition());
                 }
-//                graphics.setFill(getAnimalColor(((Animal) element).getEnergy(),config.energyLostDaily()));
-//                graphics.fillText("\uD83D\uDC3B", 0, 0);
-//                graphics.fillText("@", 0, 0);
                 graphics.restore();
             } else {
-//                configureFont(graphics, this.NotoEmojiFont, Color.ORANGE);
-//                graphics.fillText("🍯", xOnCanvas, yOnCanvas);
                 graphics.setFill(Color.YELLOWGREEN);
                 graphics.fillText("\uD83C\uDF33", xOnCanvas, yOnCanvas);
-//                graphics.fillText("#", xOnCanvas, yOnCanvas);
             }
         });
 //         Pionowe kreski

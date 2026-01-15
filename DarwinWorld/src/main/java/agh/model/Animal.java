@@ -4,9 +4,10 @@ import agh.model.util.AnimalStats;
 import agh.model.util.Genotype;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Animal implements WorldElement {
-    protected final List<AnimalListener> observers = new ArrayList<>();
+    protected final List<AnimalListener> observers = new CopyOnWriteArrayList<>();
     private final UUID id = UUID.randomUUID();
     private final Genotype genotype;
     private final List<Animal> children = new ArrayList<>();

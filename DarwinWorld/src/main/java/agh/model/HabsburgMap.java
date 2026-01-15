@@ -11,7 +11,7 @@ public class HabsburgMap extends AbstractJungleMap {
     }
 
     @Override
-    public List<Animal> animalReproduction(SimulationConfig config, int currentDay) {
+    public synchronized List<Animal> animalReproduction(SimulationConfig config, int currentDay) {
         int energyNeeded = config.energyNeededToReproduce();
         int energyLost = config.energyLostToReproduce();
         int minMut = config.minimalMutationCount();

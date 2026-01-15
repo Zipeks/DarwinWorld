@@ -3,10 +3,11 @@ package agh.model;
 import agh.model.util.Boundary;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 abstract class AbstractWorldMap implements agh.model.WorldMap {
-    protected final List<MapChangeListener> observers = new ArrayList<>();
+    protected final List<MapChangeListener> observers = new CopyOnWriteArrayList<>();
     protected final Map<Vector2d, List<Animal>> animals = new HashMap<>() {
     };
     protected final UUID uuid = UUID.randomUUID();
@@ -34,7 +35,7 @@ abstract class AbstractWorldMap implements agh.model.WorldMap {
     }
 
     @Override
-    public void place(Animal animal) {
+    public synchronized void place(Animal animal) {
         animals.computeIfAbsent(animal.getPosition(), k -> new ArrayList<>()).add(animal);
         notifyObservers("Animal has been placed at: " + animal.getPosition());
     }

@@ -7,14 +7,15 @@ import agh.model.util.SimulationStats;
 import agh.model.StatsListener;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Simulation implements Runnable {
-    protected final List<StatsListener> observers = new ArrayList<>();
+    protected final List<StatsListener> observers = new CopyOnWriteArrayList<>();
     private final List<Animal> animals;
     private final AbstractJungleMap worldMap;
     private final SimulationConfig config;
     private final SimulationStats stats = new SimulationStats();
-    private boolean isRunning = true;
+    private volatile boolean isRunning = true;
 
     public Simulation(SimulationConfig config, AbstractJungleMap jungleMap) {
         this.config = config;
@@ -48,18 +49,18 @@ public class Simulation implements Runnable {
         }
     }
 
-    public void changeState(){
-        isRunning=!isRunning;
-        if(isRunning) run();
-    }
-    public boolean getIsRunning(){
+    public boolean isRunning() {
         return isRunning;
     }
 
-
-    public void stop() {
+    public void pause() {
         isRunning = false;
     }
+
+    public void resume() {
+        isRunning = true;
+    }
+
 //    public void start() {
 //        isRunning = true;
 //        run();
@@ -77,11 +78,6 @@ public class Simulation implements Runnable {
     @Override
     public synchronized void run() {
         while (isRunning) {
-            try {
-                Thread.sleep(config.timeBetweenDays());
-            } catch (InterruptedException e) {
-                IO.println(e.getMessage());
-            }
             worldMap.removeDeadAnimals();
             worldMap.moveAnimals(config.energyLostDaily());
             worldMap.grassConsumption(config.energyFromEatingGrass());
@@ -91,6 +87,12 @@ public class Simulation implements Runnable {
             worldMap.placeGrasses(config.newGrassesDaily());
             worldMap.nextDay(stats.getCurrentDate());
             updateStats();
+            try {
+                Thread.sleep(config.timeBetweenDays());
+            } catch (InterruptedException e) {
+                IO.println(e.getMessage());
+                break;
+            }
         }
     }
 

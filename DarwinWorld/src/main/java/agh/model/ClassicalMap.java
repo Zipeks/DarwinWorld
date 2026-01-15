@@ -14,7 +14,7 @@ public class ClassicalMap extends AbstractJungleMap {
 
 
     @Override
-    public List<Animal> animalReproduction(SimulationConfig config, int date) {
+    public synchronized List<Animal> animalReproduction(SimulationConfig config, int date) {
         int energyNeededToReproduce = config.energyNeededToReproduce();
         int energyLostToReproduction = config.energyLostToReproduce();
         int minMutations = config.minimalMutationCount();

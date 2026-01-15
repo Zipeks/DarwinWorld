@@ -79,7 +79,7 @@ public class ConfigurationPresenter {
             stage.setScene(new Scene(viewRoot));
 
             stage.setOnCloseRequest(event -> {
-                simulation.stop();
+                simulation.pause();
             });
             stage.show();
 
@@ -114,6 +114,15 @@ public class ConfigurationPresenter {
         presenter.setConfig(config);
 
         Simulation simulation = new Simulation(config, map);
+        presenter.setChangeState(() -> {
+            if (simulation.isRunning()) {
+                simulation.pause();
+            } else {
+                simulation.resume();
+                executorService.execute(simulation);
+            }
+        });
+
         presenter.setSimulation(simulation);
         simulation.addObserver(presenter);
         return simulation;

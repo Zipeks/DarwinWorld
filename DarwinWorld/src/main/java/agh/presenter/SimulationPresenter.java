@@ -45,11 +45,13 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
     private double canvasHeight;
     private double cellSize;
 
+
     private AbstractJungleMap map;
     private SimulationConfig config;
 
     private Simulation simulation;
-
+    private Runnable changeState;
+    
     @FXML
     private Canvas mapCanvas;
     @FXML
@@ -85,7 +87,6 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
     private HBox avgAgeBox;
     @FXML
     private HBox genotypeBox;
-
 
     public SimulationPresenter() {
         try {
@@ -284,16 +285,17 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
     public void setSimulation(Simulation simulation) {
         this.simulation = simulation;
     }
-    public void changeSimulationState(){
-        simulation.changeState();
-        if(simulation.getIsRunning()){
-            controlSimulation.setText("STOP");
-        }
-        else{
-            controlSimulation.setText("START");
-        }
+
+    public void setChangeState(Runnable changeState) {
+        this.changeState = changeState;
     }
 
+    @FXML
+    public void onPauseResumeClicked() {
+        if (changeState != null) {
+            changeState.run();
+        }
+    }
     @Override
     public void statsChanged(SimulationStats stats) {
         Platform.runLater(() -> updateStats(stats));

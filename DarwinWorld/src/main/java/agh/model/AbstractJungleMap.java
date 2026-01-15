@@ -24,7 +24,7 @@ public abstract class AbstractJungleMap extends AbstractWorldMap {
 
         placeGrasses(grassCount);
     }
-    public void removeDeadAnimals() {
+    public synchronized void removeDeadAnimals() {
         Iterator<Map.Entry<Vector2d, List<Animal>>> iterator = animals.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<Vector2d, List<Animal>> entry = iterator.next();
@@ -38,7 +38,7 @@ public abstract class AbstractJungleMap extends AbstractWorldMap {
         }
     }
 
-    public void placeGrasses(int grassesToPlace) {
+    public synchronized void placeGrasses(int grassesToPlace) {
         Random rand = new Random();
         int i = 0;
         int mapWidth = boundary.topRight().getX() + 1;
@@ -67,7 +67,7 @@ public abstract class AbstractJungleMap extends AbstractWorldMap {
             }
         }
     }
-    public void moveAnimals(int moveCost) {
+    public synchronized void moveAnimals(int moveCost) {
         List<Animal> allAnimals = animals.values().stream()
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
@@ -94,7 +94,7 @@ public abstract class AbstractJungleMap extends AbstractWorldMap {
         return new Vector2d(x, y);
     }
 
-    public void grassConsumption(int energyGained) {
+    public synchronized void grassConsumption(int energyGained) {
         for (List<Animal> animalsList : animals.values()) {
             if (animalsList.isEmpty()) return;
             Vector2d position = animalsList.getFirst().getPosition();
@@ -115,7 +115,7 @@ public abstract class AbstractJungleMap extends AbstractWorldMap {
     public abstract List<Animal> animalReproduction(SimulationConfig config, int currentDay);
 
     @Override
-    public List<WorldElement> getElements() {
+    public synchronized List<WorldElement> getElements() {
         List<WorldElement> list = new ArrayList<>(grasses.values());
         list.addAll(super.getElements());
         return list;

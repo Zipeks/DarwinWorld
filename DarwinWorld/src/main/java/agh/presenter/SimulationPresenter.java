@@ -4,7 +4,6 @@ import agh.Simulation;
 import agh.model.*;
 import agh.model.MapChangeListener;
 import agh.model.util.Boundary;
-import agh.model.util.Genotype;
 import agh.model.util.SimulationConfig;
 import agh.model.util.SimulationStats;
 import javafx.application.Platform;
@@ -51,7 +50,7 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
 
     private Simulation simulation;
     private Runnable changeState;
-    
+
     @FXML
     private Canvas mapCanvas;
     @FXML
@@ -271,14 +270,14 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
 
 
     public void updateStats(SimulationStats stats) {
-        emptyFields.setText(String.valueOf(stats.getEmptyFields()));
-        grassCount.setText(String.valueOf(stats.getGrassesCount()));
-        avgEnergy.setText(String.valueOf(stats.getAvgEnergyLevel()));
-        avgAge.setText(String.valueOf(stats.getAvgLifeTime()));
-        avgChildCount.setText(String.valueOf(stats.getAvgChildCount()));
-        genotype.setText(stats.getMostPopularGenotype() != null ? String.valueOf(stats.getMostPopularGenotype()) : "-");
-        animalsCount.setText(String.valueOf(stats.getAnimalsCount()));
-        day.setText("Dzień " + stats.getCurrentDate());
+        emptyFields.setText(String.valueOf(stats.emptyFields()));
+        grassCount.setText(String.valueOf(stats.grassesCount()));
+        avgEnergy.setText(String.valueOf(stats.avgEnergyLevel()));
+        avgAge.setText(String.valueOf(stats.avgLifeTime()));
+        avgChildCount.setText(String.valueOf(stats.avgChildCount()));
+        genotype.setText(stats.mostPopularGenotype() != null ? String.valueOf(stats.mostPopularGenotype()) : "-");
+        animalsCount.setText(String.valueOf(stats.animalsCount()));
+        day.setText("Dzień " + stats.currentDate());
 
     }
 

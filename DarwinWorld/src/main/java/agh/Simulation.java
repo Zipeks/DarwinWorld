@@ -14,13 +14,14 @@ public class Simulation implements Runnable {
     private final List<Animal> animals;
     private final AbstractJungleMap worldMap;
     private final SimulationConfig config;
-    private final SimulationStats stats = new SimulationStats();
+    private SimulationStats stats;
     private volatile boolean isRunning = true;
 
     public Simulation(SimulationConfig config, AbstractJungleMap jungleMap) {
         this.config = config;
         this.animals = new ArrayList<>();
         this.worldMap = jungleMap;
+        stats = new SimulationStats(0, 0, 0, 0, 0, 0, 0, new Genotype(config.genotypeLength()));
         generateAnimals();
     }
 
@@ -32,20 +33,40 @@ public class Simulation implements Runnable {
         observers.remove(statsListener);
     }
 
-    public void notifyObservers() {
+    public void notifyObservers(SimulationStats dailyStats) {
         for (StatsListener observer : observers) {
             IO.println(observer);
-            observer.statsChanged(stats);
+            observer.statsChanged(dailyStats);
         }
     }
 
     private void generateAnimals() {
         Random PRNG = new Random();
-        for (int i = 0; i < config.startAnimalCount(); i++) {
-            Vector2d position = new Vector2d(PRNG.nextInt(config.mapWidth()), PRNG.nextInt(config.mapHeight()));
-            Animal animal = new Animal(position, new Genotype(config.genotypeLength()), config.startEnergy(), stats.getCurrentDate());
-            this.worldMap.place(animal);
-            animals.add(animal);
+        if (!config.habsburgsOn()) {
+            for (int i = 0; i < config.startAnimalCount(); i++) {
+                Vector2d position = new Vector2d(PRNG.nextInt(config.mapWidth()), PRNG.nextInt(config.mapHeight()));
+                Animal animal = new Animal(position, new Genotype(config.genotypeLength()), config.startEnergy(), stats.currentDate());
+                this.worldMap.place(animal);
+                animals.add(animal);
+            }
+        } else {
+            for (int j = 0; j < 2; j++) {
+                AnimalSex sex;
+                int toGen;
+                if (j == 0) {
+                    sex = AnimalSex.MALE;
+                    toGen = config.startingMales();
+                } else {
+                    sex = AnimalSex.FEMALE;
+                    toGen = config.startingFemales();
+                }
+                for (int i = 0; i < toGen; i++) {
+                    Vector2d position = new Vector2d(PRNG.nextInt(config.mapWidth()), PRNG.nextInt(config.mapHeight()));
+                    HabsburgAnimal animal = new HabsburgAnimal(position, new Genotype(config.genotypeLength()), config.startEnergy(), stats.currentDate(), sex);
+                    this.worldMap.place(animal);
+                    animals.add(animal);
+                }
+            }
         }
     }
 
@@ -61,11 +82,6 @@ public class Simulation implements Runnable {
         isRunning = true;
     }
 
-//    public void start() {
-//        isRunning = true;
-//        run();
-//    }
-
     public List<Animal> getAnimals() {
         return animals;
     }
@@ -74,7 +90,6 @@ public class Simulation implements Runnable {
         return stats;
     }
 
-    // Nie jestem pewny czy synchronized jest potrzebne, ale przy zmianie stanu wydaje mi się, że mogłoby się wysypać
     @Override
     public synchronized void run() {
         while (isRunning) {
@@ -82,10 +97,10 @@ public class Simulation implements Runnable {
             worldMap.moveAnimals(config.energyLostDaily());
             worldMap.grassConsumption(config.energyFromEatingGrass());
             animals.addAll(
-                    worldMap.animalReproduction(config, stats.getCurrentDate())
+                    worldMap.animalReproduction(config, stats.currentDate())
             );
             worldMap.placeGrasses(config.newGrassesDaily());
-            worldMap.nextDay(stats.getCurrentDate());
+            worldMap.nextDay(stats.currentDate());
             updateStats();
             try {
                 Thread.sleep(config.timeBetweenDays());
@@ -106,9 +121,10 @@ public class Simulation implements Runnable {
         Genotype mostPopularGenotype = null;
         int mostPopularGenotypeCount = 0;
         int totalAliveAnimalsChildrenCount = 0;
-
+        int avgChildCount;
+        int avgLifeTime = 0;
         for (Animal animal : animals) {
-            if(animal.isAlive() && animal.getEnergy()<=0) animal.die(stats.getCurrentDate());
+            if (animal.isAlive() && animal.getEnergy() <= 0) animal.die(stats.currentDate());
             if (animal.isAlive()) {
                 aliveAnimalsCount++;
                 totalAliveAnimalsEnergy += animal.getEnergy();
@@ -125,17 +141,20 @@ public class Simulation implements Runnable {
                 totalDeadAnimalsLifeLength += animal.getAge();
             }
         }
-            stats.setAvgChildCount(aliveAnimalsCount == 0 ? 0 : totalAliveAnimalsChildrenCount / aliveAnimalsCount);
+        avgChildCount = (aliveAnimalsCount == 0 ? 0 : totalAliveAnimalsChildrenCount / aliveAnimalsCount);
         if (deadAnimalsCount > 0) {
-            stats.setAvgLifeTime(totalDeadAnimalsLifeLength / deadAnimalsCount);
+            avgLifeTime = (totalDeadAnimalsLifeLength / deadAnimalsCount);
         }
-        stats.setAnimalsCount(aliveAnimalsCount);
-        stats.setAvgEnergyLevel(aliveAnimalsCount == 0 ? 0 : totalAliveAnimalsEnergy / aliveAnimalsCount);
-        stats.setMostPopularGenotype(mostPopularGenotype);
-        stats.setGrassesCount(worldMap.getGrassCount());
-        stats.setEmptyFields(worldMap.getEmptyCellsCount());
-        stats.increaseCurrentDate();
-        IO.println("POWIADAMIAM");
-        notifyObservers();
+        stats = new SimulationStats(
+                aliveAnimalsCount,
+                worldMap.getGrassCount(),
+                worldMap.getEmptyCellsCount(),
+                aliveAnimalsCount == 0 ? 0 : totalAliveAnimalsEnergy / aliveAnimalsCount,
+                avgLifeTime,
+                avgChildCount,
+                stats.currentDate() + 1,
+                mostPopularGenotype
+        );
+        notifyObservers(stats);
     }
 }

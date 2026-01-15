@@ -114,7 +114,7 @@ public class ConfigurationPresenter {
         presenter.setConfig(config);
 
         Simulation simulation = new Simulation(config, map);
-        presenter.setChangeState(() -> simulation.changeState());
+        presenter.setSimulation(simulation);
         simulation.addObserver(presenter);
         return simulation;
     }
@@ -141,6 +141,7 @@ public class ConfigurationPresenter {
                 JsonObject obj = reader.readObject();
                 SimulationConfig parsedConfig = parseConfig(obj);
                 setConfig(parsedConfig);
+                changeHabsburgOptions();
             } catch (Exception e) {
                 e.printStackTrace();
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -315,6 +316,13 @@ public class ConfigurationPresenter {
                 .add("inbreedingPenalty",config.inbreedingPenalty())
                 .build();
         return obj;
+    }
+
+    public void changeHabsburgOptions(){
+        boolean isSelected=habsburg.isSelected();
+        males.setDisable(!isSelected);
+        females.setDisable(!isSelected);
+        inbreedingPenaltyField.setDisable(!isSelected);
     }
 
     public void closeApp() {

@@ -13,5 +13,8 @@
   "plants":1,
   "dailyInc":4,
   "day":2000,
-  "isHabsburg":true
+  "isHabsburg":false,
+  "startingMales": 5,
+  "startingFemales": 5,
+  "inbreedingPenalty": 5
 }

@@ -4,6 +4,7 @@ import agh.Simulation;
 import agh.model.*;
 import agh.model.MapChangeListener;
 import agh.model.util.Boundary;
+import agh.model.util.Genotype;
 import agh.model.util.SimulationConfig;
 import agh.model.util.SimulationStats;
 import javafx.application.Platform;
@@ -16,6 +17,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -26,6 +28,7 @@ import java.util.*;
 
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class SimulationPresenter implements MapChangeListener, StatsListener {
     private static final double MAX_WIDTH = 1280;
@@ -45,7 +48,7 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
     private AbstractJungleMap map;
     private SimulationConfig config;
 
-    private Runnable changeState;
+    private Simulation simulation;
 
     @FXML
     private Canvas mapCanvas;
@@ -65,8 +68,23 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
     private Label avgChildCount;
     @FXML
     private Label day;
-//    @FXML
-//    private Button changeState;
+    @FXML
+    private Button controlSimulation;
+
+    @FXML
+    private HBox animalsCountBox;
+    @FXML
+    private HBox grassCountBox;
+    @FXML
+    private HBox emptyFieldsBox;
+    @FXML
+    private HBox avgEnergyBox;
+    @FXML
+    private HBox avgChildCountBox;
+    @FXML
+    private HBox avgAgeBox;
+    @FXML
+    private HBox genotypeBox;
 
 
     public SimulationPresenter() {
@@ -84,7 +102,35 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
     // Idk czy to działa, u mnie się może sypać przez WM które stosuję xD
     @FXML
     public void initialize() {
-        animalsCount.setTooltip(new Tooltip("Alive animals"));
+        //Przeniose to potem do osobnej
+
+        Tooltip animalTooltip=new Tooltip("Animals count");
+        animalTooltip.setShowDelay(Duration.millis(100));
+        Tooltip.install(animalsCountBox,animalTooltip);
+
+        Tooltip grassTooltip=new Tooltip("Grass count");
+        grassTooltip.setShowDelay(Duration.millis(100));
+        Tooltip.install(grassCountBox,grassTooltip);
+
+        Tooltip emptyTooltip=new Tooltip("Empty fields");
+        emptyTooltip.setShowDelay(Duration.millis(100));
+        Tooltip.install(emptyFieldsBox,emptyTooltip);
+
+        Tooltip avgEnergyTooltip=new Tooltip("Average energy");
+        avgEnergyTooltip.setShowDelay(Duration.millis(100));
+        Tooltip.install(avgEnergyBox,avgEnergyTooltip);
+
+        Tooltip childCountTooltip=new Tooltip("Average child count");
+        childCountTooltip.setShowDelay(Duration.millis(100));
+        Tooltip.install(avgChildCountBox,childCountTooltip);
+
+        Tooltip avgAgeTooltip=new Tooltip("Average age");
+        avgAgeTooltip.setShowDelay(Duration.millis(100));
+        Tooltip.install(avgAgeBox,avgAgeTooltip);
+
+        Tooltip genoTypeTooltip=new Tooltip("Most popular genotype");
+        genoTypeTooltip.setShowDelay(Duration.millis(100));
+        Tooltip.install(genotypeBox,genoTypeTooltip);
     }
     private void initializeView() {
         if (map == null) return;
@@ -173,6 +219,9 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         }
     }
 
+//    private Boolean hasTheMostPopularGenotype(Animal animal, Genotype mostPopularGenotype){
+//
+//    }
     private Color getAnimalColor(int animalEnergy, int dailyLoss) {
         int moves = animalEnergy / dailyLoss;
         if (moves <= 0) return Color.BLACK;
@@ -232,11 +281,17 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
 
     }
 
-    public void setChangeState(Runnable changeState) {
-        this.changeState = changeState;
+    public void setSimulation(Simulation simulation) {
+        this.simulation = simulation;
     }
     public void changeSimulationState(){
-        changeState.run();
+        simulation.changeState();
+        if(simulation.getIsRunning()){
+            controlSimulation.setText("STOP");
+        }
+        else{
+            controlSimulation.setText("START");
+        }
     }
 
     @Override

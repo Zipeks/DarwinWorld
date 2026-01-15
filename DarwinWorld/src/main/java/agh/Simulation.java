@@ -33,6 +33,7 @@ public class Simulation implements Runnable {
 
     public void notifyObservers() {
         for (StatsListener observer : observers) {
+            IO.println(observer);
             observer.statsChanged(stats);
         }
     }
@@ -51,6 +52,10 @@ public class Simulation implements Runnable {
         isRunning=!isRunning;
         if(isRunning) run();
     }
+    public boolean getIsRunning(){
+        return isRunning;
+    }
+
 
     public void stop() {
         isRunning = false;
@@ -128,6 +133,7 @@ public class Simulation implements Runnable {
         stats.setGrassesCount(worldMap.getGrassCount());
         stats.setEmptyFields(worldMap.getEmptyCellsCount());
         stats.increaseCurrentDate();
+        IO.println("POWIADAMIAM");
         notifyObservers();
     }
 }

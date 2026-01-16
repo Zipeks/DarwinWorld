@@ -21,7 +21,7 @@ public class Simulation implements Runnable {
         this.config = config;
         this.animals = new ArrayList<>();
         this.worldMap = jungleMap;
-        stats = new SimulationStats(0, 0, 0, 0, 0, 0, 0, new Genotype(config.genotypeLength()));
+        stats = new SimulationStats(config.startAnimalCount(), 0, 0, 0, 0, 0, 0, new Genotype(config.genotypeLength()));
         generateAnimals();
     }
 
@@ -93,6 +93,10 @@ public class Simulation implements Runnable {
     @Override
     public synchronized void run() {
         while (isRunning) {
+            if (stats.animalsCount() == 0) {
+                pause();
+                break;
+            }
             worldMap.removeDeadAnimals();
             worldMap.moveAnimals(config.energyLostDaily());
             worldMap.grassConsumption(config.energyFromEatingGrass());

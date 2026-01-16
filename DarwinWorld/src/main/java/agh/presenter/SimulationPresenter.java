@@ -188,15 +188,16 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
                 graphics.save();
                 graphics.translate(xOnCanvas, yOnCanvas);
                 MapDirection mapDirection = ((Animal) element).getDirection();
+                boolean isJungle = position.follows(jungleBounds.bottomLeft()) && position.precedes(jungleBounds.topRight());
+                graphics.setFill(isJungle ? Color.DARKGREEN : Color.SADDLEBROWN);
+                graphics.fillRect(-halfCell, -halfCell, cellSize, cellSize);
                 if (animalsPosition.contains(element.getPosition())) {
-                    boolean isJungle = position.follows(jungleBounds.bottomLeft()) && position.precedes(jungleBounds.topRight());
-
-                    graphics.setFill(isJungle ? Color.DARKGREEN : Color.SADDLEBROWN);
-                    graphics.fillRect(-halfCell, -halfCell, cellSize, cellSize);
 
                     graphics.rect(0, 0, cellSize, cellSize);
                     graphics.setFill(Color.RED);
-                    graphics.fillText("\uD83D\uDC9E", 0, 0);
+//                    graphics.fillText("\uD83D\uDC9E", 0, 0);
+//                    graphics.fillText("✴︎", 0, 0);
+                    graphics.fillText("\uD83D\uDC3E", 0, 0);
                 } else {
                     graphics.setFill(getAnimalColor(((Animal) element), config.energyLostDaily()));
                     graphics.fillText("\uD83D\uDC3B", 0, 0);

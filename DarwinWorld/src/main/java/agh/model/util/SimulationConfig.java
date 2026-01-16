@@ -83,7 +83,7 @@ public record SimulationConfig(int mapWidth,
             throw new InvalidConfigException("Minimalna długość genotypu wynosi 1");
         if(this.maximalMutationCount()>this.genotypeLength())
             throw new InvalidConfigException("Maksymalna liczba mutacji nie może być większa od długości genotypu");
-        if(this.timeBetweenDays()<=100)
+        if(this.timeBetweenDays()<100)
             throw new InvalidConfigException("Minimalny czas trwania dnia to 100ms");
         if(this.habsburgsOn() && this.startingMales()<0)
             throw new InvalidConfigException("Minimalna ilość samców nie może być ujemna");

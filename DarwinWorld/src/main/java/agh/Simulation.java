@@ -115,15 +115,13 @@ public class Simulation implements Runnable {
         }
     }
 
-    private void updateStats() {
-        // Nie jestem pewny czy "Liczba wszystkich zwierząt" uwzględnia martwe, tak samo najpopularniejszy genotyp
+    private synchronized void updateStats() {
         int aliveAnimalsCount = 0;
         int deadAnimalsCount = 0;
         int totalDeadAnimalsLifeLength = 0;
         int totalAliveAnimalsEnergy = 0;
-        HashMap<Genotype, Integer> genotypes = new HashMap<>();
         Genotype mostPopularGenotype = null;
-        int mostPopularGenotypeCount = 0;
+        int maxDescendants = 0;
         int totalAliveAnimalsChildrenCount = 0;
         int avgChildCount;
         int avgLifeTime = 0;
@@ -132,10 +130,9 @@ public class Simulation implements Runnable {
             if (animal.isAlive()) {
                 aliveAnimalsCount++;
                 totalAliveAnimalsEnergy += animal.getEnergy();
-                genotypes.computeIfAbsent(animal.getGenotype(), k -> 1);
-                int currentGenotypeCount = genotypes.get(animal.getGenotype());
-                if (mostPopularGenotypeCount < currentGenotypeCount) {
-                    mostPopularGenotypeCount = currentGenotypeCount;
+                int descendants = animal.getDescendantCount();
+                if (maxDescendants < descendants) {
+                    maxDescendants = descendants;
                     mostPopularGenotype = animal.getGenotype();
                 }
                 totalAliveAnimalsChildrenCount += animal.getChildrenCount();

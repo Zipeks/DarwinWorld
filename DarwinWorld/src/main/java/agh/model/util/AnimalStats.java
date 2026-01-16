@@ -9,6 +9,7 @@ public class AnimalStats {
     private int age;
     private int energy = 0;
     private int childrenCount = 0;
+    private int descendantsCount = 0;
 
     public AnimalStats(int birthDate) {
         this.birthDate = birthDate;
@@ -25,6 +26,7 @@ public class AnimalStats {
     public int getAge() {
         return age;
     }
+
     public void increaseAge() {
         age++;
     }
@@ -55,5 +57,12 @@ public class AnimalStats {
 
     public void increaseChildrenCount() {
         childrenCount++;
+    }
+
+    public void increaseDescendantsCount() {
+        descendantsCount++;
+    }
+    public int getDescendantsCount() {
+        return descendantsCount;
     }
 }

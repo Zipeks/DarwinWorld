@@ -12,11 +12,15 @@ public class Animal implements WorldElement {
     private final Genotype genotype;
     private final List<Animal> children = new ArrayList<>();
     private final AnimalStats animalStats;
+    private ArrayList<Animal> parents = new ArrayList<>();
     private MapDirection direction;
     private Vector2d position;
 
     public Animal(Vector2d position, Animal parentOne, Animal parentTwo, int mutationsCnt, int startEnergy, int birthDate) {
         this(position, new Genotype(parentOne, parentTwo, mutationsCnt), startEnergy, birthDate);
+        parents.add(parentOne);
+        parents.add(parentTwo);
+        notifyAncestors(new HashSet<>());
     }
 
     public Animal(Vector2d position, Genotype genotype, int energy, int birthDate) {
@@ -29,7 +33,7 @@ public class Animal implements WorldElement {
 
     public void addObserver(AnimalListener animalListener) {
         observers.add(animalListener);
-        animalListener.animalChanged(animalStats,genotype,getDescendantCount(),position);
+        animalListener.animalChanged(animalStats, genotype, getDescendantCount(), position);
     }
 
     public void removeObserver(AnimalListener animalListener) {
@@ -38,8 +42,24 @@ public class Animal implements WorldElement {
 
     public void notifyObservers() {
         for (AnimalListener observer : observers) {
-            observer.animalChanged(animalStats,genotype,getDescendantCount(),position);
+            observer.animalChanged(animalStats, genotype, getDescendantCount(), position);
         }
+    }
+
+    public void notifyAncestors(HashSet<Animal> ancestors) {
+        if (parents.size() == 2) {
+            for (Animal parent : parents) {
+                if (!ancestors.contains(parent)) {
+                    ancestors.add(parent);
+                    parent.increaseAncestorsCount(ancestors);
+                }
+            }
+        }
+    }
+
+    public void increaseAncestorsCount(HashSet<Animal> ancestors) {
+        animalStats.increaseDescendantsCount();
+        notifyAncestors(ancestors);
     }
 
     public boolean isAt(Vector2d otherPosition) {
@@ -72,19 +92,8 @@ public class Animal implements WorldElement {
         notifyObservers();
     }
 
-
     public int getDescendantCount() {
-        HashSet<Animal> uniqueDescendants = new HashSet<>();
-        DFS_UniqueDescendants(this, uniqueDescendants);
-        return uniqueDescendants.size();
-    }
-
-    private void DFS_UniqueDescendants(Animal animal, HashSet<Animal> unique) {
-        for (Animal child : animal.getChildren()) {
-            if (unique.add(child)) {
-                DFS_UniqueDescendants(child, unique);
-            }
-        }
+        return animalStats.getDescendantsCount();
     }
 
     @Override
@@ -131,15 +140,17 @@ public class Animal implements WorldElement {
         int endDate = animalStats.getDeathDate().orElse(currentDate);
         return endDate - animalStats.getBirthDate();
     }
+
     public int getAge() {
         return animalStats.getAge();
     }
+
     public void increaseAge() {
         animalStats.increaseAge();
         notifyObservers();
     }
 
-    public void die(int day){
+    public void die(int day) {
         animalStats.setDeathDate(day);
         notifyObservers();
     }

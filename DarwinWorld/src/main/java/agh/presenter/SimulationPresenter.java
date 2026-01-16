@@ -100,7 +100,6 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         this.map = map;
         initializeView();
     }
-    // Idk czy to działa, u mnie się może sypać przez WM które stosuję xD
     @FXML
     public void initialize() {
         //Przeniose to potem do osobnej
@@ -129,7 +128,7 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         avgAgeTooltip.setShowDelay(Duration.millis(100));
         Tooltip.install(avgAgeBox,avgAgeTooltip);
 
-        Tooltip genoTypeTooltip=new Tooltip("Most popular genotype");
+        Tooltip genoTypeTooltip=new Tooltip("Genotype of alive animal with most descendants");
         genoTypeTooltip.setShowDelay(Duration.millis(100));
         Tooltip.install(genotypeBox,genoTypeTooltip);
     }

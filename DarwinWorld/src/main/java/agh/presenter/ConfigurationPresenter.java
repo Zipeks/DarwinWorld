@@ -2,7 +2,8 @@ package agh.presenter;
 
 import agh.Simulation;
 import agh.model.*;
-import agh.model.util.MapBoundaryException;
+import agh.model.InvalidConfigException;
+import agh.model.util.ConfigParser;
 import agh.model.util.SimulationConfig;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -84,24 +85,27 @@ public class ConfigurationPresenter {
             stage.show();
 
             executorService.execute(simulation);
-        } catch (IOException e) {
+        }
+        catch(InvalidConfigException e){
+            showAlert(new Alert(Alert.AlertType.ERROR),"Nieprawidłowa konfiguracja",e.getMessage());
+        }
+        catch (NumberFormatException e) {
+            showAlert(new Alert(Alert.AlertType.ERROR),"Nieprawidłowa konfiguracja","Wartości muszą być liczbami");
+        }
+        catch (IOException e) {
             e.printStackTrace();
-        } catch (NumberFormatException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Niepoprawne wartości");
-            alert.setContentText("Podaj poprawne wartości");
-            alert.showAndWait();
-        } catch (MapBoundaryException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Zła mapa");
-            alert.setContentText("Rozmiar mapy od 5x5 do 160x80");
-            alert.showAndWait();
+            showAlert(new Alert(Alert.AlertType.ERROR),"Wystąpił błąd","Coś poszło nie tak");
         }
     }
-
-    private Simulation getSimulation(FXMLLoader loader) {
+    private void showAlert(Alert alert,String title,String msg){
+        alert.setTitle(title);
+        alert.setContentText(msg);
+        alert.showAndWait();
+    }
+    private Simulation getSimulation(FXMLLoader loader) throws InvalidConfigException {
         SimulationPresenter presenter = loader.getController();
         SimulationConfig config = getSimulationConfig();
+        config.validate();
         AbstractJungleMap map;
         if (!config.habsburgsOn()) {
             map = new ClassicalMap(config.startGrassesCount(), config.mapWidth(), config.mapHeight());
@@ -126,74 +130,6 @@ public class ConfigurationPresenter {
         presenter.setSimulation(simulation);
         simulation.addObserver(presenter);
         return simulation;
-    }
-
-    public void onLoadPresetClick() {
-        FileChooser fc = new FileChooser();
-        fc.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("JSON Files", "*.json")
-        );
-        File projectDir = new File(System.getProperty("user.dir"));
-        IO.println(projectDir);
-        if (projectDir.exists() && projectDir.isDirectory()) {
-            File presetDir = new File(projectDir, "src/main/resources/presets");
-            if (presetDir.exists() && presetDir.isDirectory()) {
-                fc.setInitialDirectory(presetDir);
-            } else {
-                fc.setInitialDirectory(projectDir);
-            }
-        }
-        File file = fc.showOpenDialog(loadPreset.getScene().getWindow());
-        if (file != null) {
-            IO.println(file);
-            try (JsonReader reader = Json.createReader(new FileInputStream(file))) {
-                JsonObject obj = reader.readObject();
-                SimulationConfig parsedConfig = parseConfig(obj);
-                setConfig(parsedConfig);
-                changeHabsburgOptions();
-            } catch (Exception e) {
-                e.printStackTrace();
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Błąd odczytu pliku");
-                alert.setContentText("Przykro mi, ale coś posło nie tak przy odczycie");
-                alert.showAndWait();
-            }
-        }
-    }
-
-    private SimulationConfig parseConfig(JsonObject obj) {
-        int mapWidth = obj.getInt("mapWidth");
-        int mapHeight = obj.getInt("mapHeight");
-        int energy = obj.getInt("energy");
-        int reproduction = obj.getInt("reproduction");
-        int genomLength = obj.getInt("genomLength");
-        int energyLossValue = obj.getInt("energyLoss");
-        int energyFromGrass = obj.getInt("energyFromGrass");
-        int mutationMinValue = obj.getInt("mutationMinValue");
-        int mutationMaxValue = obj.getInt("mutationMaxValue");
-        int animals = obj.getInt("animals");
-        int fertility = obj.getInt("fertility");
-        int plants = obj.getInt("plants");
-        int dailyInc = obj.getInt("dailyInc");
-        int day = obj.getInt("day");
-        boolean isHabsburg = obj.getBoolean("isHabsburg");
-        int startingMales = obj.getInt("startingMales");
-        int startingFemales = obj.getInt("startingFemales");
-        int inbreedingPenalty = obj.getInt("inbreedingPenalty");
-        SimulationConfig config;
-        if (!isHabsburg) {
-            config = new SimulationConfig(mapWidth, mapHeight,
-                    plants, energyFromGrass, dailyInc, animals, energy, energyLossValue,
-                    fertility, reproduction, mutationMinValue, mutationMaxValue,
-                    genomLength, day);
-        } else {
-            config = new SimulationConfig(mapWidth, mapHeight,
-                    plants, energyFromGrass, dailyInc, animals, energy, energyLossValue,
-                    fertility, reproduction, mutationMinValue, mutationMaxValue,
-                    genomLength, day, true, startingMales, startingFemales, inbreedingPenalty);
-        }
-        IO.println(config);
-        return config;
     }
 
     private void setConfig(SimulationConfig config) {
@@ -236,95 +172,41 @@ public class ConfigurationPresenter {
         int startingMales = Integer.parseInt(males.getText());
         int startingFemales = Integer.parseInt(females.getText());
         int inbreedingPenalty = Integer.parseInt(inbreedingPenaltyField.getText());
-        SimulationConfig config;
-        if (!isHabsburg) {
-            config = new SimulationConfig(mapWidth, mapHeight,
-                    plants, energyFromGrass, dailyInc, animals, energy, energyLossValue,
-                    fertility, reproduction, mutationMinValue, mutationMaxValue,
-                    genomLength, day);
-        } else {
-            config = new SimulationConfig(mapWidth, mapHeight,
-                    plants, energyFromGrass, dailyInc, animals, energy, energyLossValue,
-                    fertility, reproduction, mutationMinValue, mutationMaxValue,
-                    genomLength, day, true, startingMales, startingFemales, inbreedingPenalty);
-        }
-        if (mapWidth > 160 || mapHeight > 80 || mapWidth < 5 || mapHeight < 5)
-            throw new MapBoundaryException("Map is too big");
-        return config;
+        //Zrobiłem tu tak, żeby przy zapisie nie trzeba było kombinować z dopisywaniem pól Habsburgów,
+        //a myślę że to nie problem że te wartości tu będziemy mieć
+        return new SimulationConfig(mapWidth, mapHeight,
+                plants, energyFromGrass, dailyInc, animals, energy, energyLossValue,
+                fertility, reproduction, mutationMinValue, mutationMaxValue,
+                genomLength, day, isHabsburg, startingMales, startingFemales, inbreedingPenalty);
     }
 
     public void onSaveConfig() {
         try {
             SimulationConfig config = getSimulationConfig();
-            JsonObject obj = prepareJsonObject(config);
-
-            FileChooser fc = new FileChooser();
-            fc.getExtensionFilters().add(
-                    new FileChooser.ExtensionFilter("JSON Files", "*.json")
-            );
-            File projectDir = new File(System.getProperty("user.dir"));
-            if (projectDir.exists() && projectDir.isDirectory()) {
-                File presetDir = new File(projectDir, "src/main/resources/presets");
-                if (presetDir.exists() && presetDir.isDirectory()) {
-                    fc.setInitialDirectory(presetDir);
-                } else {
-                    fc.setInitialDirectory(projectDir);
-                }
-            }
-            File file = fc.showSaveDialog(saveConfig.getScene().getWindow());
-
-            if (file != null) {
-                try (OutputStream os = new FileOutputStream(file);
-                     JsonWriter writer = Json.createWriter(os)) {
-                    writer.writeObject(obj);
-                }
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Zapisano konfiguracje");
-                alert.setContentText(file.getAbsolutePath());
-                alert.showAndWait();
-            }
-
-        } catch (NumberFormatException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Niepoprawne wartości");
-            alert.setContentText("Podaj poprawne wartości");
-            alert.showAndWait();
-        } catch (MapBoundaryException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Zła mapa");
-            alert.setContentText("Rozmiar mapy od 5x5 do 160x80");
-            alert.showAndWait();
-        } catch (Exception e) {
+            config.validate();
+            JsonObject obj = config.toJson();
+            FileManager.saveConfig(obj,saveConfig.getScene().getWindow());
+            showAlert(new Alert(Alert.AlertType.CONFIRMATION),"Zapisano konfigurację","Poprawnie zapisano konfigurację");
+        }catch(InvalidConfigException e){
+            showAlert(new Alert(Alert.AlertType.ERROR),"Nieprawidłowa konfiguracja",e.getMessage());
+        }
+        catch (NumberFormatException e) {
+            showAlert(new Alert(Alert.AlertType.ERROR),"Nieprawidłowa konfiguracja","Wartości muszą być liczbami");
+        }
+        catch (IOException e) {
             e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Błąd przy zapisie konfiguracji");
-            alert.setContentText("Spróbuj jeszcze raz");
-            alert.showAndWait();
+            showAlert(new Alert(Alert.AlertType.ERROR),"Błąd zapisu","Coś poszło nie tak podczas zapisywania konfiguracji");
         }
     }
-
-    private JsonObject prepareJsonObject(SimulationConfig config) {
-        JsonObject obj = Json.createObjectBuilder()
-                .add("mapWidth", config.mapWidth())
-                .add("mapHeight", config.mapHeight())
-                .add("energy", config.startEnergy())
-                .add("reproduction", config.energyLostToReproduce())
-                .add("genomLength", config.genotypeLength())
-                .add("energyLoss", config.energyLostDaily())
-                .add("energyFromGrass", config.energyFromEatingGrass())
-                .add("mutationMinValue", config.minimalMutationCount())
-                .add("mutationMaxValue", config.maximalMutationCount())
-                .add("animals", config.startAnimalCount())
-                .add("fertility", config.energyNeededToReproduce())
-                .add("plants", config.startGrassesCount())
-                .add("dailyInc", config.newGrassesDaily())
-                .add("day", config.timeBetweenDays())
-                .add("isHabsburg", config.habsburgsOn())
-                .add("startingMales",config.startingMales())
-                .add("startingFemales",config.startingFemales())
-                .add("inbreedingPenalty",config.inbreedingPenalty())
-                .build();
-        return obj;
+    public void onLoadConfig() {
+        try{
+            SimulationConfig config =FileManager.loadConfig(loadPreset.getScene().getWindow());
+            setConfig(config);
+            changeHabsburgOptions();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(new Alert(Alert.AlertType.ERROR),"Błąd odczytu","Coś poszło nie tak podczas wczytywania konfiguracji");
+        }
     }
 
     public void changeHabsburgOptions(){

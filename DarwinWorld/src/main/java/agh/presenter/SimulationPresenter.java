@@ -4,6 +4,7 @@ import agh.Simulation;
 import agh.model.*;
 import agh.model.MapChangeListener;
 import agh.model.util.Boundary;
+import agh.model.util.Genotype;
 import agh.model.util.SimulationConfig;
 import agh.model.util.SimulationStats;
 import javafx.application.Platform;
@@ -197,7 +198,7 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
                     graphics.setFill(Color.RED);
                     graphics.fillText("\uD83D\uDC9E", 0, 0);
                 } else {
-                    graphics.setFill(getAnimalColor(((Animal) element).getEnergy(), config.energyLostDaily()));
+                    graphics.setFill(getAnimalColor(((Animal) element), config.energyLostDaily()));
                     graphics.fillText("\uD83D\uDC3B", 0, 0);
                     animalsPosition.add(element.getPosition());
                 }
@@ -219,11 +220,13 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         }
     }
 
-//    private Boolean hasTheMostPopularGenotype(Animal animal, Genotype mostPopularGenotype){
-//
-//    }
-    private Color getAnimalColor(int animalEnergy, int dailyLoss) {
-        int moves = animalEnergy / dailyLoss;
+    private Boolean hasTheMostPopularGenotype(Animal animal){
+        Genotype mostPopular=simulation.getStats().mostPopularGenotype();
+        return mostPopular.equals(animal.getGenotype());
+    }
+    private Color getAnimalColor(Animal animal, int dailyLoss) {
+        if(hasTheMostPopularGenotype(animal)) return Color.CYAN;
+        int moves = animal.getEnergy() / dailyLoss;
         if (moves <= 0) return Color.BLACK;
         else if (moves <= 3) return Color.RED;
         else if (moves <= 6) return Color.YELLOW;
@@ -260,12 +263,9 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         int x = (int) (mouseX / cellSize);
         int y = (int) ((mapCanvas.getHeight() - mouseY) / cellSize);
         List<Animal> animals = map.animalsAt(new Vector2d(x, y));
-        IO.println(animals);
         for (Animal animal : animals) {
             openAnimalWindow(animal);
         }
-        IO.println("x=" + x + ", y=" + y);
-//        IO.println("CANVAS CLICKED");
     }
 
 
@@ -294,6 +294,7 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         if (changeState != null) {
             changeState.run();
         }
+        controlSimulation.setText(simulation.isRunning() ? "STOP" : "START");
     }
     @Override
     public void statsChanged(SimulationStats stats) {

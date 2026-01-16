@@ -35,7 +35,7 @@ public class AnimalStatsPresenter implements AnimalListener {
         positionLabel.setText(String.valueOf(position));
         genotypeLabel.setText(genotype+" ("+genotype.getActiveGen()+")");
         energy.setText(String.valueOf(stats.getEnergy()));
-        offspring.setText(String.valueOf(stats.getChildrenCount())+" / "+String.valueOf(descendantCount) );
+        offspring.setText((stats.getChildrenCount())+" / "+(descendantCount) );
         eatenGrass.setText(String.valueOf(stats.getGrassesEaten()));
         age.setText(String.valueOf(stats.getAge()));
         dayOfDead.setText(stats.getDeathDate().isPresent() ? String.valueOf(stats.getDeathDate().get()) : "-");

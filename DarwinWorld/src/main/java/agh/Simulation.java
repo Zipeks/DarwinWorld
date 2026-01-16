@@ -157,4 +157,5 @@ public class Simulation implements Runnable {
         );
         notifyObservers(stats);
     }
+
 }

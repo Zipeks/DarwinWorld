@@ -1,6 +1,7 @@
 package agh.model.util;
 
 import agh.model.InvalidConfigException;
+import agh.model.filesManager.JsonLoader;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -52,6 +53,29 @@ public record SimulationConfig(int mapWidth,
                 timeBetweenDays,
                 false, 0, 0, 0);
     }
+
+    public SimulationConfig(JsonObject obj){
+        this(obj.getInt("mapWidth",0),
+            obj.getInt("mapHeight",0),
+            obj.getInt("plants",0),
+            obj.getInt("energyFromGrass",0),
+            obj.getInt("dailyInc",0),
+            obj.getInt("animals",0),
+            obj.getInt("energy",0),
+            obj.getInt("energyLoss",0),
+            obj.getInt("fertility",0),
+            obj.getInt("reproduction",0),
+            obj.getInt("mutationMinValue",0),
+            obj.getInt("mutationMaxValue",0),
+            obj.getInt("genomLength",0),
+            obj.getInt("day",0),
+            obj.getBoolean("isHabsburg",false),
+            obj.getInt("startingMales",0),
+            obj.getInt("startingFemales",0),
+            obj.getInt("inbreedingPenalty",0)
+        );
+    }
+
     public void validate() throws InvalidConfigException {
         if(this.mapHeight()<3 || this.mapWidth()<3 || this.mapHeight()>80 || this.mapWidth()>160)
             throw new InvalidConfigException("Dopusczalny rozmiar 3x3 - 160x80");

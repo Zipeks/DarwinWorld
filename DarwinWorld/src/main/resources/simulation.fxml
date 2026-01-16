@@ -28,7 +28,7 @@
             </HBox>
             <HBox alignment="CENTER_RIGHT" maxHeight="40.0" prefHeight="50.0" spacing="50.0" HBox.hgrow="ALWAYS">
                <children>
-                  <HBox fx:id="animalsCountBox" alignment="CENTER_LEFT" minWidth="70.0" spacing="8.0">
+                  <HBox fx:id="animalsCountBox" alignment="CENTER_LEFT" minWidth="72.0" spacing="8.0">
                         <children>
                         <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -38,7 +38,7 @@
                         <Label fx:id="animalsCount" text="-" />
                      </children>
                   </HBox>
-                  <HBox fx:id="grassCountBox" alignment="CENTER_LEFT" minWidth="70.0" spacing="8.0">
+                  <HBox fx:id="grassCountBox" alignment="CENTER_LEFT" minWidth="72.0" spacing="8.0">
                      <children>
                         <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -48,7 +48,7 @@
                         <Label fx:id="grassCount" text="-" />
                      </children>
                   </HBox>
-                  <HBox fx:id="emptyFieldsBox" alignment="CENTER_LEFT" minWidth="70.0" spacing="8.0">
+                  <HBox fx:id="emptyFieldsBox" alignment="CENTER_LEFT" minWidth="72.0" spacing="8.0">
                      <children>
                         <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -58,7 +58,7 @@
                         <Label fx:id="emptyFields" maxHeight="1.7976931348623157E308" text="-" />
                      </children>
                   </HBox>
-                  <HBox fx:id="avgEnergyBox" alignment="CENTER_LEFT" minWidth="70.0" spacing="8.0">
+                  <HBox fx:id="avgEnergyBox" alignment="CENTER_LEFT" minWidth="72.0" spacing="8.0">
                      <children>
                         <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -68,7 +68,7 @@
                         <Label fx:id="avgEnergy" text="-" />
                      </children>
                   </HBox>
-                  <HBox fx:id="avgChildCountBox" alignment="CENTER_LEFT" minWidth="70.0" spacing="8.0">
+                  <HBox fx:id="avgChildCountBox" alignment="CENTER_LEFT" minWidth="72.0" spacing="8.0">
                      <children>
                         <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -78,7 +78,7 @@
                         <Label fx:id="avgChildCount" text="-" />
                      </children>
                   </HBox>
-                  <HBox fx:id="avgAgeBox" alignment="CENTER_LEFT" minWidth="70.0" spacing="8.0">
+                  <HBox fx:id="avgAgeBox" alignment="CENTER_LEFT" minWidth="72.0" spacing="8.0">
                      <children>
                         <ImageView fx:id="avglifeExpectancy" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                            <image>

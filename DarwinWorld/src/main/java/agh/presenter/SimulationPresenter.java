@@ -3,6 +3,7 @@ package agh.presenter;
 import agh.Simulation;
 import agh.model.*;
 import agh.model.MapChangeListener;
+import agh.model.filesManager.CsvWriter;
 import agh.model.util.Boundary;
 import agh.model.util.Genotype;
 import agh.model.util.SimulationConfig;
@@ -50,6 +51,7 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
     private SimulationConfig config;
 
     private Simulation simulation;
+    private Boolean saveStats=false;
     private Runnable changeState;
 
     @FXML
@@ -102,8 +104,9 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
     }
     @FXML
     public void initialize() {
-        //Przeniose to potem do osobnej
-
+        intializeTooltips();
+    }
+    private  void intializeTooltips(){
         Tooltip animalTooltip=new Tooltip("Animals count");
         animalTooltip.setShowDelay(Duration.millis(100));
         Tooltip.install(animalsCountBox,animalTooltip);
@@ -222,7 +225,7 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
 
     private Boolean hasTheMostPopularGenotype(Animal animal){
         Genotype mostPopular=simulation.getStats().mostPopularGenotype();
-        return mostPopular.equals(animal.getGenotype());
+        return mostPopular!=null && mostPopular.equals(animal.getGenotype());
     }
     private Color getAnimalColor(Animal animal, int dailyLoss) {
         if(hasTheMostPopularGenotype(animal)) return Color.CYAN;
@@ -278,7 +281,8 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         genotype.setText(stats.mostPopularGenotype() != null ? String.valueOf(stats.mostPopularGenotype()) : "-");
         animalsCount.setText(String.valueOf(stats.animalsCount()));
         day.setText("Dzień " + stats.currentDate());
-
+        if(saveStats)
+            CsvWriter.saveConfigStats(stats,simulation.getId());
     }
 
     public void setSimulation(Simulation simulation) {

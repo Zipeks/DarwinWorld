@@ -11,6 +11,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Simulation implements Runnable {
     protected final List<StatsListener> observers = new CopyOnWriteArrayList<>();
+    private final UUID id = UUID.randomUUID();
     private final List<Animal> animals;
     private final AbstractJungleMap worldMap;
     private final SimulationConfig config;
@@ -159,4 +160,7 @@ public class Simulation implements Runnable {
         notifyObservers(stats);
     }
 
+    public UUID getId() {
+        return id;
+    }
 }

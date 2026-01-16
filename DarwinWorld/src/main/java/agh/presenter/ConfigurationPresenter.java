@@ -3,7 +3,8 @@ package agh.presenter;
 import agh.Simulation;
 import agh.model.*;
 import agh.model.InvalidConfigException;
-import agh.model.util.ConfigParser;
+import agh.model.filesManager.JsonLoader;
+import agh.model.filesManager.JsonSaver;
 import agh.model.util.SimulationConfig;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,13 +14,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonReader;
-import javax.json.JsonWriter;
 
 import java.io.*;
 import java.util.concurrent.ExecutorService;
@@ -67,6 +64,16 @@ public class ConfigurationPresenter {
     private Button loadPreset;
     @FXML
     private Button saveConfig;
+
+    @FXML
+    public void initialize() {
+        initialAnimals.textProperty().addListener((obs, old, newText) -> {
+            animalsUpdated();
+        });
+        males.textProperty().addListener((obs, old, newText) -> {
+            animalsUpdated();
+        });
+    }
 
     public void onStartClicked() {
         try {
@@ -172,8 +179,6 @@ public class ConfigurationPresenter {
         int startingMales = Integer.parseInt(males.getText());
         int startingFemales = Integer.parseInt(females.getText());
         int inbreedingPenalty = Integer.parseInt(inbreedingPenaltyField.getText());
-        //Zrobiłem tu tak, żeby przy zapisie nie trzeba było kombinować z dopisywaniem pól Habsburgów,
-        //a myślę że to nie problem że te wartości tu będziemy mieć
         return new SimulationConfig(mapWidth, mapHeight,
                 plants, energyFromGrass, dailyInc, animals, energy, energyLossValue,
                 fertility, reproduction, mutationMinValue, mutationMaxValue,
@@ -185,7 +190,7 @@ public class ConfigurationPresenter {
             SimulationConfig config = getSimulationConfig();
             config.validate();
             JsonObject obj = config.toJson();
-            FileManager.saveConfig(obj,saveConfig.getScene().getWindow());
+            JsonSaver.saveConfig(obj,saveConfig.getScene().getWindow());
             showAlert(new Alert(Alert.AlertType.CONFIRMATION),"Zapisano konfigurację","Poprawnie zapisano konfigurację");
         }catch(InvalidConfigException e){
             showAlert(new Alert(Alert.AlertType.ERROR),"Nieprawidłowa konfiguracja",e.getMessage());
@@ -200,7 +205,7 @@ public class ConfigurationPresenter {
     }
     public void onLoadConfig() {
         try{
-            SimulationConfig config =FileManager.loadConfig(loadPreset.getScene().getWindow());
+            SimulationConfig config = JsonLoader.loadConfig(loadPreset.getScene().getWindow());
             setConfig(config);
             changeHabsburgOptions();
         } catch (IOException e) {
@@ -212,8 +217,15 @@ public class ConfigurationPresenter {
     public void changeHabsburgOptions(){
         boolean isSelected=habsburg.isSelected();
         males.setDisable(!isSelected);
-        females.setDisable(!isSelected);
         inbreedingPenaltyField.setDisable(!isSelected);
+    }
+
+    public void animalsUpdated(){
+        if(initialAnimals.getText().equals("") || males.getText().equals("")) return;
+        int animals = Integer.parseInt(initialAnimals.getText());
+        int startingMales = Integer.parseInt(males.getText());
+        int femalesCount=animals-startingMales > 0 ? animals-startingMales : 0;
+        females.setText(String.valueOf(femalesCount));
     }
 
     public void closeApp() {

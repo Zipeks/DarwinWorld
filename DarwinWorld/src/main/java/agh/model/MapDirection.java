@@ -1,7 +1,5 @@
 package agh.model;
 
-import agh.model.Vector2d;
-
 import java.util.Random;
 
 public enum MapDirection {
@@ -39,6 +37,7 @@ public enum MapDirection {
     public MapDirection opposite() {
         return rotateBy(4);
     }
+
     public Vector2d toUnitVector() {
         return switch (this) {
             case NORTH -> new Vector2d(0, 1);

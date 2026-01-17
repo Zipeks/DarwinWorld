@@ -1,7 +1,9 @@
 package agh.model;
 
 import agh.model.util.Boundary;
+import agh.model.util.MapStats;
 import agh.model.util.SimulationConfig;
+import agh.model.util.SimulationStats;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -25,14 +27,19 @@ public abstract class AbstractJungleMap extends AbstractWorldMap {
         placeGrasses(grassCount);
     }
 
-    public synchronized void removeDeadAnimals() {
+    public synchronized void removeDeadAnimals(int currentDate) {
         Iterator<Map.Entry<Vector2d, List<Animal>>> iterator = animals.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<Vector2d, List<Animal>> entry = iterator.next();
             List<Animal> animalList = entry.getValue();
 
-            animalList.removeIf(animal -> animal.getEnergy() <= 0);
-
+            animalList.removeIf(animal -> {
+                if (animal.getEnergy() <= 0) {
+                    animal.die(currentDate);
+                    return true;
+                }
+                return false;
+            });
             if (animalList.isEmpty()) {
                 iterator.remove();
             }
@@ -179,5 +186,9 @@ public abstract class AbstractJungleMap extends AbstractWorldMap {
     public void nextDay(int i) {
         notifyObservers("Day: " + i);
         System.out.println("Day: " + i);
+    }
+
+    public MapStats getStats() {
+        return new MapStats(getGrassCount(), getEmptyCellsCount());
     }
 }

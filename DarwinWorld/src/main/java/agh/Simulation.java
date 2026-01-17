@@ -51,14 +51,11 @@ public class Simulation implements Runnable {
                 animals.add(animal);
             }
         } else {
-            for (int j = 0; j < 2; j++) {
-                AnimalSex sex;
+            for (AnimalSex sex: AnimalSex.values()) {
                 int toGen;
-                if (j == 0) {
-                    sex = AnimalSex.MALE;
+                if (sex == AnimalSex.MALE) {
                     toGen = config.startingMales();
                 } else {
-                    sex = AnimalSex.FEMALE;
                     toGen = config.startingFemales();
                 }
                 for (int i = 0; i < toGen; i++) {
@@ -98,7 +95,7 @@ public class Simulation implements Runnable {
                 pause();
                 break;
             }
-            worldMap.removeDeadAnimals();
+            worldMap.removeDeadAnimals(stats.currentDate());
             worldMap.moveAnimals(config.energyLostDaily());
             worldMap.grassConsumption(config.energyFromEatingGrass());
             animals.addAll(
@@ -117,46 +114,7 @@ public class Simulation implements Runnable {
     }
 
     private synchronized void updateStats() {
-        int aliveAnimalsCount = 0;
-        int deadAnimalsCount = 0;
-        int totalDeadAnimalsLifeLength = 0;
-        int totalAliveAnimalsEnergy = 0;
-        Genotype mostPopularGenotype = null;
-        int maxDescendants = 0;
-        int totalAliveAnimalsChildrenCount = 0;
-        int avgChildCount;
-        int avgLifeTime = 0;
-        for (Animal animal : animals) {
-            if (animal.isAlive() && animal.getEnergy() <= 0) animal.die(stats.currentDate());
-            if (animal.isAlive()) {
-                aliveAnimalsCount++;
-                totalAliveAnimalsEnergy += animal.getEnergy();
-                int descendants = animal.getDescendantCount();
-                if (maxDescendants < descendants) {
-                    maxDescendants = descendants;
-                    mostPopularGenotype = animal.getGenotype();
-                }
-                totalAliveAnimalsChildrenCount += animal.getChildrenCount();
-                animal.increaseAge();
-            } else {
-                deadAnimalsCount++;
-                totalDeadAnimalsLifeLength += animal.getAge();
-            }
-        }
-        avgChildCount = (aliveAnimalsCount == 0 ? 0 : totalAliveAnimalsChildrenCount / aliveAnimalsCount);
-        if (deadAnimalsCount > 0) {
-            avgLifeTime = (totalDeadAnimalsLifeLength / deadAnimalsCount);
-        }
-        stats = new SimulationStats(
-                aliveAnimalsCount,
-                worldMap.getGrassCount(),
-                worldMap.getEmptyCellsCount(),
-                aliveAnimalsCount == 0 ? 0 : totalAliveAnimalsEnergy / aliveAnimalsCount,
-                avgLifeTime,
-                avgChildCount,
-                stats.currentDate() + 1,
-                mostPopularGenotype
-        );
+        stats = SimulationStats.updateStats(animals, stats, worldMap.getStats());
         notifyObservers(stats);
     }
 

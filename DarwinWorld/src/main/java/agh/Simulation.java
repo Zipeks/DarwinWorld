@@ -90,6 +90,7 @@ public class Simulation implements Runnable {
 
     @Override
     public synchronized void run() {
+        notifyObservers(stats);
         while (isRunning) {
             try {
                 if (stats.animalsCount() == 0) {

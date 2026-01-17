@@ -28,14 +28,14 @@ public class AnimalStatsPresenter implements AnimalListener {
 
     @Override
     public void animalChanged(AnimalStats stats, Genotype genotype, int descendantCount, Vector2d position) {
-        Platform.runLater(() -> updateStats(stats,genotype,descendantCount,position));
+        Platform.runLater(() -> updateStats(stats, genotype, descendantCount, position));
     }
 
-    public void updateStats(AnimalStats stats,Genotype genotype,int descendantCount,Vector2d position){
+    public void updateStats(AnimalStats stats, Genotype genotype, int descendantCount, Vector2d position) {
         positionLabel.setText(String.valueOf(position));
-        genotypeLabel.setText(genotype+" ("+genotype.getActiveGen()+")");
+        genotypeLabel.setText(genotype + " (" + genotype.getActiveGen() + ")");
         energy.setText(String.valueOf(stats.getEnergy()));
-        offspring.setText((stats.getChildrenCount())+" / "+(descendantCount) );
+        offspring.setText((stats.getChildrenCount()) + " / " + (descendantCount));
         eatenGrass.setText(String.valueOf(stats.getGrassesEaten()));
         age.setText(String.valueOf(stats.getAge()));
         dayOfDead.setText(stats.getDeathDate().isPresent() ? String.valueOf(stats.getDeathDate().get()) : "-");

@@ -62,6 +62,7 @@ public class AnimalStats {
     public void increaseDescendantsCount() {
         descendantsCount++;
     }
+
     public int getDescendantsCount() {
         return descendantsCount;
     }

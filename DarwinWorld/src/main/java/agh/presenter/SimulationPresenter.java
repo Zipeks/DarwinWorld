@@ -51,7 +51,7 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
     private SimulationConfig config;
 
     private Simulation simulation;
-    private Boolean saveStats=false;
+    private Boolean saveStats = false;
     private Runnable changeState;
 
     @FXML
@@ -102,39 +102,42 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         this.map = map;
         initializeView();
     }
+
     @FXML
     public void initialize() {
-        intializeTooltips();
+        initializeTooltips();
     }
-    private  void intializeTooltips(){
-        Tooltip animalTooltip=new Tooltip("Animals count");
+
+    private void initializeTooltips() {
+        Tooltip animalTooltip = new Tooltip("Animals count");
         animalTooltip.setShowDelay(Duration.millis(100));
-        Tooltip.install(animalsCountBox,animalTooltip);
+        Tooltip.install(animalsCountBox, animalTooltip);
 
-        Tooltip grassTooltip=new Tooltip("Grass count");
+        Tooltip grassTooltip = new Tooltip("Grass count");
         grassTooltip.setShowDelay(Duration.millis(100));
-        Tooltip.install(grassCountBox,grassTooltip);
+        Tooltip.install(grassCountBox, grassTooltip);
 
-        Tooltip emptyTooltip=new Tooltip("Empty fields");
+        Tooltip emptyTooltip = new Tooltip("Empty fields");
         emptyTooltip.setShowDelay(Duration.millis(100));
-        Tooltip.install(emptyFieldsBox,emptyTooltip);
+        Tooltip.install(emptyFieldsBox, emptyTooltip);
 
-        Tooltip avgEnergyTooltip=new Tooltip("Average energy");
+        Tooltip avgEnergyTooltip = new Tooltip("Average energy");
         avgEnergyTooltip.setShowDelay(Duration.millis(100));
-        Tooltip.install(avgEnergyBox,avgEnergyTooltip);
+        Tooltip.install(avgEnergyBox, avgEnergyTooltip);
 
-        Tooltip childCountTooltip=new Tooltip("Average child count");
+        Tooltip childCountTooltip = new Tooltip("Average child count");
         childCountTooltip.setShowDelay(Duration.millis(100));
-        Tooltip.install(avgChildCountBox,childCountTooltip);
+        Tooltip.install(avgChildCountBox, childCountTooltip);
 
-        Tooltip avgAgeTooltip=new Tooltip("Average age");
+        Tooltip avgAgeTooltip = new Tooltip("Average age");
         avgAgeTooltip.setShowDelay(Duration.millis(100));
-        Tooltip.install(avgAgeBox,avgAgeTooltip);
+        Tooltip.install(avgAgeBox, avgAgeTooltip);
 
-        Tooltip genoTypeTooltip=new Tooltip("Genotype of alive animal with most descendants");
+        Tooltip genoTypeTooltip = new Tooltip("Genotype of alive animal with most descendants");
         genoTypeTooltip.setShowDelay(Duration.millis(100));
-        Tooltip.install(genotypeBox,genoTypeTooltip);
+        Tooltip.install(genotypeBox, genoTypeTooltip);
     }
+
     private void initializeView() {
         if (map == null) return;
 
@@ -143,8 +146,8 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         numCols = bounds.topRight().getX() - bounds.bottomLeft().getX() + 1;
         numRows = bounds.topRight().getY() - bounds.bottomLeft().getY() + 1;
 
-        double colSize =  MAX_WIDTH / numCols;
-        double rowSize =  MAX_HEIGHT / numRows;
+        double colSize = MAX_WIDTH / numCols;
+        double rowSize = MAX_HEIGHT / numRows;
 
         cellSize = Math.max(8, Math.min(colSize, rowSize));
 
@@ -223,12 +226,13 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         }
     }
 
-    private Boolean hasTheMostPopularGenotype(Animal animal){
-        Genotype mostPopular=simulation.getStats().mostPopularGenotype();
-        return mostPopular!=null && mostPopular.equals(animal.getGenotype());
+    private Boolean hasTheMostPopularGenotype(Animal animal) {
+        Genotype mostPopular = simulation.getStats().mostPopularGenotype();
+        return mostPopular != null && mostPopular.equals(animal.getGenotype());
     }
+
     private Color getAnimalColor(Animal animal, int dailyLoss) {
-        if(hasTheMostPopularGenotype(animal)) return Color.CYAN;
+        if (hasTheMostPopularGenotype(animal)) return Color.CYAN;
         int moves = animal.getEnergy() / dailyLoss;
         if (moves <= 0) return Color.BLACK;
         else if (moves <= 3) return Color.RED;
@@ -283,8 +287,8 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         genotype.setText(stats.mostPopularGenotype() != null ? String.valueOf(stats.mostPopularGenotype()) : "-");
         animalsCount.setText(String.valueOf(stats.animalsCount()));
         day.setText("Dzień " + stats.currentDate());
-        if(saveStats)
-            CsvWriter.saveConfigStats(stats,simulation.getId());
+        if (saveStats)
+            CsvWriter.saveConfigStats(stats, simulation.getId());
     }
 
     public void setSimulation(Simulation simulation) {
@@ -302,6 +306,7 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         }
         controlSimulation.setText(simulation.isRunning() ? "STOP" : "START");
     }
+
     @Override
     public void statsChanged(SimulationStats stats) {
         Platform.runLater(() -> updateStats(stats));

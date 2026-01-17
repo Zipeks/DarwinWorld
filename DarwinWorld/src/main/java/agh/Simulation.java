@@ -51,7 +51,7 @@ public class Simulation implements Runnable {
                 animals.add(animal);
             }
         } else {
-            for (AnimalSex sex: AnimalSex.values()) {
+            for (AnimalSex sex : AnimalSex.values()) {
                 int toGen;
                 if (sex == AnimalSex.MALE) {
                     toGen = config.startingMales();
@@ -98,9 +98,7 @@ public class Simulation implements Runnable {
             worldMap.removeDeadAnimals(stats.currentDate());
             worldMap.moveAnimals(config.energyLostDaily());
             worldMap.grassConsumption(config.energyFromEatingGrass());
-            animals.addAll(
-                    worldMap.animalReproduction(config, stats.currentDate())
-            );
+            animals.addAll(worldMap.animalReproduction(config, stats.currentDate()));
             worldMap.placeGrasses(config.newGrassesDaily());
             worldMap.nextDay(stats.currentDate());
             updateStats();

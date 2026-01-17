@@ -127,11 +127,11 @@ public abstract class AbstractJungleMap extends AbstractWorldMap {
             }
             Optional<Parents> parents = getParents(animalsAtP, config);
             parents.ifPresent(value -> {
-                Animal child = createChild(value, config, currentDay);
-                children.add(child);
-                parents.get().parentOne().addChild(child, config.energyLostToReproduce());
-                parents.get().parentTwo().addChild(child, config.energyLostToReproduce());
-                }
+                        Animal child = createChild(value, config, currentDay);
+                        children.add(child);
+                        parents.get().parentOne().addChild(child, config.energyLostToReproduce());
+                        parents.get().parentTwo().addChild(child, config.energyLostToReproduce());
+                    }
             );
         }
 

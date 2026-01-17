@@ -92,23 +92,22 @@ public class ConfigurationPresenter {
             stage.show();
 
             executorService.execute(simulation);
-        }
-        catch(InvalidConfigException e){
-            showAlert(new Alert(Alert.AlertType.ERROR),"Nieprawidłowa konfiguracja",e.getMessage());
-        }
-        catch (NumberFormatException e) {
-            showAlert(new Alert(Alert.AlertType.ERROR),"Nieprawidłowa konfiguracja","Wartości muszą być liczbami");
-        }
-        catch (IOException e) {
+        } catch (InvalidConfigException e) {
+            showAlert(new Alert(Alert.AlertType.ERROR), "Nieprawidłowa konfiguracja", e.getMessage());
+        } catch (NumberFormatException e) {
+            showAlert(new Alert(Alert.AlertType.ERROR), "Nieprawidłowa konfiguracja", "Wartości muszą być liczbami");
+        } catch (IOException e) {
             e.printStackTrace();
-            showAlert(new Alert(Alert.AlertType.ERROR),"Wystąpił błąd","Coś poszło nie tak");
+            showAlert(new Alert(Alert.AlertType.ERROR), "Wystąpił błąd", "Coś poszło nie tak");
         }
     }
-    private void showAlert(Alert alert,String title,String msg){
+
+    private void showAlert(Alert alert, String title, String msg) {
         alert.setTitle(title);
         alert.setContentText(msg);
         alert.showAndWait();
     }
+
     private Simulation getSimulation(FXMLLoader loader) throws InvalidConfigException {
         SimulationPresenter presenter = loader.getController();
         SimulationConfig config = getSimulationConfig();
@@ -190,41 +189,40 @@ public class ConfigurationPresenter {
             SimulationConfig config = getSimulationConfig();
             config.validate();
             JsonObject obj = config.toJson();
-            JsonSaver.saveConfig(obj,saveConfig.getScene().getWindow());
-            showAlert(new Alert(Alert.AlertType.CONFIRMATION),"Zapisano konfigurację","Poprawnie zapisano konfigurację");
-        }catch(InvalidConfigException e){
-            showAlert(new Alert(Alert.AlertType.ERROR),"Nieprawidłowa konfiguracja",e.getMessage());
-        }
-        catch (NumberFormatException e) {
-            showAlert(new Alert(Alert.AlertType.ERROR),"Nieprawidłowa konfiguracja","Wartości muszą być liczbami");
-        }
-        catch (IOException e) {
+            JsonSaver.saveConfig(obj, saveConfig.getScene().getWindow());
+            showAlert(new Alert(Alert.AlertType.CONFIRMATION), "Zapisano konfigurację", "Poprawnie zapisano konfigurację");
+        } catch (InvalidConfigException e) {
+            showAlert(new Alert(Alert.AlertType.ERROR), "Nieprawidłowa konfiguracja", e.getMessage());
+        } catch (NumberFormatException e) {
+            showAlert(new Alert(Alert.AlertType.ERROR), "Nieprawidłowa konfiguracja", "Wartości muszą być liczbami");
+        } catch (IOException e) {
             e.printStackTrace();
-            showAlert(new Alert(Alert.AlertType.ERROR),"Błąd zapisu","Coś poszło nie tak podczas zapisywania konfiguracji");
+            showAlert(new Alert(Alert.AlertType.ERROR), "Błąd zapisu", "Coś poszło nie tak podczas zapisywania konfiguracji");
         }
     }
+
     public void onLoadConfig() {
-        try{
+        try {
             SimulationConfig config = JsonLoader.loadConfig(loadPreset.getScene().getWindow());
             setConfig(config);
             changeHabsburgOptions();
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert(new Alert(Alert.AlertType.ERROR),"Błąd odczytu","Coś poszło nie tak podczas wczytywania konfiguracji");
+            showAlert(new Alert(Alert.AlertType.ERROR), "Błąd odczytu", "Coś poszło nie tak podczas wczytywania konfiguracji");
         }
     }
 
-    public void changeHabsburgOptions(){
-        boolean isSelected=habsburg.isSelected();
+    public void changeHabsburgOptions() {
+        boolean isSelected = habsburg.isSelected();
         males.setDisable(!isSelected);
         inbreedingPenaltyField.setDisable(!isSelected);
     }
 
-    public void animalsUpdated(){
-        if(initialAnimals.getText().equals("") || males.getText().equals("")) return;
+    public void animalsUpdated() {
+        if (initialAnimals.getText().equals("") || males.getText().equals("")) return;
         int animals = Integer.parseInt(initialAnimals.getText());
         int startingMales = Integer.parseInt(males.getText());
-        int femalesCount=animals-startingMales > 0 ? animals-startingMales : 0;
+        int femalesCount = animals - startingMales > 0 ? animals - startingMales : 0;
         females.setText(String.valueOf(femalesCount));
     }
 

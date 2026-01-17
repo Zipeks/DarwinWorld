@@ -27,6 +27,7 @@ public interface WorldMap extends MoveValidator {
     void moveAnimals(int moveCost);
 
     List<Animal> animalsAt(Vector2d position);
+
     Collection<WorldElement> getElements();
 
     Boundary getCurrentBounds();

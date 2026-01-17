@@ -9,14 +9,14 @@ import java.util.UUID;
 
 public class CsvWriter {
     public static void saveConfigStats(SimulationStats stats, UUID id) {
-        File file = new File("simulation"+id+".csv");
+        File file = new File("simulation" + id + ".csv");
         boolean exists = file.exists();
 
         try (FileWriter writer = new FileWriter(file, true)) {
             if (!exists) {
                 writer.append("day,animalsCount,grassesCount,emptyFields,avgEnergyLevel,avgLifeTime,avgChildCount,mostPopularGenotype\n");
             }
-            writer.append(String .format("%d,%d,%d,%d,%d,%d,%d,\"%s\"\n",
+            writer.append(String.format("%d,%d,%d,%d,%d,%d,%d,\"%s\"\n",
                     stats.currentDate(),
                     stats.animalsCount(),
                     stats.grassesCount(),
@@ -24,10 +24,9 @@ public class CsvWriter {
                     stats.avgEnergyLevel(),
                     stats.avgLifeTime(),
                     stats.avgChildCount(),
-                    stats.mostPopularGenotype()!=null ? stats.mostPopularGenotype(): "-")
+                    stats.mostPopularGenotype() != null ? stats.mostPopularGenotype() : "-")
             );
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

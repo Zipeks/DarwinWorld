@@ -12,8 +12,7 @@ public record SimulationStats(
         int avgLifeTime,
         int avgChildCount,
         int currentDate,
-        Genotype mostPopularGenotype)
-{
+        Genotype mostPopularGenotype) {
     public static SimulationStats updateStats(List<Animal> animals, SimulationStats previousStats, MapStats mapStats) {
         int aliveAnimalsCount = 0;
         int deadAnimalsCount = 0;
@@ -44,7 +43,7 @@ public record SimulationStats(
         if (deadAnimalsCount > 0) {
             avgLifeTime = (totalDeadAnimalsLifeLength / deadAnimalsCount);
         }
-        return  new SimulationStats(
+        return new SimulationStats(
                 aliveAnimalsCount,
                 mapStats.grassCount(),
                 mapStats.emptyCells(),

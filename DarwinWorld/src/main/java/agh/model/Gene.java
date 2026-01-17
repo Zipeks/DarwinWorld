@@ -23,9 +23,11 @@ public enum Gene {
     public static Gene randomGene() {
         return genes[PRNG.nextInt(genes.length)];
     }
+
     public int numericValue() {
         return gene;
     }
+
     @Override
     public String toString() {
         return String.valueOf(gene);

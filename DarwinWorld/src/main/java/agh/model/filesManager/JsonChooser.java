@@ -5,7 +5,7 @@ import javafx.stage.FileChooser;
 import java.io.File;
 
 public class JsonChooser {
-    public static FileChooser choose(){
+    public static FileChooser choose() {
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("JSON Files", "*.json")

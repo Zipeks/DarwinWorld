@@ -18,8 +18,7 @@ public class JsonLoader {
                 JsonObject obj = reader.readObject();
                 return new SimulationConfig(obj);
             }
-        }
-        else{
+        } else {
             throw new IOException("Nie znaleziono pliku");
         }
     }

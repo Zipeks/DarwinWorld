@@ -32,6 +32,6 @@ public class ClassicalMap extends AbstractJungleMap {
 
         int mutations = PRNG.nextInt(config.minimalMutationCount(), config.maximalMutationCount() + 1);
 
-        return new Animal(parentOne.getPosition(), parentOne,parentTwo, mutations, config.energyLostToReproduce() * 2, currentDay);
+        return new Animal(parentOne.getPosition(), parentOne, parentTwo, mutations, config.energyLostToReproduce() * 2, currentDay);
     }
 }

@@ -12,7 +12,7 @@ public class Animal implements WorldElement {
     private final Genotype genotype;
     private final List<Animal> children = new ArrayList<>();
     private final AnimalStats animalStats;
-    private ArrayList<Animal> parents = new ArrayList<>();
+    private final ArrayList<Animal> parents = new ArrayList<>();
     private MapDirection direction;
     private Vector2d position;
 
@@ -60,10 +60,6 @@ public class Animal implements WorldElement {
     public void increaseAncestorsCount(HashSet<Animal> ancestors) {
         animalStats.increaseDescendantsCount();
         notifyAncestors(ancestors);
-    }
-
-    public boolean isAt(Vector2d otherPosition) {
-        return Objects.equals(position, otherPosition);
     }
 
     public void move(MoveValidator moveValidator, int moveCost) {

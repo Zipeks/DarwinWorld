@@ -7,20 +7,14 @@ import java.util.Random;
 public class HabsburgAnimal extends Animal {
     private static final Random PRNG = new Random();
     private final AnimalSex animalSex;
-    private final HabsburgAnimal parentOne;
-    private final HabsburgAnimal parentTwo;
 
     public HabsburgAnimal(Vector2d position, HabsburgAnimal parentOne, HabsburgAnimal parentTwo, int mutationsCnt, int startEnergy, int birthDate) {
         super(position, parentOne, parentTwo, mutationsCnt, startEnergy, birthDate);
-        this.parentOne = parentOne;
-        this.parentTwo = parentTwo;
         this.animalSex = determineSex(parentOne, parentTwo);
     }
 
     public HabsburgAnimal(Vector2d position, Genotype genotype, int energy, int birthDate, AnimalSex animalSex) {
         this.animalSex = animalSex;
-        this.parentOne = null;
-        this.parentTwo = null;
         super(position, genotype, energy, birthDate);
     }
 

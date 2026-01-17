@@ -7,55 +7,34 @@ import agh.model.util.SimulationConfig;
 import java.util.*;
 
 public class ClassicalMap extends AbstractJungleMap {
+    private static final Random PRNG = new Random();
 
     public ClassicalMap(int grassCount, int width, int height) {
         super(grassCount, width, height);
     }
 
+    @Override
+    public Optional<Parents> getParents(List<Animal> candidates, SimulationConfig config) {
+        sortAnimals(candidates);
+        Animal parentOne = candidates.get(0);
+        Animal parentTwo = candidates.get(1);
+
+        if (parentOne.getEnergy() >= config.energyNeededToReproduce() && parentTwo.getEnergy() >= config.energyNeededToReproduce()) {
+            return Optional.of(new Parents(parentOne, parentTwo));
+        }
+        return Optional.empty();
+    }
 
     @Override
-    public synchronized List<Animal> animalReproduction(SimulationConfig config, int date) {
-        int energyNeededToReproduce = config.energyNeededToReproduce();
-        int energyLostToReproduction = config.energyLostToReproduce();
-        int minMutations = config.minimalMutationCount();
-        int maxMutation = config.maximalMutationCount();
-        List<Animal> children = new ArrayList<>();
-        Random PRNG = new Random();
+    public Animal createChild(Parents parents, SimulationConfig config, int currentDay) {
+        Animal parentOne = parents.parentOne();
+        Animal parentTwo = parents.parentTwo();
 
-        for (Vector2d position : animals.keySet()) {
-            List<Animal> animalsAtP = animals.get(position);
-            if (animalsAtP.size() < 2) {
-                continue;
-            }
-            animalsAtP.sort(Comparator.comparingInt(Animal::getEnergy)
-                    .thenComparing(Animal::getAge)
-                    .thenComparing(Animal::getChildrenCount)
-                    .reversed());
+        int mutations = PRNG.nextInt(config.minimalMutationCount(), config.maximalMutationCount() + 1);
 
-            Animal firstAnimal = animalsAtP.getFirst();
-            Animal secondAnimal = animalsAtP.get(1);
-
-            if (firstAnimal.getEnergy() > energyNeededToReproduce && secondAnimal.getEnergy() > energyNeededToReproduce) {
-                double kinship = Genotype.kinshipLevel(firstAnimal, secondAnimal);
-                int inbreedingPenalty = 0;
-                if (kinship > .5) {
-                    inbreedingPenalty = config.inbreedingPenalty();
-                } else if (kinship > 0.25) {
-                    inbreedingPenalty = config.inbreedingPenalty() / 2;
-                }
-                Animal child = new Animal(position, firstAnimal, secondAnimal,
-                        PRNG.nextInt(minMutations, maxMutation + 1), (1 - inbreedingPenalty) * (energyLostToReproduction * 2), date);
-
-                firstAnimal.addChild(child, energyLostToReproduction);
-                secondAnimal.addChild(child, energyLostToReproduction);
-
-                children.add(child);
-            }
-        }
-        for (Animal child : children) {
-            place(child);
-        }
-
-        return children;
+        Animal child =  new Animal(parentOne.getPosition(), parentOne,parentTwo, mutations, config.energyLostToReproduce() * 2, currentDay);
+        parentOne.addChild(child, config.energyLostToReproduce());
+        parentTwo.addChild(child, config.energyLostToReproduce());
+        return child;
     }
 }

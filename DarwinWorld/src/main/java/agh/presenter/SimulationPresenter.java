@@ -267,7 +267,9 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         int y = (int) ((mapCanvas.getHeight() - mouseY) / cellSize);
         List<Animal> animals = map.animalsAt(new Vector2d(x, y));
         for (Animal animal : animals) {
-            openAnimalWindow(animal);
+            if (animal.isAlive()) {
+                openAnimalWindow(animal);
+            }
         }
     }
 

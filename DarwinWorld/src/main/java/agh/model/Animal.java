@@ -66,12 +66,7 @@ public class Animal implements WorldElement {
     public void move(MoveValidator moveValidator, int moveCost) {
         direction = direction.rotateBy(genotype.next());
         Vector2d moveVector = direction.toUnitVector();
-        Vector2d newPosition = moveValidator.moveOnMap(position, moveVector);
-        if (newPosition.getY() == position.getY() && direction.toUnitVector().getY() != 0) {
-            direction = direction.opposite();
-        } else {
-            position = newPosition;
-        }
+        position = moveValidator.moveOnMap(position, moveVector);
         animalStats.setEnergy(animalStats.getEnergy() - moveCost);
         notifyObservers();
     }

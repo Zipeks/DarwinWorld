@@ -96,7 +96,7 @@ public abstract class AbstractJungleMap extends AbstractWorldMap {
         int y = position.getY() + moveVector.getY();
 
         if (y < 0 || y >= height) {
-            y = position.getY();
+            y = Math.abs(position.getY()-1);
         }
         int x = (position.getX() + moveVector.getX() + width) % width;
 

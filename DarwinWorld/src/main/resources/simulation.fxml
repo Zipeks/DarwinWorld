@@ -188,10 +188,10 @@
                <children>
                   <Label style="-fx-text-fill: CYAN;" text="🐻 ">
                      <font>
-                        <Font size="16.0" />
+                        <Font size="16.0" name="Noto Emoji" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="10.0" style="-fx-text-fill: #e0e0e0;" text=": Najwięcej potomków" textFill="WHITE">
+                  <Label layoutX="10.0" layoutY="10.0" style="-fx-text-fill: #e0e0e0;" text=": Najpopularniejszy genom" textFill="WHITE">
                      <font>
                         <Font size="16.0" />
                      </font>

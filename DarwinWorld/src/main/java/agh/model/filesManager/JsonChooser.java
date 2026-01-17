@@ -11,6 +11,11 @@ public class JsonChooser {
                 new FileChooser.ExtensionFilter("JSON Files", "*.json")
         );
         File presets = new File("presets");
+        if(!presets.exists()){
+            boolean created= presets.mkdir();
+            if(!created)
+                return null;
+        }
         fc.setInitialDirectory(presets);
         return fc;
     }

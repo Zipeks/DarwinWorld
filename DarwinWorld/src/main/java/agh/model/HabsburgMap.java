@@ -39,10 +39,7 @@ public class HabsburgMap extends AbstractJungleMap {
         HabsburgAnimal parentTwo = (HabsburgAnimal) parents.parentOne();
         int mutations = PRNG.nextInt(config.minimalMutationCount(), config.maximalMutationCount() + 1);
 
-        HabsburgAnimal child = new HabsburgAnimal(parentOne.getPosition(), parentOne, parentTwo, mutations, config.energyLostToReproduce() * 2, currentDay);
-        parentOne.addChild(child, config.energyLostToReproduce());
-        parentTwo.addChild(child, config.energyLostToReproduce());
-        return child;
+        return new HabsburgAnimal(parentOne.getPosition(), parentOne, parentTwo, mutations, config.energyLostToReproduce() * 2, currentDay);
     }
 
 

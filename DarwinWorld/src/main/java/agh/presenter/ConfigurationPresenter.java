@@ -64,6 +64,8 @@ public class ConfigurationPresenter {
     private Button loadPreset;
     @FXML
     private Button saveConfig;
+    @FXML
+    private CheckBox saveStats;
 
     @FXML
     public void initialize() {
@@ -134,6 +136,7 @@ public class ConfigurationPresenter {
         });
 
         presenter.setSimulation(simulation);
+        presenter.setSaveStats(saveStats.isSelected());
         simulation.addObserver(presenter);
         return simulation;
     }
@@ -190,7 +193,6 @@ public class ConfigurationPresenter {
             config.validate();
             JsonObject obj = config.toJson();
             JsonSaver.saveConfig(obj, saveConfig.getScene().getWindow());
-            showAlert(new Alert(Alert.AlertType.CONFIRMATION), "Zapisano konfigurację", "Poprawnie zapisano konfigurację");
         } catch (InvalidConfigException e) {
             showAlert(new Alert(Alert.AlertType.ERROR), "Nieprawidłowa konfiguracja", e.getMessage());
         } catch (NumberFormatException e) {
@@ -204,8 +206,10 @@ public class ConfigurationPresenter {
     public void onLoadConfig() {
         try {
             SimulationConfig config = JsonLoader.loadConfig(loadPreset.getScene().getWindow());
-            setConfig(config);
-            changeHabsburgOptions();
+            if(config!=null) {
+                setConfig(config);
+                changeHabsburgOptions();
+            }
         } catch (IOException e) {
             e.printStackTrace();
             showAlert(new Alert(Alert.AlertType.ERROR), "Błąd odczytu", "Coś poszło nie tak podczas wczytywania konfiguracji");

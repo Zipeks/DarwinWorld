@@ -1,0 +1,6 @@
+day,animalsCount,grassesCount,emptyFields,avgEnergyLevel,avgLifeTime,avgChildCount,mostPopularGenotype
+1,4,2,4,12,0,0,"-"
+2,5,3,4,8,0,0,"[7, 5, 5, 7, 6]"
+3,6,3,3,7,0,0,"[7, 5, 5, 7, 6]"
+4,7,3,3,5,0,0,"[7, 5, 5, 7, 6]"
+5,6,3,1,6,3,1,"[7, 5, 5, 7, 6]"

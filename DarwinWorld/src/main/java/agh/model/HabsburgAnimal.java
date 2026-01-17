@@ -29,4 +29,11 @@ public class HabsburgAnimal extends Animal {
     public AnimalSex getSex() {
         return animalSex;
     }
+
+    @Override
+    public void notifyObservers() {
+        for (AnimalListener observer : observers) {
+            observer.animalChanged(getStats(), getGenotype(), getDescendantCount(), getPosition(),getSex());
+        }
+    }
 }

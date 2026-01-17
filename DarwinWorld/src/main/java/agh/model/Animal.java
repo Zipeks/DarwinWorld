@@ -59,6 +59,7 @@ public class Animal implements WorldElement {
 
     public void increaseAncestorsCount(HashSet<Animal> ancestors) {
         animalStats.increaseDescendantsCount();
+        notifyObservers();
         notifyAncestors(ancestors);
     }
 
@@ -150,6 +151,12 @@ public class Animal implements WorldElement {
         animalStats.setDeathDate(day);
         notifyObservers();
     }
+
+    protected AnimalStats getStats(){
+        return animalStats;
+    }
+
+
 
 
 }

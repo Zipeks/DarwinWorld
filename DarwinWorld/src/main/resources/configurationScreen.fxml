@@ -78,12 +78,12 @@
                               </Label>
                               <HBox spacing="5.0">
                                  <children>
-                                    <TextField fx:id="initialMapWidth" text="10">
+                                    <TextField fx:id="initialMapWidth" text="3">
                                        <font>
                                           <Font name="Fira Code Regular" size="12.0" />
                                        </font>
                                     </TextField>
-                                    <TextField fx:id="initialMapHeight" layoutX="10.0" layoutY="10.0" text="5">
+                                    <TextField fx:id="initialMapHeight" layoutX="10.0" layoutY="10.0" text="3">
                                        <font>
                                           <Font name="Fira Code Regular" size="12.0" />
                                        </font>
@@ -99,7 +99,7 @@
                                     <Font name="Fira Code Regular" size="12.0" />
                                  </font>
                               </Label>
-                              <TextField fx:id="initialGenomLength" text="7">
+                              <TextField fx:id="initialGenomLength" text="5">
                                  <font>
                                     <Font name="Fira Code Regular" size="12.0" />
                                  </font>
@@ -113,7 +113,7 @@
                                     <Font name="Fira Code Regular" size="12.0" />
                                  </font>
                               </Label>
-                              <TextField fx:id="initialAnimals" text="1">
+                              <TextField fx:id="initialAnimals" text="4">
                                  <font>
                                     <Font name="Fira Code Regular" size="12.0" />
                                  </font>
@@ -189,12 +189,12 @@
                               </Label>
                               <HBox spacing="5.0">
                                  <children>
-                                    <TextField fx:id="initialPlants" text="5">
+                                    <TextField fx:id="initialPlants" text="4">
                                        <font>
                                           <Font name="Fira Code Regular" size="12.0" />
                                        </font>
                                     </TextField>
-                                    <TextField fx:id="dailyIncrease" layoutX="10.0" layoutY="10.0" text="2">
+                                    <TextField fx:id="dailyIncrease" layoutX="10.0" layoutY="10.0" text="1">
                                        <font>
                                           <Font name="Fira Code Regular" size="12.0" />
                                        </font>
@@ -233,18 +233,18 @@
                                     <Font name="Fira Code Regular" size="12.0" />
                                  </font>
                               </Label>
-                              <TextField fx:id="dayLength" text="1500" />
+                              <TextField fx:id="dayLength" text="500" />
                            </children>
                         </VBox>
                         <VBox alignment="CENTER" layoutX="398.0" layoutY="73.0" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="3">
                            <children>
-                              <CheckBox fx:id="habsburg" onAction="#changeHabsburgOptions" mnemonicParsing="false" text="Klątwa Habsburgów">
+                              <CheckBox fx:id="habsburg" mnemonicParsing="false" onAction="#changeHabsburgOptions" style="-fx-font-family: 'Fira Code';" text="Klątwa Habsburgów">
                                  <font>
                                     <Font name="Fira Code Regular" size="12.0" />
                                  </font></CheckBox>
                            </children>
                         </VBox>
-                        <VBox  layoutX="10.0" layoutY="-4.0" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <VBox layoutX="10.0" layoutY="-4.0" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <children>
                               <Label text="Liczba samców / samic">
                                  <font>
@@ -253,12 +253,12 @@
                               </Label>
                               <HBox spacing="5.0">
                                  <children>
-                                    <TextField fx:id="males" disable="true" text="4">
+                                    <TextField fx:id="males" disable="true" text="2">
                                        <font>
                                           <Font name="Fira Code Regular" size="12.0" />
                                        </font>
                                     </TextField>
-                                    <TextField fx:id="females" disable="true" layoutX="10.0" layoutY="10.0" text="4">
+                                    <TextField fx:id="females" disable="true" layoutX="10.0" layoutY="10.0" text="2">
                                        <font>
                                           <Font name="Fira Code Regular" size="12.0" />
                                        </font>
@@ -274,7 +274,7 @@
                                     <Font name="Fira Code Regular" size="12.0" />
                                  </font>
                               </Label>
-                              <TextField disable="true" fx:id="inbreedingPenaltyField" text="10" />
+                              <TextField fx:id="inbreedingPenaltyField" disable="true" text="10" />
                            </children>
                         </VBox>
                      </children>
@@ -284,14 +284,23 @@
                   </GridPane>
                   <HBox alignment="CENTER" VBox.vgrow="ALWAYS">
                      <children>
-                        <Button fx:id="start" mnemonicParsing="false" onAction="#onStartClicked" style="-fx-background-color: #b7cd74; -fx-background-radius: 10; -fx-border-color: #000; -fx-border-radius: 10;" text="Uruchom symulację">
-                           <font>
-                              <Font name="Fira Code Bold" size="12.0" />
-                           </font>
-                           <padding>
-                              <Insets bottom="8.0" left="24.0" right="24.0" top="8.0" />
-                           </padding>
-                        </Button>
+                        <VBox alignment="CENTER" spacing="10.0">
+                           <children>
+                              <Button fx:id="start" mnemonicParsing="false" onAction="#onStartClicked" style="-fx-background-color: #b7cd74; -fx-background-radius: 10; -fx-border-color: #000; -fx-border-radius: 10;" text="Uruchom symulację">
+                                 <font>
+                                    <Font name="Fira Code Bold" size="12.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets bottom="8.0" left="24.0" right="24.0" top="8.0" />
+                                 </padding>
+                              </Button>
+                              <CheckBox fx:id="saveStats" mnemonicParsing="false" style="-fx-font-family: 'Fira Code';" text="Zapisz statystyki symulacji">
+                                 <font>
+                                    <Font name="Fira Code Regular" size="12.0" />
+                                 </font>
+                              </CheckBox>
+                           </children>
+                        </VBox>
                      </children>
                   </HBox>
                </children>
@@ -299,7 +308,7 @@
                   <Insets />
                </StackPane.margin>
                <padding>
-                  <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
                </padding>
             </VBox>
          </children>

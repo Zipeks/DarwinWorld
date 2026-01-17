@@ -18,8 +18,6 @@ public class JsonSaver {
                  JsonWriter writer = Json.createWriter(os)) {
                 writer.writeObject(obj);
             }
-        } else {
-            throw new IOException("Nie znaleziono pliku");
         }
     }
 }

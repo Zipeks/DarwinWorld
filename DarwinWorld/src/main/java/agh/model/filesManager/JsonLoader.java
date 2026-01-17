@@ -19,7 +19,7 @@ public class JsonLoader {
                 return new SimulationConfig(obj);
             }
         } else {
-            throw new IOException("Nie znaleziono pliku");
+            return null;
         }
     }
 }

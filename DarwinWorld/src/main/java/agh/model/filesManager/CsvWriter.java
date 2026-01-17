@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public class CsvWriter {
     public static void saveConfigStats(SimulationStats stats, UUID id) {
-        File file = new File("simulation" + id + ".csv");
+        File file = new File("logs/simulation" + id + ".csv");
         boolean exists = file.exists();
 
         try (FileWriter writer = new FileWriter(file, true)) {

@@ -77,16 +77,18 @@ public record SimulationConfig(int mapWidth,
     }
 
     public void validate() throws InvalidConfigException {
-        if (this.mapHeight() < 3 || this.mapWidth() < 3 || this.mapHeight() > 80 || this.mapWidth() > 160)
-            throw new InvalidConfigException("Dopusczalny rozmiar 3x3 - 160x80");
+        if (this.mapHeight() < 3 || this.mapWidth() < 3 || this.mapHeight() > 60 || this.mapWidth() > 100)
+            throw new InvalidConfigException("Dopusczalny rozmiar 3x3 - 100x60");
         if (this.startGrassesCount() < 0 || this.startGrassesCount() > this.mapWidth() * this.mapHeight())
             throw new InvalidConfigException("Dopuszczalna ilość trawy jest dodatnia i nie większa od ilości pól na mapie");
         if (this.energyFromEatingGrass() < 0)
             throw new InvalidConfigException("Przyrost energii nie może być ujemny");
-        if (this.newGrassesDaily() < 0)
-            throw new InvalidConfigException("Dzienny przyrost roślin nie może być ujemny");
+        if (this.newGrassesDaily() < 0 || this.newGrassesDaily>(int) (0.2*this.mapWidth*this.mapHeight))
+            throw new InvalidConfigException("Dzienny przyrost roślin nie może być ujemny i nie może być większy niż 20% mapy");
         if (this.startAnimalCount() < 0)
             throw new InvalidConfigException("Liczba zwierząt nie może być ujemna");
+        if (this.startAnimalCount() >this.mapWidth()+this.mapHeight())
+            throw new InvalidConfigException("Liczba zwierząt nie może większa od sumy wysokości i szerokości mapy");
         if (this.startEnergy() < 0)
             throw new InvalidConfigException("Energia początkowa nie może być ujemna");
         if (this.energyLostDaily() < 0)

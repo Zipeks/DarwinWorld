@@ -91,18 +91,19 @@ public class Simulation implements Runnable {
     @Override
     public synchronized void run() {
         while (isRunning) {
-            if (stats.animalsCount() == 0) {
-                pause();
-                break;
-            }
-            worldMap.removeDeadAnimals(stats.currentDate());
-            worldMap.moveAnimals(config.energyLostDaily());
-            worldMap.grassConsumption(config.energyFromEatingGrass());
-            animals.addAll(worldMap.animalReproduction(config, stats.currentDate()));
-            worldMap.placeGrasses(config.newGrassesDaily());
-            worldMap.nextDay(stats.currentDate());
-            updateStats();
             try {
+                if (stats.animalsCount() == 0) {
+                    pause();
+                    break;
+                }
+                if(stats.currentDate()==0) Thread.sleep(config.timeBetweenDays());
+                worldMap.removeDeadAnimals(stats.currentDate());
+                worldMap.moveAnimals(config.energyLostDaily());
+                worldMap.grassConsumption(config.energyFromEatingGrass());
+                animals.addAll(worldMap.animalReproduction(config, stats.currentDate()));
+                worldMap.placeGrasses(config.newGrassesDaily());
+                worldMap.nextDay(stats.currentDate());
+                updateStats();
                 Thread.sleep(config.timeBetweenDays());
             } catch (InterruptedException e) {
                 IO.println(e.getMessage());

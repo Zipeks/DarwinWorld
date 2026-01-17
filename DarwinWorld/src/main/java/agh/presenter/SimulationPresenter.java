@@ -32,8 +32,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class SimulationPresenter implements MapChangeListener, StatsListener {
-    private static final double MAX_WIDTH = 1280;
-    private static final double MAX_HEIGHT = 640;
+    private static final double MAX_WIDTH = 1200;
+    private static final double MAX_HEIGHT = 620;
     private static final int BORDER_WIDTH = 2;
     private static final int BORDER_OFFSET = BORDER_WIDTH / 2;
 
@@ -199,7 +199,7 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
                 if (animalsPosition.contains(element.getPosition())) {
 
                     graphics.rect(0, 0, cellSize, cellSize);
-                    graphics.setFill(Color.RED);
+                    graphics.setFill(Color.PEACHPUFF);
 //                    graphics.fillText("\uD83D\uDC9E", 0, 0);
 //                    graphics.fillText("✴︎", 0, 0);
                     graphics.fillText("\uD83D\uDC3E", 0, 0);
@@ -305,6 +305,10 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
             changeState.run();
         }
         controlSimulation.setText(simulation.isRunning() ? "STOP" : "START");
+    }
+
+    public void setSaveStats(Boolean saveStats) {
+        this.saveStats = saveStats;
     }
 
     @Override

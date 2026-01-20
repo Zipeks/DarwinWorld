@@ -39,6 +39,7 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
 
     private String fontPath;
     private Font notoEmojiFont;
+    private Font mapFont;
 
     private int numCols;
     private int numRows;
@@ -92,7 +93,7 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
 
     public SimulationPresenter() {
         try {
-            fontPath = Objects.requireNonNull(getClass().getResource("/fonts/NotoEmoji-VariableFont_wght.ttf")).toExternalForm();
+            fontPath = Objects.requireNonNull(getClass().getResource("/fonts/NotoEmoji.ttf")).toExternalForm();
         } catch (NullPointerException e) {
             System.err.println("Font not found");
         }
@@ -105,6 +106,9 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
 
     @FXML
     public void initialize() {
+        if (fontPath != null) {
+            notoEmojiFont = Font.loadFont(fontPath, 12);
+        }
         initializeTooltips();
     }
 
@@ -156,10 +160,10 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
 
         mapCanvas.setWidth(canvasWidth);
         mapCanvas.setHeight(canvasHeight);
-
         if (fontPath != null) {
-            notoEmojiFont = Font.loadFont(fontPath, cellSize * 0.9);
+            mapFont = Font.font(notoEmojiFont.getFamily(), cellSize*0.8);
         }
+
     }
 
     public void drawMap() {
@@ -178,7 +182,7 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
 
 
         double halfCell = (cellSize / 2);
-        configureFont(graphics, this.notoEmojiFont, Color.BLACK);
+        configureFont(graphics, this.mapFont, Color.BLACK);
         Set<Vector2d> animalsPosition = new HashSet<>();
 
         map.getElements().forEach(element -> {

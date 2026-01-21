@@ -5,6 +5,7 @@ import agh.model.*;
 import agh.model.InvalidConfigException;
 import agh.model.filesManager.JsonLoader;
 import agh.model.filesManager.JsonSaver;
+import agh.model.filesManager.DirectoryCreationException;
 import agh.model.util.SimulationConfig;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -198,7 +199,12 @@ public class ConfigurationPresenter {
             showAlert(new Alert(Alert.AlertType.ERROR), "Invalid configuration", e.getMessage());
         } catch (NumberFormatException e) {
             showAlert(new Alert(Alert.AlertType.ERROR), "Invalid configuration", "Values must be numeric");
-        } catch (IOException e) {
+        }
+        catch (DirectoryCreationException e){
+            e.printStackTrace();
+            showAlert(new Alert(Alert.AlertType.ERROR), "Preset directory error", e.getMessage());
+        }
+        catch (IOException e) {
             e.printStackTrace();
             showAlert(new Alert(Alert.AlertType.ERROR), "Write error", "Could not write to file");
         }
@@ -211,7 +217,12 @@ public class ConfigurationPresenter {
                 setConfig(config);
                 changeHabsburgOptions();
             }
-        } catch (IOException e) {
+        }
+        catch (DirectoryCreationException e){
+            e.printStackTrace();
+            showAlert(new Alert(Alert.AlertType.ERROR), "Preset directory error", e.getMessage());
+        }
+        catch (IOException e) {
             e.printStackTrace();
             showAlert(new Alert(Alert.AlertType.ERROR), "Read error", "Could not read the file");
         }

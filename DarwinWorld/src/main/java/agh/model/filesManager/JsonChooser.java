@@ -5,7 +5,7 @@ import javafx.stage.FileChooser;
 import java.io.File;
 
 public class JsonChooser {
-    public static FileChooser choose() {
+    public static FileChooser choose() throws DirectoryCreationException {
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("JSON Files", "*.json")
@@ -14,7 +14,7 @@ public class JsonChooser {
         if(!presets.exists()){
             boolean created= presets.mkdir();
             if(!created)
-                return null;
+                throw new DirectoryCreationException("Could not create a preset directory");
         }
         fc.setInitialDirectory(presets);
         return fc;

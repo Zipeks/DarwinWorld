@@ -11,7 +11,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class JsonLoader {
-    public static SimulationConfig loadConfig(Window window) throws IOException {
+    public static SimulationConfig loadConfig(Window window) throws IOException, DirectoryCreationException {
         File file = JsonChooser.choose().showOpenDialog(window);
         if (file != null) {
             try (JsonReader reader = Json.createReader(new FileInputStream(file))) {

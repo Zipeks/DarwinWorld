@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class JsonSaver {
-    public static void saveConfig(JsonObject obj, Window window) throws IOException {
+    public static void saveConfig(JsonObject obj, Window window) throws IOException, DirectoryCreationException {
         File file = JsonChooser.choose().showSaveDialog(window);
         if (file != null) {
             try (OutputStream os = new FileOutputStream(file);

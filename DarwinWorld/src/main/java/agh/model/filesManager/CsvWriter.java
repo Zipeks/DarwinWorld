@@ -8,12 +8,12 @@ import java.io.IOException;
 import java.util.UUID;
 
 public class CsvWriter {
-    public static void saveConfigStats(SimulationStats stats, UUID id) {
+    public static void saveConfigStats(SimulationStats stats, UUID id) throws DirectoryCreationException {
         File logs=new File("logs");
         if(!logs.exists()){
             boolean created= logs.mkdir();
             if(!created)
-                return;
+                throw new DirectoryCreationException("Could not create a log directory");
         }
 
         File file = new File(logs,"simulation" + id + ".csv");

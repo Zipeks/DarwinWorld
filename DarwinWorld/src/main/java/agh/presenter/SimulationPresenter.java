@@ -4,10 +4,8 @@ import agh.Simulation;
 import agh.model.*;
 import agh.model.MapChangeListener;
 import agh.model.filesManager.CsvWriter;
-import agh.model.util.Boundary;
-import agh.model.util.Genotype;
-import agh.model.util.SimulationConfig;
-import agh.model.util.SimulationStats;
+import agh.model.filesManager.DirectoryCreationException;
+import agh.model.util.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -170,7 +168,7 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         avgAgeTooltip.setShowDelay(Duration.millis(100));
         Tooltip.install(avgAgeBox, avgAgeTooltip);
 
-        Tooltip genoTypeTooltip = new Tooltip("Genotype of alive animal with most descendants");
+        Tooltip genoTypeTooltip = new Tooltip("The most popular genotype");
         genoTypeTooltip.setShowDelay(Duration.millis(100));
         Tooltip.install(genotypeBox, genoTypeTooltip);
     }
@@ -321,8 +319,13 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         genotype.setText(stats.mostPopularGenotype() != null ? String.valueOf(stats.mostPopularGenotype()) : "-");
         animalsCount.setText(String.valueOf(stats.animalsCount()));
         day.setText("Day " + stats.currentDate());
-        if (saveStats)
-            CsvWriter.saveConfigStats(stats, simulation.getId());
+        if (saveStats) {
+            try {
+                CsvWriter.saveConfigStats(stats, simulation.getId());
+            } catch (DirectoryCreationException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void setSimulation(Simulation simulation) {

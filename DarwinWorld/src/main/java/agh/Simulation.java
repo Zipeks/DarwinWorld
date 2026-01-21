@@ -36,7 +36,6 @@ public class Simulation implements Runnable {
 
     public void notifyObservers(SimulationStats dailyStats) {
         for (StatsListener observer : observers) {
-            IO.println(observer);
             observer.statsChanged(dailyStats);
         }
     }

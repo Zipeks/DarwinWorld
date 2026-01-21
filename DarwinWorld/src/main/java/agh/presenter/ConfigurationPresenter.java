@@ -95,12 +95,12 @@ public class ConfigurationPresenter {
 
             executorService.execute(simulation);
         } catch (InvalidConfigException e) {
-            showAlert(new Alert(Alert.AlertType.ERROR), "Nieprawidłowa konfiguracja", e.getMessage());
+            showAlert(new Alert(Alert.AlertType.ERROR), "Invalid configuration", e.getMessage());
         } catch (NumberFormatException e) {
-            showAlert(new Alert(Alert.AlertType.ERROR), "Nieprawidłowa konfiguracja", "Wartości muszą być liczbami");
+            showAlert(new Alert(Alert.AlertType.ERROR), "Invalid configuration", "Values must be numeric");
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert(new Alert(Alert.AlertType.ERROR), "Wystąpił błąd", "Coś poszło nie tak");
+            showAlert(new Alert(Alert.AlertType.ERROR), "ERROR", "Something went wrong");
         }
     }
 
@@ -194,12 +194,12 @@ public class ConfigurationPresenter {
             JsonObject obj = config.toJson();
             JsonSaver.saveConfig(obj, saveConfig.getScene().getWindow());
         } catch (InvalidConfigException e) {
-            showAlert(new Alert(Alert.AlertType.ERROR), "Nieprawidłowa konfiguracja", e.getMessage());
+            showAlert(new Alert(Alert.AlertType.ERROR), "Invalid configuration", e.getMessage());
         } catch (NumberFormatException e) {
-            showAlert(new Alert(Alert.AlertType.ERROR), "Nieprawidłowa konfiguracja", "Wartości muszą być liczbami");
+            showAlert(new Alert(Alert.AlertType.ERROR), "Invalid configuration", "Values must be numeric");
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert(new Alert(Alert.AlertType.ERROR), "Błąd zapisu", "Coś poszło nie tak podczas zapisywania konfiguracji");
+            showAlert(new Alert(Alert.AlertType.ERROR), "Write error", "Could not write to file");
         }
     }
 
@@ -212,7 +212,7 @@ public class ConfigurationPresenter {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert(new Alert(Alert.AlertType.ERROR), "Błąd odczytu", "Coś poszło nie tak podczas wczytywania konfiguracji");
+            showAlert(new Alert(Alert.AlertType.ERROR), "Read error", "Could not read the file");
         }
     }
 
@@ -223,10 +223,10 @@ public class ConfigurationPresenter {
     }
 
     public void animalsUpdated() {
-        if (initialAnimals.getText().equals("") || males.getText().equals("")) return;
+        if (initialAnimals.getText().isEmpty() || males.getText().isEmpty()) return;
         int animals = Integer.parseInt(initialAnimals.getText());
         int startingMales = Integer.parseInt(males.getText());
-        int femalesCount = animals - startingMales > 0 ? animals - startingMales : 0;
+        int femalesCount = Math.max(animals - startingMales, 0);
         females.setText(String.valueOf(femalesCount));
     }
 

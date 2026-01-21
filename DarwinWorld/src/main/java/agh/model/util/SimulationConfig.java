@@ -78,47 +78,67 @@ public record SimulationConfig(int mapWidth,
 
     public void validate() throws InvalidConfigException {
         if (this.mapHeight() < 3 || this.mapWidth() < 3 || this.mapHeight() > 60 || this.mapWidth() > 100)
-            throw new InvalidConfigException("Dopusczalny rozmiar 3x3 - 100x60");
+            throw new InvalidConfigException("Allowed map size is 3x3 to 100x60");
+
         if (this.startGrassesCount() < 0 || this.startGrassesCount() > this.mapWidth() * this.mapHeight())
-            throw new InvalidConfigException("Dopuszczalna ilość trawy jest dodatnia i nie większa od ilości pól na mapie");
+            throw new InvalidConfigException("Grass count must be non-negative and cannot exceed the number of map fields");
+
         if (this.energyFromEatingGrass() < 0)
-            throw new InvalidConfigException("Przyrost energii nie może być ujemny");
-        if (this.newGrassesDaily() < 0 || this.newGrassesDaily>(int) (0.2*this.mapWidth*this.mapHeight))
-            throw new InvalidConfigException("Dzienny przyrost roślin nie może być ujemny i nie może być większy niż 20% mapy");
+            throw new InvalidConfigException("Energy gain cannot be negative");
+
+        if (this.newGrassesDaily() < 0 || this.newGrassesDaily > (int) (0.2 * this.mapWidth * this.mapHeight))
+            throw new InvalidConfigException("Daily grass growth must be non-negative and cannot exceed 20% of the map");
+
         if (this.startAnimalCount() < 0)
-            throw new InvalidConfigException("Liczba zwierząt nie może być ujemna");
-        if (this.startAnimalCount() >this.mapWidth()+this.mapHeight())
-            throw new InvalidConfigException("Liczba zwierząt nie może większa od sumy wysokości i szerokości mapy");
+            throw new InvalidConfigException("Animal count cannot be negative");
+
+        if (this.startAnimalCount() > this.mapWidth() + this.mapHeight())
+            throw new InvalidConfigException("Animal count cannot exceed the sum of map width and height");
+
         if (this.startEnergy() < 0)
-            throw new InvalidConfigException("Energia początkowa nie może być ujemna");
+            throw new InvalidConfigException("Starting energy cannot be negative");
+
         if (this.energyLostDaily() < 0)
-            throw new InvalidConfigException("Strata energii nie może być ujemna");
+            throw new InvalidConfigException("Daily energy loss cannot be negative");
+
         if (this.energyNeededToReproduce() < 0)
-            throw new InvalidConfigException("Energia potrzebna do rozmnażania nie może być ujemna");
+            throw new InvalidConfigException("Energy required for reproduction cannot be negative");
+
         if (this.energyLostToReproduce() < 0)
-            throw new InvalidConfigException("Energia tracona przy rozmnażaniu nie może być ujemna");
+            throw new InvalidConfigException("Energy lost during reproduction cannot be negative");
+
         if (this.energyNeededToReproduce() < this.energyLostToReproduce())
-            throw new InvalidConfigException("Energia potrzebna do rozmnażania nie może być mniejsza od energii traconej");
+            throw new InvalidConfigException("Energy required for reproduction cannot be lower than energy lost");
+
         if (this.minimalMutationCount() < 0)
-            throw new InvalidConfigException("Minimalna liczba mutacji nie może być ujemna");
+            throw new InvalidConfigException("Minimum mutation count cannot be negative");
+
         if (this.maximalMutationCount() < 0)
-            throw new InvalidConfigException("Maksymalna liczba mutacji nie może być ujemna");
+            throw new InvalidConfigException("Maximum mutation count cannot be negative");
+
         if (this.maximalMutationCount() < this.minimalMutationCount())
-            throw new InvalidConfigException("Maksymalna liczba mutacji nie może być mniejsza od minimalnej");
+            throw new InvalidConfigException("Maximum mutation count cannot be lower than minimum mutation count");
+
         if (this.genotypeLength() <= 0)
-            throw new InvalidConfigException("Minimalna długość genotypu wynosi 1");
+            throw new InvalidConfigException("Minimum genotype length is 1");
+
         if (this.maximalMutationCount() > this.genotypeLength())
-            throw new InvalidConfigException("Maksymalna liczba mutacji nie może być większa od długości genotypu");
+            throw new InvalidConfigException("Maximum mutation count cannot exceed genotype length");
+
         if (this.timeBetweenDays() < 100)
-            throw new InvalidConfigException("Minimalny czas trwania dnia to 100ms");
+            throw new InvalidConfigException("Minimum day duration is 100ms");
+
         if (this.habsburgsOn() && this.startingMales() < 0)
-            throw new InvalidConfigException("Minimalna ilość samców nie może być ujemna");
+            throw new InvalidConfigException("Male count cannot be negative");
+
         if (this.habsburgsOn() && this.startingFemales() < 0)
-            throw new InvalidConfigException("Minimalna ilość samic nie może być ujemna");
+            throw new InvalidConfigException("Female count cannot be negative");
+
         if (this.habsburgsOn() && this.startingFemales() + this.startingMales() != this.startAnimalCount())
-            throw new InvalidConfigException("Suma samic i samców musi być równa liczbie zwierząt");
+            throw new InvalidConfigException("The sum of males and females must equal the total animal count");
+
         if (this.habsburgsOn() && this.inbreedingPenalty() < 0)
-            throw new InvalidConfigException("Strata energii przy pokrewieństwie nie może być ujemna");
+            throw new InvalidConfigException("Inbreeding energy penalty cannot be negative");
     }
 
     public JsonObject toJson() {

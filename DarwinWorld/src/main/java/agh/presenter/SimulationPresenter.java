@@ -91,7 +91,19 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
     @FXML
     private HBox genotypeBox;
     @FXML
-    private Label test;
+    private Label black;
+    @FXML
+    private Label red;
+    @FXML
+    private Label yellow;
+    @FXML
+    private Label peach;
+    @FXML
+    private Label violet;
+    @FXML
+    private Label cyan;
+    @FXML
+    private Label paws;
 
     public SimulationPresenter() {
         try {
@@ -109,11 +121,29 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
     @FXML
     public void initialize() {
         if (fontPath != null) {
-            notoEmojiFont = Font.loadFont(fontPath, 12);
+            notoEmojiFont = Font.loadFont(fontPath, 16);
         }
-        test.setFont((notoEmojiFont));
+        initializeDescription();
         initializeTooltips();
     }
+
+    private void initializeDescription(){
+        black.setFont((notoEmojiFont));
+        black.setText("\uD83D\uDC3B");
+        red.setFont((notoEmojiFont));
+        red.setText("\uD83D\uDC3B");
+        yellow.setFont((notoEmojiFont));
+        yellow.setText("\uD83D\uDC3B");
+        peach.setFont((notoEmojiFont));
+        peach.setText("\uD83D\uDC3B");
+        violet.setFont((notoEmojiFont));
+        violet.setText("\uD83D\uDC3B");
+        paws.setFont((notoEmojiFont));
+        paws.setText("\uD83D\uDC3E");
+        cyan.setFont((notoEmojiFont));
+        cyan.setText("\uD83D\uDC3B");
+    }
+
 
     private void initializeTooltips() {
         Tooltip animalTooltip = new Tooltip("Animals count");
@@ -163,9 +193,8 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
 
         mapCanvas.setWidth(canvasWidth);
         mapCanvas.setHeight(canvasHeight);
-        if (fontPath != null) {
-            mapFont = Font.font(notoEmojiFont.getFamily(), cellSize*0.8);
-        }
+
+        mapFont = Font.font(notoEmojiFont.getFamily(), cellSize*0.8);
 
     }
 
@@ -207,8 +236,6 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
 
                     graphics.rect(0, 0, cellSize, cellSize);
                     graphics.setFill(Color.PEACHPUFF);
-//                    graphics.fillText("\uD83D\uDC9E", 0, 0);
-//                    graphics.fillText("✴︎", 0, 0);
                     graphics.fillText("\uD83D\uDC3E", 0, 0);
                 } else {
                     graphics.setFill(getAnimalColor(((Animal) element), config.energyLostDaily()));
@@ -293,7 +320,7 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         avgChildCount.setText(String.valueOf(stats.avgChildCount()));
         genotype.setText(stats.mostPopularGenotype() != null ? String.valueOf(stats.mostPopularGenotype()) : "-");
         animalsCount.setText(String.valueOf(stats.animalsCount()));
-        day.setText("Dzień " + stats.currentDate());
+        day.setText("Day " + stats.currentDate());
         if (saveStats)
             CsvWriter.saveConfigStats(stats, simulation.getId());
     }

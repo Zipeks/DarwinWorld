@@ -38,8 +38,12 @@ public class HabsburgMap extends AbstractJungleMap {
         HabsburgAnimal parentOne = (HabsburgAnimal) parents.parentOne();
         HabsburgAnimal parentTwo = (HabsburgAnimal) parents.parentOne();
         int mutations = PRNG.nextInt(config.minimalMutationCount(), config.maximalMutationCount() + 1);
-
-        return new HabsburgAnimal(parentOne.getPosition(), parentOne, parentTwo, mutations, config.energyLostToReproduce() * 2, currentDay);
+        double kinshipLevel = Genotype.kinshipLevel(parentOne, parentTwo);
+        int startingEnergy = config.energyLostToReproduce() * 2;
+        if (kinshipLevel >= 0.25) {
+            startingEnergy *= 1-config.inbreedingPenalty();
+        }
+        return new HabsburgAnimal(parentOne.getPosition(), parentOne, parentTwo, mutations, startingEnergy, currentDay);
     }
 
 

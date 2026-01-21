@@ -2,7 +2,6 @@ package agh.model.util;
 
 import agh.model.Animal;
 import agh.model.Gene;
-import agh.model.HabsburgAnimal;
 
 import java.util.*;
 
@@ -11,7 +10,6 @@ public class Genotype {
     private final List<Gene> genes;
     private int activeGeneIdx;
 
-    // First animal
     public Genotype(int size) {
         genes = new ArrayList<>();
         for (int i = 0; i < size; i++) {

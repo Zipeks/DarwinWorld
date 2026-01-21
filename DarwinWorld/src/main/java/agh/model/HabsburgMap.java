@@ -41,7 +41,7 @@ public class HabsburgMap extends AbstractJungleMap {
         double kinshipLevel = Genotype.kinshipLevel(parentOne, parentTwo);
         int startingEnergy = config.energyLostToReproduce() * 2;
         if (kinshipLevel >= 0.25) {
-            startingEnergy *= 1-config.inbreedingPenalty();
+            startingEnergy = startingEnergy * (1-(config.inbreedingPenalty()/100));
         }
         return new HabsburgAnimal(parentOne.getPosition(), parentOne, parentTwo, mutations, startingEnergy, currentDay);
     }

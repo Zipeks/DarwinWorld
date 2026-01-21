@@ -90,6 +90,8 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
     private HBox avgAgeBox;
     @FXML
     private HBox genotypeBox;
+    @FXML
+    private Label test;
 
     public SimulationPresenter() {
         try {
@@ -109,6 +111,7 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         if (fontPath != null) {
             notoEmojiFont = Font.loadFont(fontPath, 12);
         }
+        test.setFont((notoEmojiFont));
         initializeTooltips();
     }
 

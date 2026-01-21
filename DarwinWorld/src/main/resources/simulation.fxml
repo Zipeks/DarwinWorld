@@ -186,7 +186,7 @@
             </HBox>
             <HBox layoutX="962.0" layoutY="10.0">
                <children>
-                  <Label style="-fx-text-fill: CYAN;" text="🐻 ">
+                  <Label fx:id="test" style="-fx-text-fill: CYAN;" text="🐻 ">
                      <font>
                         <Font size="16.0" name="Noto Emoji" />
                      </font>

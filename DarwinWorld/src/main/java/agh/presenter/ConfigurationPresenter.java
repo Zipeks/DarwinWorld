@@ -159,6 +159,7 @@ public class ConfigurationPresenter {
         males.setText(String.valueOf(config.startingMales()));
         females.setText(String.valueOf(config.startingFemales()));
         inbreedingPenaltyField.setText(String.valueOf(config.inbreedingPenalty()));
+        dayLength.setText(String.valueOf(config.timeBetweenDays()));
 
     }
 

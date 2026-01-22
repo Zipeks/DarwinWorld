@@ -77,8 +77,8 @@ public record SimulationConfig(int mapWidth,
     }
 
     public void validate() throws InvalidConfigException {
-        if (this.mapHeight() < 3 || this.mapWidth() < 3 || this.mapHeight() > 60 || this.mapWidth() > 100)
-            throw new InvalidConfigException("Allowed map size is 3x3 to 100x60");
+        if (this.mapHeight() < 3 || this.mapWidth() < 3 || this.mapHeight() > 100 || this.mapWidth() > 200)
+            throw new InvalidConfigException("Allowed map size is 3x3 to 200x100");
 
         if (this.startGrassesCount() < 0 || this.startGrassesCount() > this.mapWidth() * this.mapHeight())
             throw new InvalidConfigException("Grass count must be non-negative and cannot exceed the number of map fields");
@@ -92,8 +92,8 @@ public record SimulationConfig(int mapWidth,
         if (this.startAnimalCount() < 0)
             throw new InvalidConfigException("Animal count cannot be negative");
 
-        if (this.startAnimalCount() > this.mapWidth() + this.mapHeight())
-            throw new InvalidConfigException("Animal count cannot exceed the sum of map width and height");
+        if (this.startAnimalCount() > this.mapWidth() * this.mapHeight())
+            throw new InvalidConfigException("Animal count cannot exceed the map area");
 
         if (this.startEnergy() < 0)
             throw new InvalidConfigException("Starting energy cannot be negative");

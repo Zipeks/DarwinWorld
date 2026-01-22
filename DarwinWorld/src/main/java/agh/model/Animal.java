@@ -20,7 +20,6 @@ public class Animal implements WorldElement {
         this(position, new Genotype(parentOne, parentTwo, mutationsCnt), startEnergy, birthDate);
         parents.add(parentOne);
         parents.add(parentTwo);
-        notifyAncestors(new HashSet<>());
     }
 
     public Animal(Vector2d position, Genotype genotype, int energy, int birthDate) {
@@ -46,23 +45,6 @@ public class Animal implements WorldElement {
         }
     }
 
-    public void notifyAncestors(HashSet<Animal> ancestors) {
-        if (parents.size() == 2) {
-            for (Animal parent : parents) {
-                if (!ancestors.contains(parent)) {
-                    ancestors.add(parent);
-                    parent.increaseAncestorsCount(ancestors);
-                }
-            }
-        }
-    }
-
-    public void increaseAncestorsCount(HashSet<Animal> ancestors) {
-        animalStats.increaseDescendantsCount();
-        notifyObservers();
-        notifyAncestors(ancestors);
-    }
-
     public void move(MoveValidator moveValidator, int moveCost) {
         direction = direction.rotateBy(genotype.next());
         Vector2d moveVector = direction.toUnitVector();
@@ -85,9 +67,18 @@ public class Animal implements WorldElement {
     }
 
     public int getDescendantCount() {
-        return animalStats.getDescendantsCount();
+        HashSet<Animal> uniqueDescendants = new HashSet<>();
+        DFS_UniqueDescendants(this, uniqueDescendants);
+        return uniqueDescendants.size();
     }
 
+    private void DFS_UniqueDescendants(Animal animal, HashSet<Animal> unique) {
+        for (Animal child : animal.getChildren()) {
+            if (unique.add(child)) {
+                DFS_UniqueDescendants(child, unique);
+            }
+        }
+    }
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;

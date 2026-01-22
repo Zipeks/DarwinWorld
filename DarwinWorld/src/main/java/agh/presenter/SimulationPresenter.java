@@ -89,7 +89,7 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
     @FXML
     private HBox genotypeBox;
     @FXML
-    private Label black;
+    private Label dead;
     @FXML
     private Label red;
     @FXML
@@ -126,8 +126,8 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
     }
 
     private void initializeDescription(){
-        black.setFont((notoEmojiFont));
-        black.setText("\uD83D\uDC3B");
+        dead.setFont((notoEmojiFont));
+        dead.setText("☠\uFE0F");
         red.setFont((notoEmojiFont));
         red.setText("\uD83D\uDC3B");
         yellow.setFont((notoEmojiFont));
@@ -230,12 +230,16 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
                 boolean isJungle = position.follows(jungleBounds.bottomLeft()) && position.precedes(jungleBounds.topRight());
                 graphics.setFill(isJungle ? Color.DARKGREEN : Color.SADDLEBROWN);
                 graphics.fillRect(-halfCell, -halfCell, cellSize, cellSize);
+                graphics.setFill(Color.PEACHPUFF);
                 if (animalsPosition.contains(element.getPosition())) {
-
                     graphics.rect(0, 0, cellSize, cellSize);
-                    graphics.setFill(Color.PEACHPUFF);
                     graphics.fillText("\uD83D\uDC3E", 0, 0);
-                } else {
+                }
+                else if(((Animal) element).getEnergy()==0){
+                    graphics.fillText("☠\uFE0F", 0, 0);
+                    animalsPosition.add(element.getPosition());
+                }
+                else {
                     graphics.setFill(getAnimalColor(((Animal) element), config.energyLostDaily()));
                     graphics.fillText("\uD83D\uDC3B", 0, 0);
                     animalsPosition.add(element.getPosition());

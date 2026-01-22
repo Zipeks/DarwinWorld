@@ -37,7 +37,6 @@ abstract class AbstractWorldMap implements agh.model.WorldMap {
     @Override
     public synchronized void place(Animal animal) {
         animals.computeIfAbsent(animal.getPosition(), k -> new ArrayList<>()).add(animal);
-        notifyObservers("Animal has been placed at: " + animal.getPosition());
     }
 
     @Override

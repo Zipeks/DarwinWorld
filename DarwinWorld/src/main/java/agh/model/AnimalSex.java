@@ -7,8 +7,8 @@ public enum AnimalSex {
     @Override
     public String toString(){
         return switch (this) {
-            case MALE -> "Samiec";
-            case FEMALE -> "Samica";
+            case MALE -> "M";
+            case FEMALE -> "F";
         };
     }
 

@@ -117,7 +117,7 @@ public abstract class AbstractJungleMap extends AbstractWorldMap {
         }
     }
 
-    public List<Animal> animalReproduction(SimulationConfig config, int currentDay) {
+    public synchronized List<Animal> animalReproduction(SimulationConfig config, int currentDay) {
         List<Animal> children = new ArrayList<>();
         Random PRNG = new Random();
         for (Vector2d position : animals.keySet()) {

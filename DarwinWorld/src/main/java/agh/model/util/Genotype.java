@@ -9,6 +9,7 @@ public class Genotype {
     private static final Random PRNG = new Random();
     private final List<Gene> genes;
     private int activeGeneIdx;
+    private Integer cachedHashCode = null;
 
     public Genotype(int size) {
         genes = new ArrayList<>();
@@ -103,7 +104,10 @@ public class Genotype {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(genes);
+        if (cachedHashCode == null) {
+            cachedHashCode = Objects.hashCode(genes);
+        }
+        return cachedHashCode;
     }
 
     @Override

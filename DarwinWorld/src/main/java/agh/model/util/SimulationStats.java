@@ -4,6 +4,7 @@ import agh.model.Animal;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public record SimulationStats(
         int animalsCount,
@@ -30,24 +31,20 @@ public record SimulationStats(
             if (animal.isAlive()) {
                 aliveAnimalsCount++;
                 totalAliveAnimalsEnergy += animal.getEnergy();
-//                int descendants = animal.getDescendantCount();
-//                if (maxDescendants < descendants) {
-//                    maxDescendants = descendants;
-//                    mostPopularGenotype = animal.getGenotype();
-//                }
 
-                genotypes.computeIfAbsent(animal.getGenotype(), k -> 1);
-                int currentGenotypeCount = genotypes.get(animal.getGenotype());
-                if (mostPopularGenotypeCount < currentGenotypeCount) {
-                    mostPopularGenotypeCount = currentGenotypeCount;
-                    mostPopularGenotype = animal.getGenotype();
-                }
+                genotypes.merge(animal.getGenotype(), 1, Integer::sum);
 
                 totalAliveAnimalsChildrenCount += animal.getChildrenCount();
                 animal.increaseAge();
             } else {
                 deadAnimalsCount++;
                 totalDeadAnimalsLifeLength += animal.getAge();
+            }
+        }
+        for (Map.Entry<Genotype, Integer> entry : genotypes.entrySet()) {
+            if (entry.getValue() > mostPopularGenotypeCount) {
+                mostPopularGenotypeCount = entry.getValue();
+                mostPopularGenotype = entry.getKey();
             }
         }
         avgChildCount = (aliveAnimalsCount == 0 ? 0 : totalAliveAnimalsChildrenCount / aliveAnimalsCount);

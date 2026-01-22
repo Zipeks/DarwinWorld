@@ -16,6 +16,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -51,6 +52,7 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
 
     private Simulation simulation;
     private Boolean saveStats = false;
+    private Boolean showChart=false;
     private Runnable changeState;
 
     @FXML
@@ -103,6 +105,7 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
     @FXML
     private Label paws;
 
+
     public SimulationPresenter() {
         try {
             fontPath = Objects.requireNonNull(getClass().getResource("/fonts/NotoEmoji.ttf")).toExternalForm();
@@ -123,6 +126,27 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         }
         initializeDescription();
         initializeTooltips();
+    }
+
+    private void initializeChart(){
+
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getClassLoader().getResource("chart.fxml")
+            );
+            AnchorPane viewRoot = loader.load();
+            Stage stage = new Stage();
+            ChartPresenter presenter = loader.getController();
+            simulation.addObserver(presenter);
+            stage.setTitle("Stats chart");
+            stage.setScene(new Scene(viewRoot));
+            stage.setOnCloseRequest(event -> {
+                simulation.removeObserver(presenter);
+            });
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initializeDescription(){
@@ -334,6 +358,7 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
 
     public void setSimulation(Simulation simulation) {
         this.simulation = simulation;
+        if(showChart) initializeChart();
     }
 
     public void setChangeState(Runnable changeState) {
@@ -357,6 +382,9 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
 
     public void setSaveStats(Boolean saveStats) {
         this.saveStats = saveStats;
+    }
+    public void setShowChart(Boolean showChart) {
+        this.showChart = showChart;
     }
 
     @Override

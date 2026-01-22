@@ -69,6 +69,8 @@ public class ConfigurationPresenter {
     private Button saveConfig;
     @FXML
     private CheckBox saveStats;
+    @FXML
+    private CheckBox showChart;
 
     @FXML
     public void initialize() {
@@ -125,6 +127,8 @@ public class ConfigurationPresenter {
         SimulationPresenter presenter = loader.getController();
         presenter.setHeight(height);
         presenter.setWidth(width);
+        presenter.setSaveStats(saveStats.isSelected());
+        presenter.setShowChart(showChart.isSelected());
         SimulationConfig config = getSimulationConfig();
         config.validate();
         AbstractJungleMap map;
@@ -150,7 +154,6 @@ public class ConfigurationPresenter {
         });
 
         presenter.setSimulation(simulation);
-        presenter.setSaveStats(saveStats.isSelected());
         simulation.addObserver(presenter);
         return simulation;
     }

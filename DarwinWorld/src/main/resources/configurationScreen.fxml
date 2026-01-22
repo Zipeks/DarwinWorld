@@ -294,11 +294,20 @@
                                     <Insets bottom="8.0" left="24.0" right="24.0" top="8.0" />
                                  </padding>
                               </Button>
-                              <CheckBox fx:id="saveStats" mnemonicParsing="false" style="-fx-font-family: 'Fira Code';" text="Save logs">
-                                 <font>
-                                    <Font name="Fira Code Regular" size="12.0" />
-                                 </font>
-                              </CheckBox>
+                              <HBox spacing="40.0">
+                                 <children>
+                                    <CheckBox fx:id="saveStats" mnemonicParsing="false" style="-fx-font-family: 'Fira Code';" text="Save logs">
+                                       <font>
+                                          <Font name="Fira Code Regular" size="12.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="showChart" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" style="-fx-font-family: 'Fira Code';" text="Show chart">
+                                       <font>
+                                          <Font name="Fira Code Regular" size="12.0" />
+                                       </font>
+                                    </CheckBox>
+                                 </children>
+                              </HBox>
                            </children>
                         </VBox>
                      </children>

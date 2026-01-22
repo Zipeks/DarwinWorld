@@ -30,8 +30,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class SimulationPresenter implements MapChangeListener, StatsListener {
-    private static final double MAX_WIDTH = 1200;
-    private static final double MAX_HEIGHT = 620;
+    private double height = 600.0d;
+    private double width = 1166.0d;
     private static final int BORDER_WIDTH = 2;
     private static final int BORDER_OFFSET = BORDER_WIDTH / 2;
 
@@ -181,10 +181,10 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         numCols = bounds.topRight().getX() - bounds.bottomLeft().getX() + 1;
         numRows = bounds.topRight().getY() - bounds.bottomLeft().getY() + 1;
 
-        double colSize = MAX_WIDTH / numCols;
-        double rowSize = MAX_HEIGHT / numRows;
+        double colSize = width / numCols;
+        double rowSize = height / numRows;
 
-        cellSize = Math.max(8, Math.min(colSize, rowSize));
+        cellSize = Math.min(colSize, rowSize);
 
         canvasWidth = cellSize * numCols + BORDER_WIDTH;
         canvasHeight = cellSize * numRows + BORDER_WIDTH;
@@ -338,6 +338,13 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
 
     public void setChangeState(Runnable changeState) {
         this.changeState = changeState;
+    }
+
+    public void setHeight(double height){
+        this.height=height-200;
+    }
+    public void setWidth(double width){
+        this.width=width-200;
     }
 
     @FXML

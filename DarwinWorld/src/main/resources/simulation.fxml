@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="766.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="agh.presenter.SimulationPresenter">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="agh.presenter.SimulationPresenter">
    <top>
       <HBox alignment="CENTER" maxHeight="-Infinity" prefHeight="90.0" prefWidth="200.0">
          <children>
@@ -109,7 +109,7 @@
       </HBox>
    </top>
    <center>
-      <Canvas fx:id="mapCanvas" height="620.0" onMouseClicked="#onCanvasClicked" width="1280.0" BorderPane.alignment="CENTER" />
+      <Canvas fx:id="mapCanvas" height="620.0" onMouseClicked="#onCanvasClicked" width="1280.0" />
    </center>
    <bottom>
       <HBox alignment="CENTER" spacing="50.0" style="-fx-background-color: #1e1e1e;" BorderPane.alignment="CENTER">

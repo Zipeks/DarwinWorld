@@ -9,12 +9,14 @@ import agh.model.filesManager.DirectoryCreationException;
 import agh.model.util.SimulationConfig;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import javax.json.JsonObject;
@@ -85,9 +87,17 @@ public class ConfigurationPresenter {
             );
             BorderPane viewRoot = loader.load();
             Stage stage = new Stage();
-            Simulation simulation = getSimulation(loader);
+
+            Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+            double width=primaryScreenBounds.getWidth();
+            double height= primaryScreenBounds.getHeight();
+            Simulation simulation = getSimulation(loader,width,height);
             stage.setTitle("Simulation");
             stage.setScene(new Scene(viewRoot));
+            stage.setX(primaryScreenBounds.getMinX());
+            stage.setY(primaryScreenBounds.getMinY());
+            stage.setWidth(primaryScreenBounds.getWidth());
+            stage.setHeight(primaryScreenBounds.getHeight());
 
             stage.setOnCloseRequest(event -> {
                 simulation.pause();
@@ -111,8 +121,10 @@ public class ConfigurationPresenter {
         alert.showAndWait();
     }
 
-    private Simulation getSimulation(FXMLLoader loader) throws InvalidConfigException {
+    private Simulation getSimulation(FXMLLoader loader,double width,double height) throws InvalidConfigException {
         SimulationPresenter presenter = loader.getController();
+        presenter.setHeight(height);
+        presenter.setWidth(width);
         SimulationConfig config = getSimulationConfig();
         config.validate();
         AbstractJungleMap map;
@@ -125,6 +137,7 @@ public class ConfigurationPresenter {
 
         presenter.setMap(map);
         presenter.setConfig(config);
+
 
         Simulation simulation = new Simulation(config, map);
         presenter.setChangeState(() -> {

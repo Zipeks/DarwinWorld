@@ -31,11 +31,10 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class SimulationPresenter implements MapChangeListener, StatsListener {
-    private double height = 600.0d;
-    private double width = 1166.0d;
     private static final int BORDER_WIDTH = 2;
     private static final int BORDER_OFFSET = BORDER_WIDTH / 2;
-
+    private double height = 600.0d;
+    private double width = 1166.0d;
     private String fontPath;
     private Font notoEmojiFont;
     private Font mapFont;
@@ -230,7 +229,6 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
         graphics.setStroke(Color.BLACK);
         graphics.setLineWidth(1);
 
-        //Dżungla
         graphics.setFill(Color.DARKGREEN);
         graphics.fillRect(0, (bounds.topRight().getY() - jungleBounds.topRight().getY()) * cellSize, mapCanvas.getWidth(), (jungleBounds.topRight().getY() - jungleBounds.bottomLeft().getY() + 1) * cellSize);
 
@@ -274,12 +272,10 @@ public class SimulationPresenter implements MapChangeListener, StatsListener {
                 graphics.fillText("\uD83C\uDF33", xOnCanvas, yOnCanvas);
             }
         });
-//         Pionowe kreski
         for (int i = 0; i <= numCols; i++) {
             double x = i * cellSize + BORDER_OFFSET;
             graphics.strokeLine(x, 0, x, canvasHeight);
         }
-        // Poziome kreski
         for (int i = 0; i <= numRows; i++) {
             double y = i * cellSize + BORDER_OFFSET;
             graphics.strokeLine(0, y, canvasWidth, y);

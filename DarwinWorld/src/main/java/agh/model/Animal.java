@@ -12,14 +12,11 @@ public class Animal implements WorldElement {
     private final Genotype genotype;
     private final List<Animal> children = new ArrayList<>();
     private final AnimalStats animalStats;
-    private final ArrayList<Animal> parents = new ArrayList<>();
     private MapDirection direction;
     private Vector2d position;
 
     public Animal(Vector2d position, Animal parentOne, Animal parentTwo, int mutationsCnt, int startEnergy, int birthDate) {
         this(position, new Genotype(parentOne, parentTwo, mutationsCnt), startEnergy, birthDate);
-        parents.add(parentOne);
-        parents.add(parentTwo);
     }
 
     public Animal(Vector2d position, Genotype genotype, int energy, int birthDate) {
@@ -117,11 +114,6 @@ public class Animal implements WorldElement {
 
     public boolean isAlive() {
         return animalStats.getDeathDate().isEmpty();
-    }
-
-    public int lifeLength(int currentDate) {
-        int endDate = animalStats.getDeathDate().orElse(currentDate);
-        return endDate - animalStats.getBirthDate();
     }
 
     public int getAge() {

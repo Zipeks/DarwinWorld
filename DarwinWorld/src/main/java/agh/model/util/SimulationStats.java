@@ -23,7 +23,6 @@ public record SimulationStats(
         HashMap<Genotype, Integer> genotypes = new HashMap<>();
         Genotype mostPopularGenotype = null;
         int mostPopularGenotypeCount = 0;
-        int maxDescendants = 0;
         int totalAliveAnimalsChildrenCount = 0;
         int avgChildCount;
         int avgLifeTime = 0;

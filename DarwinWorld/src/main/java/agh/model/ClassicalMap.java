@@ -1,7 +1,5 @@
 package agh.model;
 
-import agh.model.util.Boundary;
-import agh.model.util.Genotype;
 import agh.model.util.SimulationConfig;
 
 import java.util.*;

@@ -3,10 +3,8 @@ package agh.model;
 import agh.model.util.Boundary;
 import agh.model.util.MapStats;
 import agh.model.util.SimulationConfig;
-import agh.model.util.SimulationStats;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public abstract class AbstractJungleMap extends AbstractWorldMap {
     private final Map<Vector2d, Grass> grasses = new HashMap<>();
@@ -119,7 +117,6 @@ public abstract class AbstractJungleMap extends AbstractWorldMap {
 
     public synchronized List<Animal> animalReproduction(SimulationConfig config, int currentDay) {
         List<Animal> children = new ArrayList<>();
-        Random PRNG = new Random();
         for (Vector2d position : animals.keySet()) {
             List<Animal> animalsAtP = animals.get(position);
             if (animalsAtP.size() < 2) {

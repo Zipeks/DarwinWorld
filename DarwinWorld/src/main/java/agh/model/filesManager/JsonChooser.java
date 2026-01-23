@@ -10,12 +10,7 @@ public class JsonChooser {
         fc.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("JSON Files", "*.json")
         );
-        File presets = new File("presets");
-        if(!presets.exists()){
-            boolean created= presets.mkdir();
-            if(!created)
-                throw new DirectoryCreationException("Could not create a preset directory");
-        }
+        File presets = ProjectSubfolderGetter.get("presets");
         fc.setInitialDirectory(presets);
         return fc;
     }

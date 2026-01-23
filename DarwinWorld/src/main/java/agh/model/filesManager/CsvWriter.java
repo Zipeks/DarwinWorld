@@ -9,12 +9,7 @@ import java.util.UUID;
 
 public class CsvWriter {
     public static void saveConfigStats(SimulationStats stats, UUID id) throws DirectoryCreationException {
-        File logs=new File("logs");
-        if(!logs.exists()){
-            boolean created= logs.mkdir();
-            if(!created)
-                throw new DirectoryCreationException("Could not create a log directory");
-        }
+        File logs= ProjectSubfolderGetter.get("logs");
 
         File file = new File(logs,"simulation" + id + ".csv");
         boolean exists = file.exists();

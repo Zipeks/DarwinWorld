@@ -7,6 +7,7 @@ build/
 .kotlin
 gradlew
 gradlew.bat
+logs/*
 
 ### IntelliJ IDEA ###
 .idea/

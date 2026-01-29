@@ -1,0 +1,17 @@
+@font-face {
+    font-family: "Fira Code Regular";
+    src: url("fonts/FiraCode-Regular.ttf");
+}
+@font-face {
+    font-family: "Fira Code Bold";
+    src: url("fonts/FiraCode-Bold.ttf");
+}
+
+.label,.text-field {
+    -fx-font-family: "Fira Code Regular";
+}
+
+.button {
+    -fx-cursor: hand;
+    -fx-font-family: "Fira Code Bold";
+}

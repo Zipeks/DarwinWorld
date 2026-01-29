@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="agh.presenter.ConfigurationPresenter">
+   <center>
+      <StackPane>
+         <children>
+            <ImageView fitHeight="427.0" fitWidth="705.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/bg4.png" />
+               </image>
+            </ImageView>
+            <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="598.0" spacing="24.0">
+               <children>
+                  <HBox alignment="TOP_CENTER">
+                     <children>
+                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@images/title.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </HBox>
+                  <HBox>
+                     <VBox.margin>
+                        <Insets top="16.0" />
+                     </VBox.margin>
+                     <children>
+                        <HBox alignment="CENTER">
+                           <children>
+                              <Label alignment="CENTER" contentDisplay="CENTER" text="Provide initial parameters:">
+                                 <font>
+                                    <Font name="Fira Code Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox alignment="TOP_RIGHT" spacing="10.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Button fx:id="loadPreset" mnemonicParsing="false" onAction="#onLoadConfig" style="-fx-background-color: #74aad3; -fx-border-width: 1; -fx-border-color: #000; -fx-border-radius: 10; -fx-background-radius: 10;" text="Load preset">
+                                 <font>
+                                    <Font name="Fira Code Bold" size="12.0" />
+                                 </font>
+                              </Button>
+                              <Button fx:id="saveConfig" mnemonicParsing="false" onAction="#onSaveConfig" style="-fx-background-color: #e4854c; -fx-border-width: 1; -fx-border-color: #000; -fx-border-radius: 10; -fx-background-radius: 10;" text="Save config">
+                                 <font>
+                                    <Font name="Fira Code Bold" size="12.0" />
+                                 </font>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+                  <GridPane hgap="16.0" vgap="24.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <VBox prefHeight="200.0" prefWidth="100.0">
+                           <children>
+                              <Label text="Map size (X,Y)">
+                                 <font>
+                                    <Font name="Fira Code Regular" size="12.0" />
+                                 </font>
+                              </Label>
+                              <HBox spacing="5.0">
+                                 <children>
+                                    <TextField fx:id="initialMapWidth" text="3">
+                                       <font>
+                                          <Font name="Fira Code Regular" size="12.0" />
+                                       </font>
+                                    </TextField>
+                                    <TextField fx:id="initialMapHeight" layoutX="10.0" layoutY="10.0" text="3">
+                                       <font>
+                                          <Font name="Fira Code Regular" size="12.0" />
+                                       </font>
+                                    </TextField>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                        <VBox layoutX="10.0" layoutY="96.0" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
+                           <children>
+                              <Label text="Genotype length">
+                                 <font>
+                                    <Font name="Fira Code Regular" size="12.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="initialGenomLength" text="5">
+                                 <font>
+                                    <Font name="Fira Code Regular" size="12.0" />
+                                 </font>
+                              </TextField>
+                           </children>
+                        </VBox>
+                        <VBox layoutX="194.0" layoutY="4.0" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2">
+                           <children>
+                              <Label text="Animals">
+                                 <font>
+                                    <Font name="Fira Code Regular" size="12.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="initialAnimals" text="4">
+                                 <font>
+                                    <Font name="Fira Code Regular" size="12.0" />
+                                 </font>
+                              </TextField>
+                           </children>
+                        </VBox>
+                        <VBox layoutX="10.0" layoutY="4.0" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
+                           <children>
+                              <Label text="Energy / after grazing ">
+                                 <font>
+                                    <Font name="Fira Code Regular" size="12.0" />
+                                 </font>
+                              </Label>
+                              <HBox spacing="5.0">
+                                 <children>
+                                    <TextField fx:id="initialEnergy" text="10">
+                                       <font>
+                                          <Font name="Fira Code Regular" size="12.0" />
+                                       </font>
+                                    </TextField>
+                                    <TextField fx:id="energyFromEatingGrass" layoutX="10.0" layoutY="10.0" text="4">
+                                       <font>
+                                          <Font name="Fira Code Regular" size="12.0" />
+                                       </font>
+                                    </TextField>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                        <VBox layoutX="10.0" layoutY="4.0" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <Label text="Daily energy loss">
+                                 <font>
+                                    <Font name="Fira Code Regular" size="12.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="energyLoss" text="1">
+                                 <font>
+                                    <Font name="Fira Code Regular" size="12.0" />
+                                 </font>
+                              </TextField>
+                           </children>
+                        </VBox>
+                        <VBox layoutX="10.0" layoutY="4.0" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                           <children>
+                              <Label text="Reproduction (min,cost)">
+                                 <font>
+                                    <Font name="Fira Code Regular" size="12.0" />
+                                 </font>
+                              </Label>
+                              <HBox spacing="5.0">
+                                 <children>
+                                    <TextField fx:id="fertilityEnergy" text="3">
+                                       <font>
+                                          <Font name="Fira Code Regular" size="12.0" />
+                                       </font>
+                                    </TextField>
+                                    <TextField fx:id="reproductionCost" layoutX="10.0" layoutY="10.0" text="1">
+                                       <font>
+                                          <Font name="Fira Code Regular" size="12.0" />
+                                       </font>
+                                    </TextField>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                        <VBox layoutX="10.0" layoutY="142.0" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="2">
+                           <children>
+                              <Label text="Grass / increase">
+                                 <font>
+                                    <Font name="Fira Code Regular" size="12.0" />
+                                 </font>
+                              </Label>
+                              <HBox spacing="5.0">
+                                 <children>
+                                    <TextField fx:id="initialPlants" text="4">
+                                       <font>
+                                          <Font name="Fira Code Regular" size="12.0" />
+                                       </font>
+                                    </TextField>
+                                    <TextField fx:id="dailyIncrease" layoutX="10.0" layoutY="10.0" text="1">
+                                       <font>
+                                          <Font name="Fira Code Regular" size="12.0" />
+                                       </font>
+                                    </TextField>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                        <VBox layoutX="388.0" layoutY="96.0" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <children>
+                              <Label text="Mutation (min,max)">
+                                 <font>
+                                    <Font name="Fira Code Regular" size="12.0" />
+                                 </font>
+                              </Label>
+                              <HBox spacing="5.0">
+                                 <children>
+                                    <TextField fx:id="mutationMin" text="0">
+                                       <font>
+                                          <Font name="Fira Code Regular" size="12.0" />
+                                       </font>
+                                    </TextField>
+                                    <TextField fx:id="mutationMax" layoutX="10.0" layoutY="10.0" text="4">
+                                       <font>
+                                          <Font name="Fira Code Regular" size="12.0" />
+                                       </font>
+                                    </TextField>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                        <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                           <children>
+                              <Label text="Day length (ms)">
+                                 <font>
+                                    <Font name="Fira Code Regular" size="12.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="dayLength" text="500" />
+                           </children>
+                        </VBox>
+                        <VBox alignment="CENTER" layoutX="398.0" layoutY="73.0" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="3">
+                           <children>
+                              <CheckBox fx:id="habsburg" mnemonicParsing="false" onAction="#changeHabsburgOptions" prefHeight="17.0" prefWidth="178.0" style="-fx-font-family: 'Fira Code';" text="The Habsburgs curse">
+                                 <font>
+                                    <Font name="Fira Code Regular" size="12.0" />
+                                 </font></CheckBox>
+                           </children>
+                        </VBox>
+                        <VBox layoutX="10.0" layoutY="-4.0" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <children>
+                              <Label text="Males / Females">
+                                 <font>
+                                    <Font name="Fira Code Regular" size="12.0" />
+                                 </font>
+                              </Label>
+                              <HBox spacing="5.0">
+                                 <children>
+                                    <TextField fx:id="males" disable="true" text="2">
+                                       <font>
+                                          <Font name="Fira Code Regular" size="12.0" />
+                                       </font>
+                                    </TextField>
+                                    <TextField fx:id="females" disable="true" layoutX="10.0" layoutY="10.0" text="2">
+                                       <font>
+                                          <Font name="Fira Code Regular" size="12.0" />
+                                       </font>
+                                    </TextField>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                        <VBox layoutX="10.0" layoutY="-4.0" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                           <children>
+                              <Label text="\% of energy loss">
+                                 <font>
+                                    <Font name="Fira Code Regular" size="12.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="inbreedingPenaltyField" disable="true" text="10" />
+                           </children>
+                        </VBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </GridPane>
+                  <HBox alignment="CENTER" VBox.vgrow="ALWAYS">
+                     <children>
+                        <VBox alignment="CENTER" spacing="10.0">
+                           <children>
+                              <Button fx:id="start" mnemonicParsing="false" onAction="#onStartClicked" style="-fx-background-color: #b7cd74; -fx-background-radius: 10; -fx-border-color: #000; -fx-border-radius: 10;" text="Launch simulation">
+                                 <font>
+                                    <Font name="Fira Code Bold" size="12.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets bottom="8.0" left="24.0" right="24.0" top="8.0" />
+                                 </padding>
+                              </Button>
+                              <HBox spacing="40.0">
+                                 <children>
+                                    <CheckBox fx:id="saveStats" mnemonicParsing="false" style="-fx-font-family: 'Fira Code';" text="Save logs">
+                                       <font>
+                                          <Font name="Fira Code Regular" size="12.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="showChart" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" style="-fx-font-family: 'Fira Code';" text="Show chart">
+                                       <font>
+                                          <Font name="Fira Code Regular" size="12.0" />
+                                       </font>
+                                    </CheckBox>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+               <StackPane.margin>
+                  <Insets />
+               </StackPane.margin>
+               <padding>
+                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+               </padding>
+            </VBox>
+         </children>
+      </StackPane>
+   </center>
+</BorderPane>

@@ -1,0 +1,1 @@
+{"mapWidth":200,"mapHeight":100,"energy":300,"reproduction":60,"genomLength":15,"energyLoss":3,"energyFromGrass":30,"mutationMinValue":5,"mutationMaxValue":10,"animals":6000,"fertility":100,"plants":2000,"dailyInc":1000,"day":100,"isHabsburg":true,"startingMales":2000,"startingFemales":4000,"inbreedingPenalty":40}
